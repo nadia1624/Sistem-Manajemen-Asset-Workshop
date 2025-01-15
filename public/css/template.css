@@ -1,0 +1,105 @@
+.lord-icon {
+  --icon-primary-color: white;
+  --icon-secondary-color: white;
+  transition: all 0.3s ease;
+}
+
+.lord-icon:hover {
+  --icon-primary-color: black;
+  --icon-secondary-color: black;
+}
+
+.lord-icon:active {
+  --icon-primary-color: black;
+  --icon-secondary-color: black;
+}
+
+.sidebar {
+  background-color: #B60017;
+  color: white;
+  width: 230px;
+  height: calc(100vh - 16px); /* Mengurangi tinggi agar ada jarak di bawah */
+  position: fixed;
+  top: 8px; /* Jarak dari atas */
+  left: 8px; /* Jarak dari kiri */
+  right: 8px; /* Jarak dari kanan */
+  bottom: 8px; /* Jarak dari bawah */
+  overflow-y: auto;
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 25px;
+  padding: 8px;
+  
+}
+
+.sidebar header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.sidebar header img {
+  width: 75px;
+  height: 75px;
+  margin-bottom: 10px;
+}
+
+.sidebar header h1 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  margin: 5px 0;
+  text-decoration: none;
+  color: white;
+  border-radius: 5px;
+}
+
+.sidebar a:hover {
+  background-color: white;
+  color: black;
+}
+
+.content {
+  margin-left: 250px;
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
+  height: calc(100vh - 16px); /* Mengurangi tinggi agar ada jarak di bawah */
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 25px;
+  position: fixed;
+  top: 8px; /* Jarak dari atas */
+  left: 0px; /* Jarak dari kiri */
+  right: 8px; /* Jarak dari kanan */
+  bottom: 8px; /* Jarak dari bawah */
+}
+
+
+.header-content {
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+  padding: 16px; 
+  padding-left: 20px;
+  
+}
+
+.header-content h3 {
+  font-weight: 500;
+  font-size: 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif;
+}
+
+/* Font for body text */
+body, p, span, label, input, button {
+font-family: 'Montserrat', sans-serif;
+}

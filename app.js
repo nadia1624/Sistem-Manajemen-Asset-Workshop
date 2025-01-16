@@ -34,6 +34,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 //db.sync({alter: true})
 
+
 app.listen(PORT, () => {
     console.log(`Server running on port: ${PORT}`);
 })

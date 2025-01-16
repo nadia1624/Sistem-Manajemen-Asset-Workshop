@@ -337,19 +337,28 @@ overflow-x: auto;
   padding: 6px 12px;  
   font-size: 14px;     
   border-radius: 4px;  
-  margin: 5px; 
+  margin: 10px; 
   margin-top: 30px;       
 }
 
-/* Tombol Cancel dan Finish */
-.popup-modal .cancel-btn {
-  background-color: #CACACA; /* Warna merah untuk tombol batal */
+.popup-modal .cancel-btn, 
+.popup-modal .finish-btn {
+  display: flex; /* Agar elemen di dalam tombol menggunakan flexbox */
+  align-items: center; /* Vertikal: posisi tengah */
+  justify-content: center; /* Horizontal: posisi tengah */
+  background-color: #CACACA; /* Warna tombol cancel */
   color: black;
+  width: 70px;
+  height: 40px; /* Tambahkan tinggi agar konsisten */
+  border: none; /* Hilangkan border default */
+  border-radius: 8px; /* Opsional: Melengkungkan tombol */
+  cursor: pointer; /* Ubah kursor menjadi pointer */
+  font-size: 14px; /* Ukuran font */
 }
 
 .popup-modal .finish-btn {
-  background-color: #C2EF97; /* Warna hijau untuk tombol selesai */
-  color: black;
+  background-color: #C2EF97; /* Warna hijau untuk tombol finish */
+
 }
 
 /* Menambahkan efek hover */
@@ -737,3 +746,20 @@ form button:hover {
 .sidebar-overlay.active {
   display: block;
 }
+
+
+.custom-td {
+  padding: 10px 15px; /* px-4 py-2 */
+  text-align: center;
+}
+
+.custom-span {
+  display: inline-block;
+  padding: 12px 24px; /* px-6 py-3 */
+  font-size: 14px; /* text-sm */
+  font-weight: 600; /* font-semibold */
+  color: #232323; /* text-gray-700 */
+  background-color: #d1d5db; /* bg-gray-300 */
+  border-radius: 30px; /* rounded-[16px] */
+}
+

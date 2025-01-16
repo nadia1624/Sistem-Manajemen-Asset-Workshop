@@ -47,27 +47,26 @@
             </table>
         </div>
     </div>
-</main>
-
-<div id="popupModal" class="popup-modal">
-    <div class="modal-content">
-        <span class="close-btn" id="closeBtn">&times;</span>
-        <h3>Tandai Telah Dikembalikan</h3>
-        <form id="returnForm">
-            <label for="itemName" class="left-label">Update Kondisi Aset</label>
-            <input type="text" id="itemName" name="itemName" required>
-
-            <label for="serialNumber" class="left-label">Keterangan</label>
-            <input type="text" id="serialNumber" name="serialNumber" required>
-
-            <label for="imageProof" class="left-label">Bukti Gambar</label>
-            <input type="file" id="imageProof" name="imageProof" required>
-
-            <button type="submit" class="btn cancel-btn">Batal</button>
-            <button type="submit" class="btn finish-btn">Selesai</button>
-        </form>
+    <div id="popupModal" class="popup-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeBtn">&times;</span>
+            <h3>Tandai Telah Dikembalikan</h3>
+            <form id="returnForm">
+                <label for="itemName" class="left-label">Update Kondisi Aset</label>
+                <input type="text" id="itemName" name="itemName" required>
+    
+                <label for="serialNumber" class="left-label">Keterangan</label>
+                <input type="text" id="serialNumber" name="serialNumber" required>
+    
+                <label for="imageProof" class="left-label">Bukti Gambar</label>
+                <input type="file" id="imageProof" name="imageProof" required>
+    
+                <button type="submit" class="btn cancel-btn">Batal</button>
+                <button type="submit" class="btn finish-btn">Selesai</button>
+            </form>
+        </div>
     </div>
-</div>
+</main>
 
 <script>
     // Mendapatkan elemen modal dan tombol

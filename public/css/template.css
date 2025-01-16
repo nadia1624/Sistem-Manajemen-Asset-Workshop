@@ -446,6 +446,31 @@ form button:hover {
 .finish-btn:hover {
   background-color: #C2EF97;
 }
+      /* Font for headings */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      a {
+        font-family: "Raleway", sans-serif;
+      }
+
+      /* Font for body text */
+      body,
+      p,
+      span,
+      label,
+      input,
+      button {
+        font-family: "Montserrat", sans-serif;
+      }
+
+      #topbar {
+        font-size: small;
+        font-weight: bold;
+      }
 
 /* Tambahkan CSS berikut ke file style.css yang sudah ada */
 
@@ -737,3 +762,4 @@ form button:hover {
   background-color: #d1d5db; /* bg-gray-300 */
   border-radius: 30px; /* rounded-[16px] */
 }
+

@@ -1,0 +1,271 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Raleway:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Font for headings */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      a {
+        font-family: "Raleway", sans-serif;
+      }
+
+      /* Font for body text */
+      body,
+      p,
+      span,
+      label,
+      input,
+      button {
+        font-family: "Montserrat", sans-serif;
+      }
+
+      #topbar {
+        font-size: small;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <header
+      class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-white border-b border-gray-200 py-3"
+    >
+      <nav
+        class="relative max-w-[85rem] flex items-center justify-between w-full mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <!-- Logo and Primary Navigation -->
+        <div class="flex items-center justify-start flex-grow mt-2">
+          <!-- Logo -->
+          <a class="flex-none" href="#">
+            <img class="w-10 h-10" src="/image/logo.png" alt="Logo" />
+          </a>
+
+          <!-- Main Navigation -->
+          <div class="hidden sm:flex items-center ml-4 lg:ml-8">
+            <!-- Daftar Aset Button -->
+            <a
+              id="topbar"
+              href="#"
+              class="px-5 py-2 bg-red-600 text-white rounded-full font-medium hover:bg-red-800 transition-colors"
+            >
+              Daftar Aset
+            </a>
+
+            <!-- Other Nav Items -->
+            <a
+              id="topbar"
+              href="#"
+              class="ml-8 text-gray-800 hover:text-gray-400 font-medium"
+              >Pengajuan</a
+            >
+            <a
+              id="topbar"
+              href="#"
+              class="ml-8 text-gray-800 hover:text-gray-400 font-medium"
+              >Dipinjam</a
+            >
+            <a
+              id="topbar"
+              href="#"
+              class="ml-8 text-gray-800 hover:text-gray-400 font-medium"
+              >Laporan Pengecekan</a
+            >
+            <a
+              id="topbar"
+              href="#"
+              class="ml-8 text-gray-800 hover:text-gray-400 font-medium"
+              >Riwayat</a
+            >
+          </div>
+        </div>
+
+        <!-- Profile Icon -->
+        <div class="flex items-center ml-auto">
+          <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="sm:hidden ml-4">
+          <button
+            type="button"
+            class="hs-collapse-toggle flex justify-center items-center w-9 h-9 text-sm font-semibold rounded-lg border border-gray-200 text-gray-800 hover:bg-gray-100"
+            data-hs-collapse="#navbar-collapse-mobile"
+            aria-controls="navbar-collapse-mobile"
+            aria-label="Toggle navigation"
+          >
+            <svg
+              class="w-4 h-4"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              />
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Mobile Menu -->
+      <div id="navbar-collapse-mobile" class="hidden sm:hidden w-full">
+        <div class="px-4 py-5 space-y-4">
+          <a
+            href="#"
+            class="block px-4 py-2 bg-red-600 text-white rounded-full text-center font-medium hover:bg-red-700 transition-colors"
+          >
+            Daftar Aset
+          </a>
+          <a
+            href="#"
+            class="block px-4 py-2 text-gray-800 hover:text-gray-600 font-medium"
+            >Pengajuan</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-gray-800 hover:text-gray-600 font-medium"
+            >Dipinjam</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-gray-800 hover:text-gray-600 font-medium"
+            >Laporan Pengecekan</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-gray-800 hover:text-gray-600 font-medium"
+            >Riwayat</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Card Grid -->
+    <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 mx-auto">
+      <div id="cardContainer" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Cards will be inserted here by JavaScript -->
+      </div>
+    </div>
+
+    <script>
+      // Dummy data array
+      const dummyData = [
+        {
+          id: 1,
+          title: "[Jenis Barang 1]",
+          description: "Description for Asset 1",
+          image: "/api/placeholder/400/300",
+        },
+        {
+          id: 2,
+          title: "[Jenis Barang 2]",
+          description: "Description for Asset 2",
+          image: "/api/placeholder/400/300",
+        },
+        {
+          id: 3,
+          title: "[Jenis Barang 3]",
+          description: "Description for Asset 3",
+          image: "/api/placeholder/400/300",
+        },
+        {
+          id: 4,
+          title: "[Jenis Barang 4]",
+          description: "Description for Asset 4",
+          image: "/api/placeholder/400/300",
+        },
+        {
+          id: 5,
+          title: "[Jenis Barang 5]",
+          description: "Description for Asset 5",
+          image: "/api/placeholder/400/300",
+        },
+        {
+          id: 6,
+          title: "[Jenis Barang 6]",
+          description: "Description for Asset 6",
+          image: "/api/placeholder/400/300",
+        },
+        {
+          id: 7,
+          title: "[Jenis Barang 7]",
+          description: "Description for Asset 7",
+          image: "/api/placeholder/400/300",
+        },
+        {
+          id: 8,
+          title: "[Jenis Barang 8]",
+          description: "Description for Asset 8",
+          image: "/api/placeholder/400/300",
+        },
+      ];
+
+      // Function to create card HTML
+      function createCard(item) {
+        return `
+                <a href="${item.link}" class="group flex flex-col h-full bg-white border border-gray-200 shadow-sm rounded-xl hover:shadow-md transition-shadow duration-300">
+            <div class="h-52 flex flex-col justify-center items-center bg-gray-100 rounded-t-xl">
+                <img class="w-full h-full object-cover rounded-t-xl" src="${item.image}" alt="${item.title}">
+            </div>
+            <div class="p-4 md:p-6">
+                <h3 class="text-xl font-semibold text-gray-800">
+                    ${item.title}
+                </h3>
+                <p class="mt-2 text-gray-600">
+                    ${item.description}
+                </p>
+            </div>
+            <div class="p-4 md:p-6 mt-auto text-right">
+                <button type="button" class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg bg-red-600 text-red-500 hover:bg-red-800 disabled:opacity-50 disabled:pointer-events-none">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
+            </div>
+        </a>
+    `;
+      }
+
+      // Function to render all cards
+      function renderCards() {
+        const container = document.getElementById("cardContainer");
+        const cardsHTML = dummyData.map((item) => createCard(item)).join("");
+        container.innerHTML = cardsHTML;
+      }
+
+      // Render cards when page loads
+      document.addEventListener("DOMContentLoaded", renderCards);
+
+      // Simple toggle for mobile menu
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleButton = document.querySelector(".hs-collapse-toggle");
+        const mobileMenu = document.getElementById("navbar-collapse-mobile");
+
+        toggleButton.addEventListener("click", function () {
+          mobileMenu.classList.toggle("hidden");
+        });
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+  </body>
+</html>

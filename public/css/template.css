@@ -404,3 +404,29 @@ form button:hover {
   background-color: #C2EF97;
 }
 
+      /* Font for headings */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      a {
+        font-family: "Raleway", sans-serif;
+      }
+
+      /* Font for body text */
+      body,
+      p,
+      span,
+      label,
+      input,
+      button {
+        font-family: "Montserrat", sans-serif;
+      }
+
+      #topbar {
+        font-size: small;
+        font-weight: bold;
+      }
+

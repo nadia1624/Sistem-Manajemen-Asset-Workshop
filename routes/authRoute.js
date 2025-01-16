@@ -6,7 +6,11 @@ const authRouter = express.Router()
 authRouter.get('/login', (req,res)=> {
     res.render('login')
 })
-// authRouter.post('/auth/login', login);
+
+authRouter.get('/dashboard', (req,res)=> {
+    res.render('admin/dashboard')
+})
+
 
 
 module.exports = authRouter

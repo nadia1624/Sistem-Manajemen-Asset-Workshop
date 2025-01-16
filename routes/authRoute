@@ -7,10 +7,16 @@ authRouter.get('/login', (req,res)=> {
     res.render('login')
 })
 
+//Admin
 authRouter.get('/dashboard', (req,res)=> {
     res.render('admin/dashboard')
 })
-
+authRouter.get('/pengembalianAset', (req, res) => {
+    res.render('admin/pengembalianAset');
+});
+authRouter.get('/riwayatPengembalian', (req, res) => {
+    res.render('admin/riwayatPengembalian');
+});
 
 // authRouter.post('/auth/login', login);
 

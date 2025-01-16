@@ -4,18 +4,14 @@ const path = require('path');
 const bodyParser = require('body-parser')
 require('dotenv/config')
 
-
-
-
-
-
+const penggunaRoutes = require('./routes/pengguna');
 
 const PORT = process.env.PORT;
 const app = express();
 
 app.use(express.json())
 app.use(route)
-
+app.use(penggunaRoutes);
 
   
 // Middleware untuk melayani file statis dari folder "public"

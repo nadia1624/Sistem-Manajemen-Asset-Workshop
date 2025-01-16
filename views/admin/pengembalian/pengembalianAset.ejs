@@ -27,25 +27,31 @@
                         <th width="20%">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Lorem Ipsum</td>
-                        <td>Lorem Ipsum</td>
-                        <td>Lorem Ipsum</td>
-                        <td>Lorem Ipsum</td>
-                        <td>
-                            <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100"/>
-                        </td>
-                        <td>
-                            <button class="btn btn-action">
-                                <i class="fas fa-check"></i> Selesai
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
             </table>
+            <div class="table-scroll">
+                <table class="table-compact">
+                    <tbody>
+                        <tr>
+                            <td width="5%">1</td>
+                            <td width="15%">Lorem Ipsum</td>
+                            <td width="15%">Lorem Ipsum</td>
+                            <td width="15%">Lorem Ipsum</td>
+                            <td width="15%">Lorem Ipsum</td>
+                            <td>
+                                <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
+                            </td>
+                            <td width="20%">
+                                <button class="btn btn-action">
+                                    <i class="fas fa-check"></i> Selesai
+                                </button>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            
         </div>
+    </div>
     </div>
 </main>
 
@@ -53,27 +59,49 @@
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
         <h3>Tandai Telah Dikembalikan</h3>
-        <form id="returnForm" class="form-compact">
-            <div class="form-group">
-                <label for="itemName" class="left-label">Update Kondisi Aset</label>
-                <input type="text" id="itemName" name="itemName" required>
-            </div>
+        <form id="returnForm">
+            <label for="itemName" class="left-label">Update Kondisi Aset</label>
+            <input type="text" id="itemName" name="itemName" required>
 
-            <div class="form-group">
-                <label for="serialNumber" class="left-label">Keterangan</label>
-                <input type="text" id="serialNumber" name="serialNumber" required>
-            </div>
+            <label for="serialNumber" class="left-label">Keterangan</label>
+            <input type="text" id="serialNumber" name="serialNumber" required>
 
-            <div class="form-group">
-                <label for="imageProof" class="left-label">Bukti Gambar</label>
-                <input type="file" id="imageProof" name="imageProof" required>
-            </div>
+            <label for="imageProof" class="left-label">Bukti Gambar</label>
+            <input type="file" id="imageProof" name="imageProof" required>
 
-            <div class="button-group">
-                <button type="button" class="btn cancel-btn">Batal</button>
-                <button type="submit" class="btn finish-btn">Selesai</button>
-            </div>
+            <button type="submit" class="btn cancel-btn">Batal</button>
+            <button type="submit" class="btn finish-btn">Selesai</button>
         </form>
     </div>
 </div>
 
+<script>
+    // Mendapatkan elemen modal dan tombol
+    const modal = document.getElementById("popupModal");
+    const closeBtn = document.getElementById("closeBtn");
+
+    // Menangani klik pada tombol "Selesai"
+    const selesaiButtons = document.querySelectorAll('.btn');
+
+    selesaiButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();  // Mencegah aksi default
+            modal.style.display = 'flex';  // Menampilkan modal
+        });
+    });
+
+    // Menangani klik pada tombol tutup
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';  // Menyembunyikan modal
+    });
+
+    // Menangani klik di luar modal untuk menutupnya
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+</script>
+
+</body>
+</html>

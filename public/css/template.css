@@ -204,6 +204,7 @@ color: #fff;
   background-color: #f5f5f5;
   color: #000;
 }
+
 .table-container {
   background-color: #fff;
   border-radius: 10px;
@@ -211,24 +212,35 @@ color: #fff;
   overflow-x: auto;
 }
 
-table {
+.table-compact {
   width: 100%;
   border-collapse: collapse;
 }
 
 th, td {
   padding: 15px;
-  text-align: center; 
+  text-align: center;
 }
 
 th {
-  background-color: #fff; 
-  color: #000; 
-  font-weight: bold; 
+  background-color: #fff;
+  color: #000;
+  font-weight: bold;
 }
 
 thead {
-  background-color: #fff; 
+  background-color: #fff;
+}
+
+/* Scrollable tbody */
+.table-scroll {
+  max-height: 420px; /* Sesuaikan tinggi maksimum tabel scroll */
+  overflow-y: auto;
+}
+
+.table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 tr:nth-child(even) {
@@ -239,9 +251,11 @@ tr:nth-child(odd) {
   background-color: #ffecec;
 }
 
-th:first-child, td:first-child {
-  width: 5%; 
+th:first-child,
+td:first-child {
+  width: 5%;
 }
+
 
 
 .btn {
@@ -316,6 +330,41 @@ overflow-x: auto;
   z-index: 999;
   justify-content: center;
   align-items: center;
+}
+
+/* Mengatur ukuran tombol di dalam modal */
+.popup-modal .btn {
+  padding: 6px 12px;  
+  font-size: 14px;     
+  border-radius: 4px;  
+  margin: 10px; 
+  margin-top: 30px;       
+}
+
+.popup-modal .cancel-btn, 
+.popup-modal .finish-btn {
+  display: flex; /* Agar elemen di dalam tombol menggunakan flexbox */
+  align-items: center; /* Vertikal: posisi tengah */
+  justify-content: center; /* Horizontal: posisi tengah */
+  background-color: #CACACA; /* Warna tombol cancel */
+  color: black;
+  width: 70px;
+  height: 40px; /* Tambahkan tinggi agar konsisten */
+  border: none; /* Hilangkan border default */
+  border-radius: 8px; /* Opsional: Melengkungkan tombol */
+  cursor: pointer; /* Ubah kursor menjadi pointer */
+  font-size: 14px; /* Ukuran font */
+}
+
+.popup-modal .finish-btn {
+  background-color: #C2EF97; /* Warna hijau untuk tombol finish */
+
+}
+
+/* Menambahkan efek hover */
+.popup-modal .cancel-btn:hover,
+.popup-modal .finish-btn:hover {
+  opacity: 0.8;
 }
 
 .modal-content {
@@ -397,6 +446,31 @@ form button:hover {
 .finish-btn:hover {
   background-color: #C2EF97;
 }
+      /* Font for headings */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      a {
+        font-family: "Raleway", sans-serif;
+      }
+
+      /* Font for body text */
+      body,
+      p,
+      span,
+      label,
+      input,
+      button {
+        font-family: "Montserrat", sans-serif;
+      }
+
+      #topbar {
+        font-size: small;
+        font-weight: bold;
+      }
 
 /* Tambahkan CSS berikut ke file style.css yang sudah ada */
 
@@ -424,6 +498,35 @@ form button:hover {
 .table-compact td {
   padding: 12px 8px;
   font-size: 14px;
+}
+
+.table-body-container {
+  max-height: 300px; /* Tinggi maksimal untuk tbody */
+  overflow-y: auto;
+}
+
+.table-body-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-body-container td {
+  background-color: #fff;
+}
+
+/* Tombol aksi */
+.btn-action {
+  background-color: #C2EF97;
+  font-size: 18px;
+  border: 2px solid #C2EF97;
+  border-radius: 8px;
+  color: #000;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.btn-action i {
+  font-size: 16px;
 }
 
 .img-fluid {
@@ -527,23 +630,36 @@ form button:hover {
   z-index: 1000;
 }
 
-/* Sidebar Styles */
-.sidebar {
-  background-color: #B60017;
-  color: white;
-  width: 230px;
-  height: calc(100vh - 16px);
-  position: fixed;
-  top: 8px;
-  left: 8px;
-  bottom: 8px;
-  overflow-y: auto;
-  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 25px;
-  padding: 8px;
-  z-index: 1001; /* Memastikan sidebar muncul di atas konten lain */
-  transition: transform 0.3s ease-in-out;
+/* Tambahkan efek blur pada sidebar saat overlay aktif */
+.sidebar-overlay.active + .sidebar {
+  filter: blur(4px);
+  pointer-events: none; /* Menghindari interaksi dengan sidebar saat blur */
 }
+
+/* Pastikan overlay mencakup seluruh halaman */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Sidebar tetap di atas overlay */
+.sidebar {
+  z-index: 500;
+}
+
 
 
 
@@ -632,7 +748,7 @@ form button:hover {
 }
 
 
-/* CSS UNTUK PERMINTAAN ASET */
+
 
 .modal-content {
   background-color: #fff;
@@ -665,3 +781,19 @@ button i, a i {
   line-height: 1; /* Hindari icon terlalu besar */
   vertical-align: middle; /* Pastikan icon sejajar dengan teks */
 }
+
+.custom-td {
+  padding: 10px 15px; /* px-4 py-2 */
+  text-align: center;
+}
+
+.custom-span {
+  display: inline-block;
+  padding: 12px 24px; /* px-6 py-3 */
+  font-size: 14px; /* text-sm */
+  font-weight: 600; /* font-semibold */
+  color: #232323; /* text-gray-700 */
+  background-color: #d1d5db; /* bg-gray-300 */
+  border-radius: 30px; /* rounded-[16px] */
+}
+

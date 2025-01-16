@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// db.sync({alter: true})
+db.sync({alter: true})
 
 app.listen(PORT, () => {
     console.log(`Server running on port: ${PORT}`);

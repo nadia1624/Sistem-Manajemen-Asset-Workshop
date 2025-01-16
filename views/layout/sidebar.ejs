@@ -9,6 +9,62 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <script src="https://cdn.lordicon.com/lordicon.js"></script>
+  <script>
+// Add this script to your page
+document.addEventListener('DOMContentLoaded', function() {
+    // Create menu toggle button if it doesn't exist
+    if (!document.querySelector('.menu-toggle')) {
+        const menuToggle = document.createElement('button');
+        menuToggle.className = 'menu-toggle';
+        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        document.body.appendChild(menuToggle);
+    }
+
+    // Create overlay div if it doesn't exist
+    if (!document.querySelector('.sidebar-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+
+    menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        this.classList.toggle('active');
+    });
+
+    // Close sidebar when clicking overlay
+    overlay.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        menuToggle.classList.remove('active');
+    });
+
+    // Close sidebar when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!sidebar.contains(e.target) && 
+            !menuToggle.contains(e.target) && 
+            !overlay.contains(e.target)) {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            menuToggle.classList.remove('active');
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 992) {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            menuToggle.classList.remove('active');
+        }
+    });
+});
+  </script>
 </head>
 <body style="padding: 36px;">
 <div class="sidebar">
@@ -180,9 +236,3 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
 </div>
 <!-- End Sidebar -->
 </div>
-
-
-
-</body>
-
-</html>

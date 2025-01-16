@@ -1,0 +1,78 @@
+<%- include("../../layout/sidebar.ejs") %>
+
+
+<main class="content">
+    <div class="header-content">
+        <h3 style="font-weight: bold;">Pengembalian Aset</h3>
+        <div class="search-bar">
+            <input placeholder="Search..." type="text"/>
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+    <div class="container-fluid px-4">
+        <div class="tabButton">
+            <a href="pengembalianAset" class="button active">Daftar Pengembalian</a>
+            <a href="riwayatPengembalian" class="button inactive">Riwayat Pengembalian</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table-compact">
+                <thead>
+                    <tr>
+                        <th width="5%">No</th>
+                        <th width="15%">Nama</th>
+                        <th width="15%">Unit Kerja</th>
+                        <th width="15%">Nama Barang</th>
+                        <th width="15%">Serial Number</th>
+                        <th width="15%">Bukti Gambar</th>
+                        <th width="20%">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Lorem Ipsum</td>
+                        <td>Lorem Ipsum</td>
+                        <td>Lorem Ipsum</td>
+                        <td>Lorem Ipsum</td>
+                        <td>
+                            <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100"/>
+                        </td>
+                        <td>
+                            <button class="btn btn-action">
+                                <i class="fas fa-check"></i> Selesai
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<div id="popupModal" class="popup-modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeBtn">&times;</span>
+        <h3>Tandai Telah Dikembalikan</h3>
+        <form id="returnForm" class="form-compact">
+            <div class="form-group">
+                <label for="itemName" class="left-label">Update Kondisi Aset</label>
+                <input type="text" id="itemName" name="itemName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="serialNumber" class="left-label">Keterangan</label>
+                <input type="text" id="serialNumber" name="serialNumber" required>
+            </div>
+
+            <div class="form-group">
+                <label for="imageProof" class="left-label">Bukti Gambar</label>
+                <input type="file" id="imageProof" name="imageProof" required>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn cancel-btn">Batal</button>
+                <button type="submit" class="btn finish-btn">Selesai</button>
+            </div>
+        </form>
+    </div>
+</div>

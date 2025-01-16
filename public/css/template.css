@@ -332,6 +332,32 @@ overflow-x: auto;
   align-items: center;
 }
 
+/* Mengatur ukuran tombol di dalam modal */
+.popup-modal .btn {
+  padding: 6px 12px;  
+  font-size: 14px;     
+  border-radius: 4px;  
+  margin: 5px; 
+  margin-top: 30px;       
+}
+
+/* Tombol Cancel dan Finish */
+.popup-modal .cancel-btn {
+  background-color: #CACACA; /* Warna merah untuk tombol batal */
+  color: black;
+}
+
+.popup-modal .finish-btn {
+  background-color: #C2EF97; /* Warna hijau untuk tombol selesai */
+  color: black;
+}
+
+/* Menambahkan efek hover */
+.popup-modal .cancel-btn:hover,
+.popup-modal .finish-btn:hover {
+  opacity: 0.8;
+}
+
 .modal-content {
   background-color: white;
   padding: 20px;
@@ -456,9 +482,9 @@ form button:hover {
 
 /* Tombol aksi */
 .btn-action {
-  background-color: #ffffff;
+  background-color: #C2EF97;
   font-size: 18px;
-  border: 2px solid #ccc;
+  border: 2px solid #C2EF97;
   border-radius: 8px;
   color: #000;
   cursor: pointer;
@@ -570,23 +596,36 @@ form button:hover {
   z-index: 1000;
 }
 
-/* Sidebar Styles */
-.sidebar {
-  background-color: #B60017;
-  color: white;
-  width: 230px;
-  height: calc(100vh - 16px);
-  position: fixed;
-  top: 8px;
-  left: 8px;
-  bottom: 8px;
-  overflow-y: auto;
-  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 25px;
-  padding: 8px;
-  z-index: 1001; /* Memastikan sidebar muncul di atas konten lain */
-  transition: transform 0.3s ease-in-out;
+/* Tambahkan efek blur pada sidebar saat overlay aktif */
+.sidebar-overlay.active + .sidebar {
+  filter: blur(4px);
+  pointer-events: none; /* Menghindari interaksi dengan sidebar saat blur */
 }
+
+/* Pastikan overlay mencakup seluruh halaman */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Sidebar tetap di atas overlay */
+.sidebar {
+  z-index: 500;
+}
+
 
 
 

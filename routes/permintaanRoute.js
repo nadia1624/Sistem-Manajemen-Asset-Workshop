@@ -9,5 +9,8 @@ permintaanRouter.get('/admin/permintaanAset', (req, res) => {
 
 
 //karyawan
-
+permintaanRouter.get('/karyawan/permintaanAset', (req, res) => {
+    const currentPath = req.path; // Dapatkan path saat ini
+    res.render('karyawan/permintaan/permintaanAset', { currentPath }); // Kirim currentPath ke template
+});
 module.exports = permintaanRouter

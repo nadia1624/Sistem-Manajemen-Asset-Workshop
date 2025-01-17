@@ -21,37 +21,44 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="15%">Nama</th>
-                        <th width="15%">Unit Kerja</th>
-                        <th width="15%">Nama Barang</th>
                         <th width="15%">Serial Number</th>
-                        <th width="15%">Bukti Gambar</th>
+                        <th width="15%">Nama Aset</th>
+                        <th width="15%">Gambar</th>
+                        <th width="15%">Status Vendor</th>
                         <th width="20%">Aksi</th>
                     </tr>
                 </thead>
             </table>
             <div class="table-scroll">
                 <table class="table-compact">
-                    <tbody>
+                    <tbody></tbody>
                         <tr>
                             <td width="5%">1</td>
                             <td width="15%">Lorem Ipsum</td>
                             <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td>
+                            <td width="15%">
                                 <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
                             </td>
+                            <td width="15%" class="custom-td">
+                                <span class="custom-span">Belum diproses</span>
+                              </td>
                             <td width="20%">
-                                <button class="btn btn-action">
-                                    <i class="fas fa-check"></i> Selesai
+                                <button id="editButton" style="background-color: #FBDA00; padding: 12px; padding-right: 7px; margin-right: 5px; font-size: 18px; border: 2px solid #FBDA00; border-radius: 15px; color: #fff; cursor: pointer;">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
+                                <a href="detailAsetKaryawan">
+                                <button id="infoButton" style="background-color: #44C400; padding: 12px; padding-right: 7px; margin-right: 10px; font-size: 18px; border: 2px solid #44C400; border-radius: 15px; color: #FFF; cursor: pointer;">
+                                    <i class="fa-solid fa-circle-info"></i>  
+                                </button>  
+                            </a>         
+                                <button id="finishButton" class="btn">
+                                    <i class="fas fa-check"></i> Return
                                 </button>
                             </td>
                         </tr>
                         
                     </tbody>
                 </table>
-            
         </div>
     </div>
     </div>
@@ -60,22 +67,72 @@
 <div id="addModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
-        <h3>Tandai Telah Dikembalikan</h3>
-        <form id="returnForm">
-            <label for="itemName" class="left-label">Update Kondisi Aset</label>
-            <input type="text" id="itemName" name="itemName" required>
 
-            <label for="serialNumber" class="left-label">Keterangan</label>
-            <input type="text" id="serialNumber" name="serialNumber" required>
+        <!-- Form untuk Edit -->
+        <div id="editForm" style="position: relative; padding: 20px; border-radius: 10px; background: white;">
+            <span class="close-btn" id="closeBtn" 
+                style="position: absolute; top: 10px; right: 10px; font-size: 20px; font-weight: bold; cursor: pointer;">
+                &times;
+            </span>
+            <h3>Edit Status</h3>
+            <form id="editAssetForm">
+                <div class="form-group">
+                    <label for="status" style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px;">Status</label>
+                    <select id="status" name="status" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
+                        <option value="" disabled selected>Pilih Status</option>
+                        <option value="Belum Diperbaiki">Belum diproses</option>
+                        <option value="Diperbaiki di Workshop">Sedang diproses</option>
+                        <option value="Selesai Diperbaiki">Selesai</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn cancel-btn">Batal</button>
+                <button type="submit" class="btn finish-btn">Selesai</button>
+            </form>
+        </div>
+        
 
-            <label for="imageProof" class="left-label">Bukti Gambar</label>
-            <input type="file" id="imageProof" name="imageProof" required>
 
-            <button type="submit" class="btn cancel-btn">Batal</button>
-            <button type="submit" class="btn finish-btn">Selesai</button>
-        </form>
+         <!-- Pesan Popup untuk Tombol Selesai -->
+         <div id="finishMessage" style="display: none;">
+            <h3>Pengecekan Selesai</h3>
+            <p class="text-gray-600 mb-6 text-center">Apakah Anda yakin pengecekan kondisi aset sudah selesai dan akan dikembalikan?</p>
+            <div class="flex justify-center space-x-4">
+                <button type="button" class="btn cancel-btn">Tidak</button>
+                <button type="button" class="btn finish-btn">Ya</button>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    let activeTab = localStorage.getItem("activeTab");
+    let buttons = document.querySelectorAll(".button");
+
+    // Jika ada tab yang aktif yang disimpan di localStorage
+    if (activeTab) {
+        buttons.forEach(btn => {
+            if (btn.getAttribute("href") === activeTab) {
+                btn.classList.add("active");
+            } else {
+                btn.classList.remove("active");
+            }
+        });
+    }
+
+    // Mengatur kelas 'active' ketika tombol diklik
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function (event) {
+            event.preventDefault();
+            let href = btn.getAttribute("href");
+            localStorage.setItem("activeTab", href);
+            buttons.forEach(button => button.classList.remove("active"));
+            btn.classList.add("active");
+            window.location.href = href;
+        });
+    });
+});
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -99,33 +156,68 @@
     }
 </script>
 
-
 <script>
+
     // Mendapatkan elemen modal dan tombol
     const modal = document.getElementById("addModal");
     const closeBtn = document.getElementById("closeBtn");
 
-    // Menangani klik pada tombol "Selesai"
-    const selesaiButtons = document.querySelectorAll('.btn');
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("popupModal");
+        const closeBtn = document.getElementById("closeBtn");
+        const editForm = document.getElementById("editForm");
+        const finishMessage = document.getElementById("finishMessage");
 
-    selesaiButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();  // Mencegah aksi default
-            modal.style.display = 'flex';  // Menampilkan modal
+
+        const editButton = document.getElementById("editButton");
+        const infoButton = document.getElementById("infoButton");
+        const finishButton = document.getElementById("finishButton");
+
+        // Menangani klik pada tombol "Edit"
+        editButton.addEventListener('click', function() {
+            editForm.style.display = 'block';
+            finishMessage.style.display = 'none';
+            modal.style.display = 'flex';
+        });
+
+        // Menangani klik pada tombol "Selesai"
+        finishButton.addEventListener('click', function() {
+            finishMessage.style.display = 'block';
+            editForm.style.display = 'none';
+            modal.style.display = 'flex';
+        });
+
+        // Menangani klik pada tombol "Info"
+        infoButton.addEventListener('click', function() {
+            window.location.href = "halaman-info.html"; // Ganti dengan URL tujuan
+        });
+
+        // Menangani klik pada tombol tutup
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        // Menangani klik di luar modal untuk menutupnya
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Menangani klik tombol batal
+        document.querySelectorAll('.cancel-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        });
+
+        // Menangani submit form edit
+        document.getElementById("editAssetForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Data aset berhasil disimpan!");
+            modal.style.display = 'none';
         });
     });
-
-    // Menangani klik pada tombol tutup
-    closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';  // Menyembunyikan modal
-    });
-
-    // Menangani klik di luar modal untuk menutupnya
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    };
 </script>
 
 </body>

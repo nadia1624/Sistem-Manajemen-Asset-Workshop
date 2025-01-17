@@ -31,6 +31,7 @@
             <div class="table-scroll">
                 <table class="table-compact">
                     <tbody>
+                        <% for (let i = 1; i <= 10; i++) { %>
                         <tr>
                             <td width="5%">1</td>
                             <td width="15%">Lorem Ipsum</td>
@@ -46,6 +47,7 @@
                                 </button>
                             </td>
                         </tr>
+                        <% } %>
                         
                     </tbody>
                 </table>
@@ -55,7 +57,7 @@
     </div>
 </main>
 
-<div id="popupModal" class="popup-modal">
+<div id="addModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
         <h3>Tandai Telah Dikembalikan</h3>
@@ -77,7 +79,7 @@
 
 <script>
     // Mendapatkan elemen modal dan tombol
-    const modal = document.getElementById("popupModal");
+    const modal = document.getElementById("addModal");
     const closeBtn = document.getElementById("closeBtn");
 
     // Menangani klik pada tombol "Selesai"

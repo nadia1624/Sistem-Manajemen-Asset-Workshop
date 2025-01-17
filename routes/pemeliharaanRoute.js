@@ -1,11 +1,11 @@
 const express = require('express')
 const pemeliharaanRouter = express.Router()
 
-pemeliharaanRouter.get('/admin/pemeliharaanAset', (req,res)=> {
+pemeliharaanRouter.get('/admin/pemeliharaan-aset', (req,res)=> {
     res.render('admin/pemeliharaan/pemeliharaanAset')
 })
 
-pemeliharaanRouter.get('/admin/pemeliharaanAset/detail', (req,res)=> {
+pemeliharaanRouter.get('/admin/pemeliharaan-aset/detail', (req,res)=> {
     res.render('admin/pemeliharaan/detailPemeliharaan')
 })
 

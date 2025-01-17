@@ -35,15 +35,16 @@
                           </td>
                           
                         
-                        <td>
-                            <button style="background-color: #FBDA00; padding: 12px; padding-right: 7px; margin-right: 10px; font-size: 18px; border: 2px solid #FBDA00; border-radius: 15px; color: #fff; cursor: pointer;">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                           
-                            <button style="background-color: #44C400; padding: 12px; padding-right: 7px; margin-right: 13px; font-size: 18px; border: 2px solid #44C400; border-radius: 15px; color: #FFF; cursor: pointer;">
+                          <td>
+                            <button id="editButton" style="background-color: #FBDA00; padding: 12px; padding-right: 7px; margin-right: 10px; font-size: 18px; border: 2px solid #FBDA00; border-radius: 15px; color: #fff; cursor: pointer;">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </button>
+                        
+                            <button id="infoButton" style="background-color: #44C400; padding: 12px; padding-right: 7px; margin-right: 13px; font-size: 18px; border: 2px solid #44C400; border-radius: 15px; color: #FFF; cursor: pointer;">
                                 <i class="fa-solid fa-circle-info"></i>
-                                                       
-                           
-                            <button class="btn">
+                            </button>
+                        
+                            <button id="finishButton" class="btn">
                                 <i class="fas fa-check"></i> Selesai
                             </button>
                         </td>
@@ -55,14 +56,45 @@
     </div>
 </main>
 
-<div id="popupModal" class="popup-modal">
+<!-- Popup Modal -->
+<div id="popupModal" class="popup-modal" style="display: none;">
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
-        <h3>Pengecekan Kondisi Selesai</h3>
-        <p class="text-gray-600 mb-6 text-center">Apakah kamu yakin pengecekan kondisi aset sudah selesai?</p>
-        <div class="flex justify-center space-x-4">
-            <button type="submit" class="btn cancel-btn ">Tidak</button>
-            <button type="submit" class="btn finish-btn">Ya</button>
+        <!-- Form untuk Edit -->
+        <div id="editForm" style="display: none;">
+            <h3 class="text-center">Ubah Status Pengecekan</h3>
+            <form id="editAssetForm" class="space-y-4">
+                <div class="form-group">
+                  <label for="serialNumber" class="block text-sm font-medium text-gray-700 left-label">Serial Number</label>
+                  <input type="text" id="serialNumber" name="serialNumber" placeholder="Masukkan Serial Number" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2"/>
+                </div>
+                
+                <div class="form-group">
+                  <label for="namaAset" class="block text-sm font-medium text-gray-700 left-label">Nama Aset</label>
+                  <input type="text" id="namaAset" name="namaAset" placeholder="Masukkan Nama Aset" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2"/>
+                </div>
+              
+                <div class="form-group">
+                  <label for="status" class="block text-sm font-medium text-gray-700 left-label">Status</label>
+                  <select id="status" name="status" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
+                    <option value="Belum Diperbaiki">Belum diperbaiki</option>
+                    <option value="Diperbaiki di Workshop">Diperbaiki di workshop</option>
+                    <option value="Selesai Diperbaiki">Selesai diperbaiki</option>
+                    <option value="Simpan di Gudang">Simpan di gudang</option>
+                  </select>
+                  <button type="submit" class="btn finish-btn">Simpan</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Pesan Popup untuk Tombol Selesai -->
+        <div id="finishMessage" style="display: none;">
+            <h3>Pengecekan Selesai</h3>
+            <p class="text-gray-600 mb-6 text-center">Apakah Anda yakin pengecekan kondisi aset sudah selesai?</p>
+            <div class="flex justify-center space-x-4">
+                <button type="button" class="btn cancel-btn">Tidak</button>
+                <button type="button" class="btn finish-btn">Ya</button>
+            </div>
         </div>
     </div>
 </div>
@@ -71,20 +103,37 @@
     // Mendapatkan elemen modal dan tombol
     const modal = document.getElementById("popupModal");
     const closeBtn = document.getElementById("closeBtn");
+    const editForm = document.getElementById("editForm");
+    const finishMessage = document.getElementById("finishMessage");
+
+    const editButton = document.getElementById("editButton");
+    const infoButton = document.getElementById("infoButton");
+    const finishButton = document.getElementById("finishButton");
+
+    // Menangani klik pada tombol "Edit"
+    editButton.addEventListener('click', function() {
+        // Menampilkan form edit
+        editForm.style.display = 'block';
+        finishMessage.style.display = 'none';
+        modal.style.display = 'flex';
+    });
 
     // Menangani klik pada tombol "Selesai"
-    const selesaiButtons = document.querySelectorAll('.btn');
+    finishButton.addEventListener('click', function() {
+        // Menampilkan pesan selesai
+        finishMessage.style.display = 'block';
+        editForm.style.display = 'none';
+        modal.style.display = 'flex';
+    });
 
-    selesaiButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();  // Mencegah aksi default
-            modal.style.display = 'flex';  // Menampilkan modal
-        });
+    // Menangani klik pada tombol "Info"
+    infoButton.addEventListener('click', function() {
+        window.location.href = "halaman-info.html"; // Ganti dengan URL tujuan
     });
 
     // Menangani klik pada tombol tutup
     closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';  // Menyembunyikan modal
+        modal.style.display = 'none';
     });
 
     // Menangani klik di luar modal untuk menutupnya
@@ -93,8 +142,23 @@
             modal.style.display = 'none';
         }
     };
+
+    // Menangani klik tombol batal
+    document.querySelectorAll('.cancel-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    });
+
+    // Menangani submit form edit
+    document.getElementById("editAssetForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Mencegah form submit secara default
+        alert("Data aset berhasil disimpan!");
+        modal.style.display = 'none';
+    });
 </script>
+
+
 </body>
 </html>
 
-   

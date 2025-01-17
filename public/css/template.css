@@ -1227,3 +1227,130 @@ button i, a i {
   }
 }
 
+.button-tambah button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3A68F3; 
+  color: white; 
+  border: none;
+  border-radius: 8px; 
+  padding: 10px 20px; 
+  font-size: 14px; /* Ukuran teks */
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.button-tambah button:hover {
+  background-color: #2154ee; /* Warna tombol saat hover */
+  transform: scale(1.05); /* Sedikit membesar saat hover */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Bayangan lebih besar saat hover */
+}
+
+.button-tambah button:active {
+  background-color: #1046e8; /* Warna tombol saat diklik */
+  transform: scale(0.98); /* Sedikit mengecil saat diklik */
+}
+
+.button-tambah button i {
+  margin-right: 8px; /* Memberikan jarak antara ikon dan teks */
+  font-size: 16px; /* Ukuran ikon */
+}
+
+.button-selesai button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #44C400; 
+  color: white; 
+  border: none;
+  border-radius: 8px; 
+  padding: 10px 20px; 
+  font-size: 14px; /* Ukuran teks */
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.button-selesai button:hover {
+  background-color: #41b800; /* Warna tombol saat hover */
+  transform: scale(1.05); /* Sedikit membesar saat hover */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Bayangan lebih besar saat hover */
+}
+
+.button-selesai button:active {
+  background-color: #41b800; /* Warna tombol saat diklik */
+  transform: scale(0.98); /* Sedikit mengecil saat diklik */
+}
+
+.button-selesai button i {
+  margin-right: 8px; /* Memberikan jarak antara ikon dan teks */
+  font-size: 16px; /* Ukuran ikon */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f4f4;
+}
+h1 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+.container2 {
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.container2 .details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  margin-left: 50px; /* Tambahkan jarak antara gambar dan teks */
+  
+}
+.container2 .details p {
+  margin: 15px 0; /* Tambahkan jarak antar tulisan */
+  font-size: 14px; /* Ukuran teks */
+  font-weight: bold;
+}
+.user-container {
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 20px; /* Kurangi padding agar elemen tidak terlalu jauh dari tepi */
+  width: 100%;
+  height: 100%;
+  max-width: 1100px;
+  max-height: 200px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex; /* Gunakan flexbox */
+  flex-direction: column; /* Atur elemen dalam kolom */
+  align-items: flex-start; /* Pastikan konten rata kiri */
+  justify-content: flex-start; /* Pastikan konten mulai dari atas */
+}
+
+.user-container p {
+  margin: 10px 0; /* Tambahkan jarak antar paragraf */
+  font-size: 14px; /* Ukuran teks */
+  font-weight: bold;
+}
+
+
+

@@ -13,8 +13,16 @@ pengembalianVendorRouter.get('/admin/riwayatVendor', (req, res) => {
     res.render('admin/pengembalianVendor/riwayatVendor');
 });
 
+
 pengembalianVendorRouter.get('/admin/detailAsetKaryawan', (req, res) => {
     res.render('admin/pengembalianVendor/detailAsetKaryawan');
+
+pengembalianVendorRouter.get('/admin/detailAsetGudang', (req, res) => {
+    res.render('admin/pengembalianVendor/detailAsetGudang');
+});
+pengembalianVendorRouter.get('/admin/detailAsetRiwayat', (req, res) => {
+    res.render('admin/pengembalianVendor/detailAsetRiwayat');
+
 });
 
 //karyawan

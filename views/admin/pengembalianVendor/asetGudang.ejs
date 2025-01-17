@@ -48,7 +48,7 @@
     </div>
     <div class="container-fluid px-4">
         <div class="tabButton">
-            <a href="asetKaryawan" class="button" onclick="setActive(event, this)">Aset Pengguna</a>
+            <a href="asetKaryawan" class="button" onclick="setActive(event, this)">Aset Karyawan</a>
             <a href="asetGudang" class="button" onclick="setActive(event, this)">Aset Gudang</a>
             <a href="riwayatVendor" class="button" onclick="setActive(event, this)">Riwayat Pengembalian</a>
         </div>
@@ -83,9 +83,11 @@
                                 <button id="editButton" style="background-color: #FBDA00; padding: 12px; padding-right: 7px; margin-right: 5px; font-size: 18px; border: 2px solid #FBDA00; border-radius: 15px; color: #fff; cursor: pointer;">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </button>
+                                <a href="detailAsetGudang">
                                 <button id="infoButton" style="background-color: #44C400; padding: 12px; padding-right: 7px; margin-right: 10px; font-size: 18px; border: 2px solid #44C400; border-radius: 15px; color: #FFF; cursor: pointer;">
                                     <i class="fa-solid fa-circle-info"></i>  
                                 </button>           
+                            </a>
                                 <button id="finishButton" class="btn">
                                     <i class="fas fa-check"></i> Return
                                 </button>
@@ -144,9 +146,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        let activeTab = localStorage.getItem("activeTab");
-        let buttons = document.querySelectorAll(".button");
-        
+    let activeTab = localStorage.getItem("activeTab");
+    let buttons = document.querySelectorAll(".button");
+
+    // Jika ada tab yang aktif yang disimpan di localStorage
+    if (activeTab) {
         buttons.forEach(btn => {
             if (btn.getAttribute("href") === activeTab) {
                 btn.classList.add("active");
@@ -154,14 +158,20 @@
                 btn.classList.remove("active");
             }
         });
-    });
-
-    function setActive(event, element) {
-        event.preventDefault();
-        let href = element.getAttribute("href");
-        localStorage.setItem("activeTab", href);
-        window.location.href = href;
     }
+
+    // Mengatur kelas 'active' ketika tombol diklik
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function (event) {
+            event.preventDefault();
+            let href = btn.getAttribute("href");
+            localStorage.setItem("activeTab", href);
+            buttons.forEach(button => button.classList.remove("active"));
+            btn.classList.add("active");
+            window.location.href = href;
+        });
+    });
+});
 </script>
 
 <script>
@@ -224,5 +234,3 @@
 
 </body>
 </html>
-
-

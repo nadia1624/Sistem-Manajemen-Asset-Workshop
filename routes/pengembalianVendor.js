@@ -12,6 +12,11 @@ pengembalianVendorRouter.get('/admin/asetGudang', (req, res) => {
 pengembalianVendorRouter.get('/admin/riwayatVendor', (req, res) => {
     res.render('admin/pengembalianVendor/riwayatVendor');
 });
+
+pengembalianVendorRouter.get('/admin/detailAsetKaryawan', (req, res) => {
+    res.render('admin/pengembalianVendor/detailAsetKaryawan');
+});
+
 //karyawan
 
 module.exports = pengembalianVendorRouter

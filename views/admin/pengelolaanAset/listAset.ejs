@@ -1,0 +1,66 @@
+<%- include("../../layout/sidebar.ejs") %>
+
+
+<main class="content">
+    <div class="header-content">
+        <div class="title-section">
+            <a href="/admin/pengelolaan-aset">
+                <button class="back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </a>
+            <h3>[Nama Kategori]</h3>
+        </div>
+        <button class="button-add-category">
+            Tambah Aset
+        </button>
+    </div>
+    <div class="container-fluid px-4">
+        <!-- Container utama untuk tabel -->
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <table class="table-compact">
+                    <thead>
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="20%">Serial Number</th>
+                            <th width="20%">Nama Aset</th>
+                            <th width="15%">Kondisi Aset</th>
+                            <th width="15%">Status Pinjam</th>
+                            <th width="25%">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Lorem Ipsum</td>
+                            <td>Lorem Ipsum</td>
+                            <td>Lorem Ipsum</td>
+                            <td>Lorem Ipsum</td>
+                            <td>
+                                <button class="button-delete">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                                <button class="button-edit">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
+                                <a href="/admin/info-aset">
+                                    <button class="button-info">
+                                        <i class="fa-solid fa-circle-info"></i>
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+
+</script>
+
+</body>
+</html>

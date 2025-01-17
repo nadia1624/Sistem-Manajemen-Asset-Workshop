@@ -1,0 +1,94 @@
+<%- include("../../layout/sidebar.ejs") %>
+
+
+<main class="content">
+    <div class="header-content">
+        <h3 style="font-weight: bold;">Pengembalian Aset</h3>
+        <div class="search-bar">
+            <input placeholder="Search..." type="text"/>
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+    <div class="container-fluid px-4">
+        <div class="tabButton">
+            <a href="asetKaryawan" class="button" onclick="setActive(event, this)">Aset Karyawan</a>
+            <a href="asetGudang" class="button" onclick="setActive(event, this)">Aset Gudang</a>
+            <a href="riwayatVendor" class="button" onclick="setActive(event, this)">Riwayat Pengembalian</a>
+        </div>
+    
+        <div class="table-responsive">
+            <table class="table-compact">
+                <thead>
+                    <tr>
+                        <th width="5%">No</th>
+                        <th width="15%">Serial Number</th>
+                        <th width="15%">Nama Aset</th>
+                        <th width="15%">Deskripsi</th>
+                        <th width="15%">Gambar</th>
+                        <th width="12%">Aksi</th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="table-scroll">
+                <table class="table-compact">
+                    <tbody>
+                        <tr>
+                            <td width="5%">1</td>
+                            <td width="15%">Lorem Ipsum</td>
+                            <td width="15%">Lorem Ipsum</td>
+                            <td width="15%">Lorem Ipsum</td>
+                            <td width="15%">
+                                <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
+                            </td>
+                            <td width="12%">
+                                <a href="detailAsetRiwayat">
+                                <button id="infoButton" style="background-color: #44C400; padding: 12px; padding-right: 7px; font-size: 18px; border: 2px solid #44C400; border-radius: 15px; color: #FFF; cursor: pointer;">
+                                    <i class="fa-solid fa-circle-info"></i>  
+                                </button> 
+                                </a>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            
+        </div>
+    </div>
+    </div>
+</main>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    let activeTab = localStorage.getItem("activeTab");
+    let buttons = document.querySelectorAll(".button");
+
+    // Jika ada tab yang aktif yang disimpan di localStorage
+    if (activeTab) {
+        buttons.forEach(btn => {
+            if (btn.getAttribute("href") === activeTab) {
+                btn.classList.add("active");
+            } else {
+                btn.classList.remove("active");
+            }
+        });
+    }
+
+    // Mengatur kelas 'active' ketika tombol diklik
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function (event) {
+            event.preventDefault();
+            let href = btn.getAttribute("href");
+            localStorage.setItem("activeTab", href);
+            buttons.forEach(button => button.classList.remove("active"));
+            btn.classList.add("active");
+            window.location.href = href;
+        });
+    });
+});
+
+</script>
+
+
+</body>
+</html>

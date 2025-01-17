@@ -770,10 +770,14 @@ form button:hover {
 }
 
 
-.btn-setuju, .btn-tolak, .btn-info {
+/* Gaya untuk tombol serahkan dan generate yang serupa */
+.btn-setuju, .btn-tolak, .btn-info, .btn-serahkan, .btn-generate {
   padding: 4px 8px; /* Mengurangi padding */
   font-size: 12px;  /* Ukuran teks lebih kecil */
   border-radius: 4px; /* Mengurangi border radius sedikit */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 button i, a i {
@@ -781,6 +785,30 @@ button i, a i {
   line-height: 1; /* Hindari icon terlalu besar */
   vertical-align: middle; /* Pastikan icon sejajar dengan teks */
 }
+
+/* Tombol generate dengan gaya yang sama dengan serahkan */
+.btn-generate {
+  background-color: white;
+  color: #28a745;
+  border: 1px solid #28a745;
+  cursor: pointer;
+}
+
+/* Gaya ketika tombol ditekan */
+.btn-generate:hover {
+  background-color: #28a745;
+  color: white;
+}
+
+/* Menambahkan konfirmasi tombol */
+.button-konfirmasi {
+  display: flex;
+  justify-content: center;
+  gap: 10px; 
+  margin-top: 20px;
+  cursor: pointer;
+}
+
 
 .custom-td {
   padding: 10px 15px; /* px-4 py-2 */
@@ -797,3 +825,30 @@ button i, a i {
   border-radius: 30px; /* rounded-[16px] */
 }
 
+
+.status-badge {
+  justify-content: center; 
+  align-items: center; 
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  border-radius: 15px;
+  text-transform: capitalize;
+  line-height: 1.5;
+  height: 30px;
+  width: 100%;
+}
+
+/* Warna untuk masing-masing status */
+.status-badge.telahdiserahkan , .status-badge.disetujui { 
+  background-color: #4CAF50; /* Hijau untuk disetujui */
+}
+
+.status-badge.belumdiserahkan , .status-badge.ditolak{ 
+  background-color: #f44336; /* Merah untuk ditolak */
+}
+
+.status-badge.diproses {
+  background-color: #FFC107; /* Kuning untuk diproses */
+}

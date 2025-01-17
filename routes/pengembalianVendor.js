@@ -12,6 +12,13 @@ pengembalianVendorRouter.get('/admin/asetGudang', (req, res) => {
 pengembalianVendorRouter.get('/admin/riwayatVendor', (req, res) => {
     res.render('admin/pengembalianVendor/riwayatVendor');
 });
+pengembalianVendorRouter.get('/admin/detailAsetGudang', (req, res) => {
+    res.render('admin/pengembalianVendor/detailAsetGudang');
+});
+pengembalianVendorRouter.get('/admin/detailAsetRiwayat', (req, res) => {
+    res.render('admin/pengembalianVendor/detailAsetRiwayat');
+});
+
 //karyawan
 
 module.exports = pengembalianVendorRouter

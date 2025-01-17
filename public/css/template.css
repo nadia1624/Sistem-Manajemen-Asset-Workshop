@@ -840,8 +840,7 @@ th {
 
 .btn-setuju,
 .btn-tolak,
-.btn-info {
-
+.btn-info 
 
 /* Gaya untuk tombol serahkan dan generate yang serupa */
 .btn-setuju, .btn-tolak, .btn-info, .btn-serahkan, .btn-generate {

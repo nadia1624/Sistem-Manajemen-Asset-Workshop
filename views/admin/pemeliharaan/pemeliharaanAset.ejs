@@ -42,9 +42,11 @@
                                 <span class="custom-span" style="background-color: #A2E180; font: black;">Telah Dilakukan</span>
                             </td>
                             <td width="20%">
+                                <a href="pemeliharaan-aset/detail">
                                 <button style="background-color: #3A68F3; padding: 12px; padding-right: 7px; margin-right: 10px; font-size: 18px; border: 2px solid #3A68F3; border-radius: 15px; color: #fff; cursor: pointer;">
                                     <i class="fa-solid fa-arrow-right"></i>
                                     </button>
+                                </a>
                                 <button style="background-color: #B60017; padding: 12px; padding-right: 7px; margin-right: 10px; font-size: 18px; border: 2px solid #B60017; border-radius: 15px; color: #fff; cursor: pointer;">
                                     <i class="fa-solid fa-trash"></i>
                                     </button>
@@ -57,7 +59,7 @@
         </div>
         </div>
 </main>
-<div id="popupModal" class="popup-modal">
+<div id="addModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
         <h3>Tambah Pemeliharaan</h3>
@@ -85,7 +87,7 @@
 
 <script>
     // Mendapatkan elemen modal dan tombol
-    const modal = document.getElementById("popupModal");
+    const modal = document.getElementById("addModal");
     const closeBtn = document.getElementById("closeBtn");
 
     // Menangani klik pada tombol "Selesai"

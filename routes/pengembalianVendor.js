@@ -16,6 +16,7 @@ pengembalianVendorRouter.get('/admin/riwayatVendor', (req, res) => {
 
 pengembalianVendorRouter.get('/admin/detailAsetKaryawan', (req, res) => {
     res.render('admin/pengembalianVendor/detailAsetKaryawan');
+});
 
 pengembalianVendorRouter.get('/admin/detailAsetGudang', (req, res) => {
     res.render('admin/pengembalianVendor/detailAsetGudang');

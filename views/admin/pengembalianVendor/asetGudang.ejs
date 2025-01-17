@@ -102,17 +102,13 @@
     </div>
 </main>
 
-<div id="popupModal" class="popup-modal">
+<div id="addModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
 
         <!-- Form untuk Edit -->
-        <div id="editForm" style="position: relative; padding: 20px; border-radius: 10px; background: white;">
-            <span class="close-btn" id="closeBtn" 
-                style="position: absolute; top: 10px; right: 10px; font-size: 20px; font-weight: bold; cursor: pointer;">
-                &times;
-            </span>
-            <h3>Edit Status</h3>
+        <div id="editForm" style="position: relative; border-radius: 10px; background: white;">
+            <h3 style="margin-bottom: 1px;">Edit Status</h3>
             <form id="editAssetForm">
                 <div class="form-group">
                     <label for="status" style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px;">Status</label>
@@ -176,7 +172,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const modal = document.getElementById("popupModal");
+        const modal = document.getElementById("addModal");
         const closeBtn = document.getElementById("closeBtn");
         const editForm = document.getElementById("editForm");
         const finishMessage = document.getElementById("finishMessage");

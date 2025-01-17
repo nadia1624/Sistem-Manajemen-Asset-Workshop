@@ -64,7 +64,7 @@
     </div>
 </main>
 
-<div id="popupModal" class="popup-modal">
+<div id="addModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
 
@@ -157,11 +157,17 @@
 </script>
 
 <script>
+
+    // Mendapatkan elemen modal dan tombol
+    const modal = document.getElementById("addModal");
+    const closeBtn = document.getElementById("closeBtn");
+
     document.addEventListener("DOMContentLoaded", function () {
         const modal = document.getElementById("popupModal");
         const closeBtn = document.getElementById("closeBtn");
         const editForm = document.getElementById("editForm");
         const finishMessage = document.getElementById("finishMessage");
+
 
         const editButton = document.getElementById("editButton");
         const infoButton = document.getElementById("infoButton");

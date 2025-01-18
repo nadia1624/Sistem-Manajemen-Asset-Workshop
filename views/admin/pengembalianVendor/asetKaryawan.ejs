@@ -69,12 +69,8 @@
         <span class="close-btn" id="closeBtn">&times;</span>
 
         <!-- Form untuk Edit -->
-        <div id="editForm" style="position: relative; padding: 20px; border-radius: 10px; background: white;">
-            <span class="close-btn" id="closeBtn" 
-                style="position: absolute; top: 10px; right: 10px; font-size: 20px; font-weight: bold; cursor: pointer;">
-                &times;
-            </span>
-            <h3>Edit Status</h3>
+        <div id="editForm" style="position: relative; border-radius: 10px; background: white;">
+            <h3 style="margin-bottom: 1px;">Edit Status</h3>
             <form id="editAssetForm">
                 <div class="form-group">
                     <label for="status" style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px;">Status</label>
@@ -92,11 +88,13 @@
         
 
 
-         <!-- Pesan Popup untuk Tombol Selesai -->
-         <div id="finishMessage" style="display: none;">
-            <h3>Pengecekan Selesai</h3>
-            <p class="text-gray-600 mb-6 text-center">Apakah Anda yakin pengecekan kondisi aset sudah selesai dan akan dikembalikan?</p>
-            <div class="flex justify-center space-x-4">
+        <!-- Pesan Popup untuk Tombol Selesai -->
+        <div id="finishMessage">
+            <h3>Kembalikan Aset</h3>
+            <p>Apakah kamu yakin pengecekan 
+                aset sudah selesai dan akan
+                dikembalikan?</p>
+            <div class="btn-group">
                 <button type="button" class="btn cancel-btn">Tidak</button>
                 <button type="button" class="btn finish-btn">Ya</button>
             </div>
@@ -136,38 +134,10 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        let activeTab = localStorage.getItem("activeTab");
-        let buttons = document.querySelectorAll(".button");
-        
-        buttons.forEach(btn => {
-            if (btn.getAttribute("href") === activeTab) {
-                btn.classList.add("active");
-            } else {
-                btn.classList.remove("active");
-            }
-        });
-    });
-
-    function setActive(event, element) {
-        event.preventDefault();
-        let href = element.getAttribute("href");
-        localStorage.setItem("activeTab", href);
-        window.location.href = href;
-    }
-</script>
-
-<script>
-
-    // Mendapatkan elemen modal dan tombol
-    const modal = document.getElementById("addModal");
-    const closeBtn = document.getElementById("closeBtn");
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const modal = document.getElementById("popupModal");
+        const modal = document.getElementById("addModal");
         const closeBtn = document.getElementById("closeBtn");
         const editForm = document.getElementById("editForm");
         const finishMessage = document.getElementById("finishMessage");
-
 
         const editButton = document.getElementById("editButton");
         const infoButton = document.getElementById("infoButton");

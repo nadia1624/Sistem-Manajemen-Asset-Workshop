@@ -144,10 +144,8 @@ td img {
   margin: 0 auto;
 }
 
-
-
 .btn-upload,
-.btn-cancel {
+.btn-batal {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -155,12 +153,12 @@ td img {
   cursor: pointer;
   border: 1px solid; 
   border-radius: 4px;
-  font-size: 8px; 
+  font-size: 10px; 
   font-weight: bold;
   text-align: center;
   transition: all 0.3s ease;
   height: 30px; 
-  width: 85px;
+  width: 95px;
 }
 
 .btn-upload {
@@ -169,7 +167,7 @@ td img {
   border-color: #4CAF50;
 }
 
-.btn-upload i , .btn-cancel i{
+.btn-upload i , .btn-batal i{
   margin-right: 3px; 
   font-size: 13px;
 }
@@ -179,13 +177,13 @@ td img {
   color: white;
 }
 
-.btn-cancel {
+.btn-batal {
   background-color: #fdfdfd;
   color: #f44336; 
   border-color: #f44336;
 }
 
-.btn-cancel:hover {
+.btn-batal:hover {
   background-color: #f44336;
   color: white;
 }
@@ -428,17 +426,7 @@ label {
   }
 }
 
-.btn {
-  background-color: #c2ef97;
-  color: #000;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
-  weight: 40px;
-  font-weight: bold;
-  
-}
+
 
 .modal-content label {
   display: block;

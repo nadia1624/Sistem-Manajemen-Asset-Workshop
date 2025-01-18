@@ -445,10 +445,6 @@ form input::placeholder {
   cursor: pointer;
 }
 
-.modal-content button:hover {
-  background-color: #a1d27d;
-}
-
 .left-label {
   display: block;
   margin-bottom: 5px;
@@ -480,11 +476,11 @@ form input::placeholder {
 }
 
 .cancel-btn:hover {
-  background-color: #cacaca;
+  background-color: #a0a0a0;
 }
 
 .finish-btn:hover {
-  background-color: #c2ef97;
+  background-color: #91df47;
 }
 /* Font for headings */
 h1,
@@ -917,15 +913,15 @@ a i {
 
 /* Warna untuk masing-masing status */
 .status-badge.telahdiserahkan , .status-badge.disetujui { 
-  background-color: #4CAF50; /* Hijau untuk disetujui */
+  background-color: #A2E180; /* Hijau untuk disetujui */
 }
 
 .status-badge.belumdiserahkan , .status-badge.ditolak{ 
-  background-color: #f44336; /* Merah untuk ditolak */
+  background-color: #DD5F61; /* Merah untuk ditolak */
 }
 
 .status-badge.diproses {
-  background-color: #FFC107; /* Kuning untuk diproses */
+  background-color: #FDEC80; /* Kuning untuk diproses */
 }
 
 .button-edit {

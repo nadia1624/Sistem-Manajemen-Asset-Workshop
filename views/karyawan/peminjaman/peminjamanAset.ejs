@@ -1,0 +1,130 @@
+<body>
+    <!-- Gunakan currentPath yang sudah dikirim dari route -->
+    <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
+    
+    <main class="content">
+    <div class="header-content">
+        <h3 style="font-weight: bold;">Peminjaman Aset</h3>
+        <div class="search-bar">
+            <input placeholder="Search..." type="text"/>
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+    <div class="container-fluid px-4">
+        <div class="table-responsive">
+            <table class="table-compact">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Barang</th>
+                        <th>Gambar</th>
+                        <th>Kategori</th>
+                        <th>Deskripsi</th>
+                        <th>Ajukan Cek</th>
+                        <th>Return Aset</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% const dataDummy = [
+                        { no: 1, nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis" },
+                        { no: 2, nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru" },
+                        { no: 3, nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi" },
+                    ]; %>
+
+                    <% dataDummy.forEach((item) => { %>
+                        <tr>
+                            <td><%= item.no %></td>
+                            <td><%= item.nama %></td>
+                            <td>
+                                <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>"/>
+                            </td>
+                            <td><%= item.kategori %></td>
+                            <td><%= item.deskripsi %></td>
+                            <td>
+                              <!-- Tambahkan atribut onclick -->
+                              <button class="btn btn-success" onclick="openModal()">
+                                <i class="fa-solid fa-check"></i> Check
+                              </button>
+                            </td>
+                            <td>
+                              <button class="btn btn-secondary" style="background-color: #ccc;" onclick="openReturnModal()">
+                                  <i class="fa-solid fa-arrow-rotate-left"></i> Return
+                              </button>
+                          </td>
+                            <td width="20%">
+                              <button class="btn btn-action" style="background-color: #ffffff; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
+                                  <i class="fa-solid fa-download" style="font-size: 15px;"></i>
+                              </button>
+                          </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Modal -->
+<div id="checkModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h3>Ajukan Pengecekan Aset</h3>
+    <form>
+      <label for="complaint">Keluhan:</label>
+      <textarea id="complaint" placeholder="Keluhan yang diajukan"></textarea>
+      <button type="button" class="btn" onclick="submitComplaint()" style="margin-top: 20px; float: right;">Simpan</button>
+    </form>
+  </div>
+</div>
+
+ <!-- Modal Return -->
+ <div id="returnModal" class="modal">
+  <div class="modal-content">
+      <h3>Pengembalian Aset</h3>
+      <p>Apakah kamu yakin akan mengembalikan aset <span id="returnAssetName"></span>?</p>
+      <div class="modal-actions">
+          <button type="button"  class="closeBtn" onclick="closeReturnModal()" style="margin-top: 20px;">Tidak</button>
+          <button type="button" class="btn" onclick="submitComplaint()" style="margin-top: 20px; float: right;">Ya</button>
+  </div>
+</div>
+
+<script>
+  // Open Modal
+  function openModal() {
+    document.getElementById("checkModal").style.display = "flex";
+  }
+
+  // Close Modal
+  function closeModal() {
+    document.getElementById("checkModal").style.display = "none";
+  }
+
+  // Submit Complaint (Placeholder functionality)
+  function submitComplaint() {
+    const complaintText = document.getElementById("complaint").value;
+    if (complaintText.trim() === "") {
+      alert("Silakan isi keluhan terlebih dahulu.");
+    } else {
+      alert("Keluhan berhasil disimpan!");
+      closeModal();
+    }
+  }
+
+  // Modal Return
+function openReturnModal() {
+    document.getElementById("returnModal").style.display = "flex";
+}
+
+function closeReturnModal() {
+    document.getElementById("returnModal").style.display = "none";
+}
+
+function confirmReturn() {
+    alert("Pengembalian aset berhasil dikonfirmasi!");
+    closeReturnModal();
+}
+</script>
+
+
+

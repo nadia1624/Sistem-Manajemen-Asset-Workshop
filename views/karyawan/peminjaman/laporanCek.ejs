@@ -1,0 +1,53 @@
+<body>
+    <!-- Gunakan currentPath yang sudah dikirim dari route -->
+    <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
+    
+    <main class="content">
+        <div class="header-content">
+            <h3 style="font-weight: bold;">Laporan Pengecekan</h3>
+            <div class="search-bar">
+                <input placeholder="Search..." type="text"/>
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        <div class="container-fluid px-4">
+            <div class="table-responsive">
+                <table class="table-compact">
+                    <thead>
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="10%">Tanggal</th>
+                            <th width="15%">Nama Barang</th>
+                            <th width="10%">Gambar</th>
+                            <th width="15%">Status Pengecekan</th>
+                            <th width="15%">Status Pengembalian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% const dataDummy = [
+                            { no: 1, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", status : "disetujui", statuspengembalian:"returned" },
+                            { no: 2, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", status: "ditolak", statuspengembalian:"NotReturned" },
+                            { no: 3, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", status: "diproses", statuspengembalian:"returned" },
+                        ]; %>
+    
+                        <% dataDummy.forEach((item) => { %>
+                            <tr>
+                                <td><%= item.no %></td>
+                                <td><%= item.tanggal %></td>
+                                <td><%= item.nama %></td>
+                                <td>
+                                    <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>"/>
+                                </td>
+                                <td>
+                                    <span class="status-badge <%= item.status %>"><%= item.status %></span>
+                                </td>
+                                <td>
+                                    <span class="status-badge <%= item.statuspengembalian %>"><%= item.statuspengembalian %></span>
+                                </td>           
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>

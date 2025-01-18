@@ -57,7 +57,7 @@
                             <i class="fa-solid fa-arrow-up-from-bracket"></i>Upload TTD
                           </button>
                         <% } else if (item.status === "diproses") { %>
-                          <button class="btn btn-cancel" onclick="openModal('cancelModal')">
+                          <button class="btn btn-batal" onclick="openModal('cancelModal')">
                             <i class="fa-solid fa-circle-xmark"></i>Batalkan
                           </button>
                         <% } %>
@@ -95,7 +95,7 @@
       <p>Apakah Anda yakin ingin membatalkan permintaan ini?</p>
       <div class="modal-actions">
         <button type="button" class="btn cancel-btn"  onclick="closeModal('cancelModal')">Tidak</button>
-        <button type="submit" class="btn finish-btn" onclick="confirmCancel()">Ya, Batalkan</button>
+        <button type="submit" class="btn finish-btn" onclick="confirmCancel()">Ya</button>
       </div>
     </div>
   </div>

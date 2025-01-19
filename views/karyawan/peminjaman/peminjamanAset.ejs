@@ -2,6 +2,58 @@
     <!-- Gunakan currentPath yang sudah dikirim dari route -->
     <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
     
+    <style>
+      th:nth-child(2), td:nth-child(2) { width: 15%; }
+      th:nth-child(3), td:nth-child(3) { width: 15%; }
+      th:nth-child(4), td:nth-child(4) { width: 10%; }
+      th:nth-child(5), td:nth-child(5) { width: 20%; }
+      th:nth-child(6), td:nth-child(6) { width: 15%; }
+      th:nth-child(7), td:nth-child(7) { width: 10%; }
+      th:nth-child(8), td:nth-child(8) { width: 10%; }
+   
+      .btn {
+         background-color: #c2ef97;
+         color: #000;
+         border: none;
+         border-radius: 5px;
+         padding: 10px;
+         cursor: pointer;
+         width: 100px; 
+         font-weight: bold;
+      }
+
+      .btn-action {
+    background-color: #ffffff;
+    font-size: 18px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    color: #000;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-action i {
+    font-size: 12px;
+    margin-right: 5px;
+  }
+
+  td button {
+    white-space: nowrap;
+    overflow: visible;
+    width: auto;
+    
+  }
+      .modal-actions {
+         display: flex;
+         justify-content: center;
+         gap: 10px;
+      }
+   </style>
+   
+
     <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Peminjaman Aset</h3>
@@ -52,9 +104,9 @@
                                   <i class="fa-solid fa-arrow-rotate-left"></i> Return
                               </button>
                           </td>
-                            <td width="20%">
-                              <button class="btn btn-action" style="background-color: #ffffff; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
-                                  <i class="fa-solid fa-download" style="font-size: 15px;"></i>
+                            <td >
+                              <button class="btn-action" >
+                                  <i class="fa-solid fa-download" style="font-size: 16px;"></i>
                               </button>
                           </td>
                         </tr>
@@ -83,10 +135,10 @@
   <div class="modal-content">
       <h3>Pengembalian Aset</h3>
       <p>Apakah kamu yakin akan mengembalikan aset <span id="returnAssetName"></span>?</p>
-      <div class="modal-actions">
-          <button type="button"  class="closeBtn" onclick="closeReturnModal()" style="margin-top: 20px;">Tidak</button>
-          <button type="button" class="btn" onclick="submitComplaint()" style="margin-top: 20px; float: right;">Ya</button>
-  </div>
+      <div class="modal-actions" style="display: flex; justify-content: center; margin-top: 20px;">
+        <button type="button" class="cancel-btn" onclick="closeReturnModal()">Tidak</button>
+        <button type="button" class="finish-btn" onclick="submitComplaint()">Ya</button>
+    </div>
 </div>
 
 <script>

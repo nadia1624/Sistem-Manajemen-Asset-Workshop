@@ -1,133 +1,110 @@
 <body>
-    <!-- Gunakan currentPath yang sudah dikirim dari route -->
-    <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
-    
-<main class="content">
-  <div class="header-content">
-      <h3 style="font-weight: bold;">Permintaan Aset</h3>
-      <div class="search-bar">
-          <input placeholder="Search..." type="text"/>
-          <i class="fas fa-search"></i>
-      </div>
-  </div>
-  <div class="container-fluid px-4">
-      <div class="table-responsive">
-          <table class="table-compact">
-              <thead>
-                  <tr>
-                      <th width="5%">No</th>
-                      <th width="10%">Tanggal</th>
-                      <th width="15%">Nama Barang</th>
-                      <th width="10%">Gambar</th>
-                      <th width="10%">Kategori</th>
-                      <th width="25%">Deskripsi</th>
-                      <th width="15%">Status</th>
-                      <th width="10%">Aksi</th>
-                  </tr>
-              </thead>
-          </table>
-      <div class="table-scroll">
-        <table class="table-compact">
-          <tbody>
-            <% const dataDummy = [
-                { no: 1, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis", status: "disetujui" },
-                { no: 2, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru", status: "ditolak" },
-                { no: 3, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi", status: "diproses" },
-                { no: 1, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis", status: "disetujui" },
-                { no: 2, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru", status: "ditolak" },
-                { no: 3, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi", status: "diproses" },
-            ]; %>
+  <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
 
-            <% dataDummy.forEach((item) => { %>
-                <tr>
-                    <td width="5%"><%= item.no %></td>
-                    <td width="10%"><%= item.tanggal %></td>
-                    <td width="15%"><%= item.nama %></td>
-                    <td width="10%">
-                        <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>"/>
-                    </td>
-                    <td width="10%"><%= item.kategori %></td>
-                    <td width="25%"><%= item.deskripsi %></td>
-                    <td width="15%">
-                        <span class="status-badge <%= item.status %>"><%= item.status %></span>
-                    </td>
-                    <td width="10%">
-                        <% if (item.status === "disetujui") { %>
-                          <button class="btn btn-upload" onclick="openModal('uploadModal')">
-                            <i class="fa-solid fa-arrow-up-from-bracket"></i>Upload TTD
-                          </button>
-                        <% } else if (item.status === "diproses") { %>
-                          <button class="btn btn-batal" onclick="openModal('cancelModal')">
-                            <i class="fa-solid fa-circle-xmark"></i>Batalkan
-                          </button>
-                        <% } %>
-                    </td>                                  
-                </tr>
-            <% }); %>
-        </tbody>
-      </table>
+  <style>
+    th:nth-child(1), td:nth-child(1) { width: 5%; }
+    th:nth-child(2), td:nth-child(2) { width: 10%; }
+    th:nth-child(3), td:nth-child(3) { width: 15%; }
+    th:nth-child(4), td:nth-child(4) { width: 10%; }
+    th:nth-child(5), td:nth-child(5) { width: 10%; }
+    th:nth-child(6), td:nth-child(6) { width: 25%; }
+    th:nth-child(7), td:nth-child(7) { width: 15%; }
+    th:nth-child(8), td:nth-child(8) { width: 10%; }
+</style>
+
+<main class="content">
+<div class="header-content">
+    <h3 style="font-weight: bold;">Permintaan Aset</h3>
+    <div class="search-bar">
+        <input placeholder="Search..." type="text"/>
+        <i class="fas fa-search"></i>
     </div>
+</div>
+<div class="container-fluid px-4">
+    <div class="table-responsive">
+        <table class="table-compact">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Nama Barang</th>
+                    <th>Gambar</th>
+                    <th>Kategori</th>
+                    <th>Deskripsi</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+        </table>
+    <div class="table-scroll">
+      <table class="table-compact">
+        <tbody>
+          <% const dataDummy = [
+              { no: 1, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis", status: "disetujui" },
+              { no: 2, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru", status: "ditolak" },
+              { no: 3, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi", status: "diproses" }
+          ]; %>
+
+          <% dataDummy.forEach((item) => { %>
+              <tr>
+                  <td><%= item.no %></td>
+                  <td><%= item.tanggal %></td>
+                  <td><%= item.nama %></td>
+                  <td>
+                      <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>"/>
+                  </td>
+                  <td><%= item.kategori %></td>
+                  <td><%= item.deskripsi %></td>
+                  <td>
+                      <span class="status-badge <%= item.status %>"><%= item.status %></span>
+                  </td>
+                  <td>
+                      <% if (item.status === "disetujui") { %>
+                        <button class="btn btn-upload" onclick="openModal('uploadModal')">
+                          <i class="fa-solid fa-arrow-up-from-bracket"></i>Upload TTD
+                        </button>
+                      <% } else if (item.status === "diproses") { %>
+                        <button class="btn btn-batal" onclick="openModal('cancelModal')">
+                          <i class="fa-solid fa-circle-xmark"></i>Batalkan
+                        </button>
+                      <% } %>
+                  </td>                                  
+              </tr>
+          <% }); %>
+      </tbody>
+    </table>
   </div>
-  </div>
+</div>
+</div>
 </main>
 
-    <!-- Modal Pop-Up Tanda Tangan -->
+<!-- Modal Pop-Up Tanda Tangan -->
 <div id="uploadModal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
-      <h3>Upload Tanda Tangan</h3>
-      <form id="uploadForm">
-        <label for="signatureInput">Pilih file tanda tangan:</label>
-        <input type="file" id="signatureInput" accept="image/*" required />
-        <div class="modal-actions">
-            <button type="button" class="btn cancel-btn" onclick="closeModal('uploadModal')">Batal</button>
-          <button type="submit" class="btn finish-btn" onclick="submitUpload()">Upload</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  
-  <!-- Modal Pop-Up Cancel Permintaan -->
-  <div id="cancelModal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeModal('cancelModal')">&times;</span>
-      <h3>Konfirmasi Pembatalan</h3>
-      <p>Apakah Anda yakin ingin membatalkan permintaan ini?</p>
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
+    <h3>Upload Tanda Tangan</h3>
+    <form id="uploadForm">
+      <label for="signatureInput">Pilih file tanda tangan:</label>
+      <input type="file" id="signatureInput" accept="image/*" required />
       <div class="modal-actions">
-        <button type="button" class="btn cancel-btn"  onclick="closeModal('cancelModal')">Tidak</button>
-        <button type="submit" class="btn finish-btn" onclick="confirmCancel()">Ya</button>
+          <button type="button" class="btn cancel-btn" onclick="closeModal('uploadModal')">Batal</button>
+        <button type="submit" class="btn finish-btn" onclick="submitUpload()">Upload</button>
       </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Pop-Up Cancel Permintaan -->
+<div id="cancelModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('cancelModal')">&times;</span>
+    <h3>Konfirmasi Pembatalan</h3>
+    <p>Apakah Anda yakin ingin membatalkan permintaan ini?</p>
+    <div class="modal-actions">
+      <button type="button" class="btn cancel-btn"  onclick="closeModal('cancelModal')">Tidak</button>
+      <button type="submit" class="btn finish-btn" onclick="confirmCancel()">Ya</button>
     </div>
   </div>
-  
+</div>
+
 </body>
-
-<script>
-    // Open modal
-function openModal(modalId) {
-  document.getElementById(modalId).style.display = 'flex';
-}
-
-// Close modal
-function closeModal(modalId) {
-  document.getElementById(modalId).style.display = 'none';
-}
-
-// Submit tanda tangan
-function submitUpload() {
-  const fileInput = document.getElementById('signatureInput');
-  if (fileInput.files.length === 0) {
-    alert('Silakan pilih file tanda tangan terlebih dahulu.');
-    return;
-  }
-  alert('Tanda tangan berhasil diupload!');
-  closeModal('uploadModal');
-}
-
-// Confirm cancel
-function confirmCancel() {
-  alert('Permintaan aset telah dibatalkan.');
-  closeModal('cancelModal');
-}
-
-</script>

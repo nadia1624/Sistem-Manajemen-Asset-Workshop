@@ -54,27 +54,27 @@
                                 </td>
                                 <td width="20%">
                                     <% if (item.status === "Diproses") { %>
-                                        <button class="btn btn-setuju" style="background-color: #28a745; color: white;" onclick="showModal('setuju')">
-                                            <i class="fas fa-check" style="padding-left: 5px;"></i>
+                                        <button class="btn-setuju" onclick="showModal('setuju')">
+                                            <i class="fas fa-check" ></i>
                                         </button>
-                                        <button class="btn btn-tolak" style="background-color: #dc3545; color: white;" onclick="showModal('tolak')">
-                                            <i class="fas fa-times" style="padding-left: 5px;"></i>
+                                        <button class="btn-tolak" onclick="showModal('tolak')">
+                                            <i class="fas fa-times" ></i>
                                         </button>
                                         <a href="detailPermintaan" >
-                                            <button class="btn btn-info" href="/detailInfo" style="background-color: #3A68F3; color: white;">
-                                                <i class="fas fa-info-circle" style="padding-left: 5px;"></i>
+                                            <button href="/detailInfo" class="button-info">
+                                                <i class="fas fa-info-circle"></i>
                                             </button>
                                         </a>
                                     <% } else if (item.status === "Disetujui" || item.status === "Ditolak") { %>
-                                        <button class="btn btn-setuju" style="background-color: #D9D9D9; color: white;" disabled>
-                                            <i class="fas fa-check" style="padding-left: 5px;"></i>
+                                        <button class="btn-setuju"  disabled>
+                                            <i class="fas fa-check" ></i>
                                         </button>
-                                        <button class="btn btn-tolak" style="background-color: #D9D9D9; color: white;" disabled>
-                                            <i class="fas fa-times" style="padding-left: 5px;"></i>
+                                        <button class="btn-tolak" disabled>
+                                            <i class="fas fa-times" ></i>
                                         </button>
                                         <a href="detailPermintaan" >
-                                            <button class="btn btn-info" href="/detailInfo" style="background-color: #3A68F3; color: white;">
-                                                <i class="fas fa-info-circle" style="padding-left: 5px;"></i>
+                                            <button href="/detailInfo" class="button-info">
+                                                <i class="fas fa-info-circle"></i>
                                             </button>
                                         </a>
                                     <% } %>

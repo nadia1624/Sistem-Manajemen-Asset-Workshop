@@ -2,7 +2,14 @@
 
 <main class="content">
     <div class="header-content">
+        <div class="title-section">
+            <a href="/admin/pemeliharaan-aset">
+                <button class="back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </a>
         <h3 style="font-weight: bold;">Detail Pemeliharaan Aset</h3>
+        </div>  
         <div class="header-content">
             <div class="search-bar" style="margin-right: 30px;">
                 <input placeholder="Search..." type="text"/>
@@ -67,12 +74,42 @@
     </div>
 </div>
 
+<div id="editModal" class="popup-modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeEditBtn">&times;</span>
+        <h3>Update Kondisi Aset</h3>
+        <form id="editForm">
+            <label for="serialNumber" class="left-label">Serial Number</label>
+            <input type="text" id="serialNumber" name="serialNumber" placeholder="Masukkan serial number" readonly required>
+
+            <label for="namaAset" class="left-label">Nama Aset</label>
+            <input type="text" id="namaAset" name="namaAset" placeholder="Masukkan Nama Aset" readonly required>
+            
+            <label for="kondisiAset" class="left-label">Pilih Kondisi Aset</label>
+            <select id="kondisiAset" name="kondisiAset" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
+                <option value="" disabled selected>Pilih Kondisi Aset</option>
+                <option value="Baik">Baik</option>
+                <option value="Rusak Ringan">Rusak Ringan</option>
+                <option value="Rusak Berat">Rusak Berat</option>
+            </select>
+
+            <label for="keterangan" class="left-label">Keterangan</label>
+            <input type="text" id="keterangan" name="keterangan" placeholder="Masukkan Keterangan"  required>
+            <button type="submit" class="btn finish-btn">Simpan</button>
+        </form>
+    </div>
+</div>  
+
+
 <script>
     // Mendapatkan elemen modal dan tombol
     const modal = document.getElementById("addModal");
     const cancelBtn = modal.querySelector('.cancel-btn');
     const finishBtn = modal.querySelector('.finish-btn');
     const closeBtn = document.getElementById("close");
+    const editModal = document.getElementById("editModal");
+    const closeEditBtn = document.getElementById("closeEditBtn");
+    const editForm = document.getElementById('editForm');
 
     // Menangani klik pada tombol "Selesai"
     const selesaiButton = document.querySelector('.button-selesai');
@@ -103,6 +140,29 @@
             modal.style.display = 'none';  // Menyembunyikan modal saat klik di luar modal
         }
     };
+
+    // Menangkap semua tombol dengan kelas 'openEditModalBtn'
+const openEditModalBtns = document.querySelectorAll('.button-edit');
+
+// Tambahkan event listener ke setiap tombol
+openEditModalBtns.forEach((btn) => {
+    btn.addEventListener('click', function () {
+        editModal.style.display = 'flex'; // Tampilkan modal
+    });
+});
+
+// Menangani tombol close modal
+closeEditBtn.addEventListener('click', function () {
+    editModal.style.display = 'none'; // Sembunyikan modal
+});
+
+// Menutup modal jika klik di luar area modal
+window.addEventListener('click', function (event) {
+    if (event.target === editModal) {
+        editModal.style.display = 'none'; // Sembunyikan modal
+    }
+});
+
 </script>
 
 

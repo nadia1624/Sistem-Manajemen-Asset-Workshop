@@ -9,6 +9,10 @@ pengembalianRouter.get('/admin/pengembalianAset', (req, res) => {
 pengembalianRouter.get('/admin/riwayatPengembalian', (req, res) => {
     res.render('admin/pengembalian/riwayatPengembalian');
 });
+pengembalianRouter.get('/karyawan/riwayatKaryawan', (req, res) => {
+    const currentPath = req.path;
+    res.render('karyawan/riwayat/riwayatKaryawan', { currentPath }); 
+});
 
 //karyawan
 

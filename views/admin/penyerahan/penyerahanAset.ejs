@@ -58,11 +58,11 @@
                                 <td width="10%">
                                     <% if (item.status === "belum diserahkan") { %>
                                         <button class="btn btn-setuju" style="background-color: #28a745; color: white;" onclick="showModal('serahkan', '<%= item.no %>', '<%= item.namaAset %>')">
-                                            <i class="fas fa-check" style="padding-left: 5px;"></i>
+                                            <i class="fas fa-check"></i>
                                         </button>
                                     <% } else if (item.status === "telah diserahkan") { %>
-                                        <button class="btn btn-generate" style="background-color: white; color: white; border: 1px solid black;" onclick="showModal('generate', '<%= item.no %>', '<%= item.namaAset %>')">
-                                            <i class="fa-solid fa-download" style="color: black;"></i>
+                                        <button class="btn btn-action" style="background-color: #ffffff; padding: 10px; padding-right: 7px; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
+                                            <i class="fa-solid fa-download" style="font-size: 15px;"></i>
                                         </button>
                                     <% } %>
                                 </td>

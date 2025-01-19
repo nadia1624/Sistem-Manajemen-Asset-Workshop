@@ -14,141 +14,117 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="10%">Nama</th>
-                        <th width="10%">Unit Kerja</th>
-                        <th width="10%">Nama Aset</th>
-                        <th width="15%">Kategori</th>
+                        <th width="15%">Nama</th>
+                        <th width="15%">Unit Kerja</th>
+                        <th width="15%">Nama Aset</th>
+                        <th width="10%">Kategori</th>
                         <th width="15%">Gambar</th>
                         <th width="15%">Status</th>
-                        <th width="20%">Aksi</th>
+                        <th width="10%">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <% const data = [ 
-                        { no: 1, nama: "John Doe", unitKerja: "IT Department", namaAset: "Laptop", kategori: "Elektronik", gambar: "https://placehold.co/100x100", status: "belum diserahkan" },
-                        { no: 2, nama: "Jane Smith", unitKerja: "HR Department", namaAset: "Printer", kategori: "Peralatan Kantor", gambar: "https://placehold.co/100x100", status: "telah diserahkan" },
-                    ]; %>
-                
-                    <% data.forEach((item) => { %>
-                        <tr>
-                            <td><%= item.no %></td>
-                            <td><%= item.nama %></td>
-                            <td><%= item.unitKerja %></td>
-                            <td><%= item.namaAset %></td>
-                            <td><%= item.kategori %></td>
-                            <td>
-                                <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>" />
-                            </td>
-                            <td>
-                                <% if (item.status === "belum diserahkan") { %>
-                                    <div class="status-badge belumdiserahkan">Belum Diserahkan</div>
-                                <% } else if (item.status === "telah diserahkan") { %>
-                                    <div class="status-badge telahdiserahkan">Telah Diserahkan</div>
-                                <% } %>
-                            </td>
-                            <td>
-                                <% if (item.status === "belum diserahkan") { %>
-                                    <button class="btn btn-setuju" style="background-color: #28a745; color: white;" onclick="showModal('serahkan')">
-                                        <i class="fas fa-check" style="padding-left: 5px;"></i>
-                                    </button>
-                                <% } else if (item.status === "telah diserahkan") { %>
-                                    <button class="btn btn-generate" style="background-color: white; color: white; border: 1px solid black;" onclick="showModal('generate', '<%= item.no %>', '<%= item.namaAset %>')">
-                                        <i class="fa-solid fa-download" style="color: black;"></i>
-                                    </button>
-                                <% } %>
-                            </td>
-                            
-                        </tr>
-                    <% }); %>
-                </tbody>
             </table>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div id="popupModal" class="popup-modal">
-        <div class="modal-content" style="position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-            <span class="close-btn" id="closeBtn">&times;</span>
-            <h3 id="modalTitle"></h3>
-            <p id="modalContent"></p>
-            <div class="button-konfirmasi">
-                <button id="btnNo" class="btn cancel-btn" style="background-color: #D9D9D9;">Tidak</button>
-                <button id="btnYes" class="btn finish-btn" style="background-color: #28a745;">Ya</button>
+            <div class="table-scroll">
+                <table class="table-compact">
+                    <tbody>
+                        <% const data = [ 
+                            { no: 1, nama: "John Doe", unitKerja: "IT Department", namaAset: "Laptop", kategori: "Elektronik", gambar: "https://placehold.co/100x100", status: "belum diserahkan" },
+                            { no: 2, nama: "Jane Smith", unitKerja: "HR Department", namaAset: "Printer", kategori: "Peralatan Kantor", gambar: "https://placehold.co/100x100", status: "telah diserahkan" },
+                            { no: 3, nama: "John Doe", unitKerja: "IT Department", namaAset: "Laptop", kategori: "Elektronik", gambar: "https://placehold.co/100x100", status: "belum diserahkan" },
+                            { no: 4, nama: "Jane Smith", unitKerja: "HR Department", namaAset: "Printer", kategori: "Peralatan Kantor", gambar: "https://placehold.co/100x100", status: "telah diserahkan" },
+                            { no: 5, nama: "John Doe", unitKerja: "IT Department", namaAset: "Laptop", kategori: "Elektronik", gambar: "https://placehold.co/100x100", status: "belum diserahkan" },
+                            { no: 6, nama: "Jane Smith", unitKerja: "HR Department", namaAset: "Printer", kategori: "Peralatan Kantor", gambar: "https://placehold.co/100x100", status: "telah diserahkan" },
+                            { no: 7, nama: "John Doe", unitKerja: "IT Department", namaAset: "Laptop", kategori: "Elektronik", gambar: "https://placehold.co/100x100", status: "belum diserahkan" },
+                            { no: 8, nama: "Jane Smith", unitKerja: "HR Department", namaAset: "Printer", kategori: "Peralatan Kantor", gambar: "https://placehold.co/100x100", status: "telah diserahkan" },
+                        ]; %>
+                    
+                        <% data.forEach((item) => { %>
+                            <tr>
+                                <td width="5%"><%= item.no %></td>
+                                <td width="15%"><%= item.nama %></td>
+                                <td width="15%"><%= item.unitKerja %></td>
+                                <td width="15%"><%= item.namaAset %></td>
+                                <td width="10%"><%= item.kategori %></td>
+                                <td width="15%">
+                                    <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>" />
+                                </td>
+                                <td width="15%">
+                                    <% if (item.status === "belum diserahkan") { %>
+                                        <div class="status-badge belumdiserahkan">Belum Diserahkan</div>
+                                    <% } else if (item.status === "telah diserahkan") { %>
+                                        <div class="status-badge telahdiserahkan">Telah Diserahkan</div>
+                                    <% } %>
+                                </td>
+                                <td width="10%">
+                                    <% if (item.status === "belum diserahkan") { %>
+                                        <button class="btn btn-setuju" style="background-color: #28a745; color: white;" onclick="showModal('serahkan', '<%= item.no %>', '<%= item.namaAset %>')">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    <% } else if (item.status === "telah diserahkan") { %>
+                                        <button class="btn btn-action" style="background-color: #ffffff; padding: 10px; padding-right: 7px; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
+                                            <i class="fa-solid fa-download" style="font-size: 15px;"></i>
+                                        </button>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+
+
 </main>
 
+    <!-- Modal -->
+    <div id="addModal" class="popup-modal">
+        <div class="modal-content">
+            <span id="close" class="close-btn" >&times;</span>
+            <h3 id="modalTitle"></h3>
+            <p id="modalContent"></p>
+            <div class="flex justify-center space-x-4">
+                <button type="button" class="btn cancel-btn">Tidak</button>
+                <button type="submit" class="btn finish-btn">Ya</button>
+            </div>
+        </div>
+    </div>
+    
 <script>
-    let selectedRowNo = null;
-    let selectedAssetName = "";
+const modal = document.getElementById("addModal");
+const closeBtn = document.getElementById("close");
+const modalTitle = document.getElementById("modalTitle");
+const modalContent = document.getElementById("modalContent");
+const cancelBtn = document.querySelector(".cancel-btn");
 
-    function showModal(type, rowNo = null, assetName = "") {
-        selectedRowNo = rowNo;
-        selectedAssetName = assetName;
-        
-        const modal = document.getElementById('popupModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalContent = document.getElementById('modalContent');
-        const btnYes = document.getElementById('btnYes');
+// Function to show modal
+function showModal(action, no, namaAset) {
+    modal.style.display = "flex";
 
-        if (type === 'serahkan') {
-            modalTitle.textContent = 'Penyerahan Aset';
-            modalContent.textContent = 'Apakah Anda yakin telah menyerahkan aset ke karyawan?';
-            btnYes.onclick = function () {
-             // Menampilkan notifikasi
-                alert('Aset telah diserahkan!');
-
-            // Menutup modal
-            const modal = document.getElementById('popupModal');
-            modal.style.display = 'none';
-            };
-
-        } else if (type === 'generate') {
-            modalTitle.textContent = 'Generate Surat';
-            modalContent.textContent = `Apakah Anda ingin mengunduh surat penyerahan aset ini?`;
-            btnYes.onclick = function () {
-                // Logika untuk mengunduh surat, kita akan gunakan link download langsung
-                downloadSurat(selectedRowNo, selectedAssetName);
-                modal.style.display = 'none';
-            };
-        }
-
-        modal.style.display = 'block';
+    if (action === "serahkan") {
+        modalTitle.textContent = "Konfirmasi Penyerahan Aset";
+        modalContent.textContent = `Apakah Anda yakin ingin menyerahkan aset "${namaAset}" dengan nomor ${no}?`;
+    } else if (action === "generate") {
+        modalTitle.textContent = "Generate Dokumen";
+        modalContent.textContent = `Apakah Anda ingin mengunduh dokumen terkait aset "${namaAset}" dengan nomor ${no}?`;
     }
+}
 
-    function downloadSurat(rowNo, assetName) {
-        const surat = `Surat Penyerahan Aset No: ${rowNo}\nNama Aset: ${assetName}\nTanggal: ${new Date().toLocaleDateString()}`;
-        
-        // Membuat Blob untuk file teks
-        const blob = new Blob([surat], { type: 'text/plain' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `Surat_Penyerahan_Aset_No_${rowNo}.txt`; // Nama file surat
-        link.click();
+// Close modal when clicking the close button
+closeBtn.onclick = function () {
+    addModal.style.display = "none";
+};
+
+// Close modal when clicking the cancel button
+cancelBtn.onclick = function () {
+    addModal.style.display = "none";
+};
+
+// Close modal when clicking outside the modal content
+window.onclick = function (event) {
+    if (event.target === modal) {
+        modal.style.display = "none";
     }
+};
 
-    document.getElementById('closeBtn').onclick = function () {
-        document.getElementById('popupModal').style.display = 'none';
-    };
-
-    window.onclick = function (event) {
-        const modal = document.getElementById('popupModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    };
-
-    document.getElementById('btnNo').onclick = function () {
-        document.getElementById('popupModal').style.display = 'none';
-    };
 </script>

@@ -1,0 +1,58 @@
+<body>
+    <!-- Gunakan currentPath yang sudah dikirim dari route -->
+    <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
+    
+    <style>
+        th:nth-child(2), td:nth-child(2) { width: 15%; }
+        th:nth-child(3), td:nth-child(3) { width: 10%; }
+        th:nth-child(4), td:nth-child(4) { width: 17%; }
+        th:nth-child(5), td:nth-child(5) { width: 10%; }
+        th:nth-child(6), td:nth-child(6) { width: 15%; }
+      </style>
+      
+    <main class="content">
+        <div class="header-content">
+            <h3 style="font-weight: bold;">Riwayat Karyawan</h3>
+            <div class="search-bar">
+                <input placeholder="Search..." type="text"/>
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        <div class="container-fluid px-4">
+            <div class="table-responsive">
+                <table class="table-compact">
+                    <thead>
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="15%">Nama Barang</th>
+                            <th width="10%">Kategori</th>
+                            <th width="17%">Deskripsi</th>
+                            <th width="10%">Gambar</th>
+                            <th width="15%">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% const dataDummy = [
+                            { no: 1, nama: "Laptop Dell XPS", kategori: "Elektronik", deskripsi: "Laptop high-end untuk pekerjaan berat", gambar: "https://placehold.co/100x100", keterangan: "sudah dikembalikan" },
+                            { no: 2, nama: "Meja Kerja", kategori: "Furniture", deskripsi: "Meja kerja ergonomis untuk kantor", gambar: "https://placehold.co/100x100", keterangan: "sudah dikembalikan" },
+                            { no: 3, nama: "Printer Epson", kategori: "Elektronik", deskripsi: "Printer laser cepat dan hemat tinta", gambar: "https://placehold.co/100x100", keterangan: "sudah dikembalikan" }
+                        ]; %>
+
+                        <% dataDummy.forEach((item) => { %>
+                            <tr>
+                                <td><%= item.no %></td> <!-- No -->
+                                <td><%= item.nama %></td> <!-- Nama Barang -->
+                                <td><%= item.kategori %></td> <!-- Kategori -->
+                                <td><%= item.deskripsi %></td> <!-- Deskripsi -->
+                                <td>
+                                    <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>"/>
+                                </td> <!-- Gambar -->
+                                <td><%= item.keterangan %></td> <!-- Keterangan -->
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>

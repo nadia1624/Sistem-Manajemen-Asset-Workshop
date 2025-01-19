@@ -445,10 +445,6 @@ form input::placeholder {
   cursor: pointer;
 }
 
-.modal-content button:hover {
-  background-color: #a1d27d;
-}
-
 .left-label {
   display: block;
   margin-bottom: 5px;
@@ -480,11 +476,11 @@ form input::placeholder {
 }
 
 .cancel-btn:hover {
-  background-color: #cacaca;
+  background-color: #a0a0a0;
 }
 
 .finish-btn:hover {
-  background-color: #c2ef97;
+  background-color: #91df47;
 }
 /* Font for headings */
 h1,
@@ -907,7 +903,7 @@ a i {
   padding: 7px 10px;
   font-size: 12px;
   font-weight: bold;
-  color: white;
+  color: black;
   border-radius: 15px;
   text-transform: capitalize;
   line-height: 1.5;
@@ -917,15 +913,15 @@ a i {
 
 /* Warna untuk masing-masing status */
 .status-badge.telahdiserahkan , .status-badge.disetujui { 
-  background-color: #4CAF50; /* Hijau untuk disetujui */
+  background-color: #A2E180; /* Hijau untuk disetujui */
 }
 
 .status-badge.belumdiserahkan , .status-badge.ditolak{ 
-  background-color: #f44336; /* Merah untuk ditolak */
+  background-color: #DD5F61; /* Merah untuk ditolak */
 }
 
 .status-badge.diproses {
-  background-color: #FFC107; /* Kuning untuk diproses */
+  background-color: #FDEC80; /* Kuning untuk diproses */
 }
 
 .button-edit {
@@ -1235,8 +1231,8 @@ a i {
   height: 40px;
 
   /* Base styles */
-  background-color: #44c400;
-  border: 2px solid #44c400;
+  background-color: #355edc;
+  border: 2px solid #355edc;
   border-radius: 12px;
   color: #ffffff;
   cursor: pointer;
@@ -1258,8 +1254,8 @@ a i {
 
 /* Hover state */
 .button-info:hover {
-  background-color: #4de600;
-  border-color: #4de600;
+  background-color: #7a9bfe;
+  border-color: #7a9bfe;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -1423,4 +1419,179 @@ h1 {
   font-size: 14px; /* Ukuran teks */
   font-weight: bold;
 }
+
+/* Setuju (Agree) button */
+.btn-setuju {
+  /* Fixed dimensions */
+  width: 40px;
+  height: 40px;
+
+  /* Base styles */
+  background-color: #44c400;
+  border: 2px solid #44c400;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* Perfect centering using flexbox */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Remove default padding/margin */
+  padding: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  /* Box shadow for depth */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover state */
+.btn-setuju:hover {
+  background-color: #C2EF97;
+  border-color: #C2EF97;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Active/Pressed state */
+.btn-setuju:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon styles */
+.btn-setuju i {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Icon animation on hover */
+.btn-setuju:hover i {
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .btn-setuju {
+    width: 40px;
+    height: 40px;
+  }
+
+  .btn-setuju i {
+    font-size: 18px;
+  }
+}
+
+/* Tolak (Disagree) button */
+.btn-tolak {
+  /* Fixed dimensions */
+  width: 40px;
+  height: 40px;
+
+  /* Base styles */
+  background-color: #DD5F61;
+  border: 2px solid #DD5F61;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* Perfect centering using flexbox */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Remove default padding/margin */
+  padding: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  /* Box shadow for depth */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover state */
+.btn-tolak:hover {
+  background-color: #ff3333;
+  border-color: #ff3333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Active/Pressed state */
+.btn-tolak:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon styles */
+.btn-tolak i {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Icon animation on hover */
+.btn-tolak:hover i {
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .btn-tolak {
+    width: 40px;
+    height: 40px;
+  }
+
+  .btn-tolak i {
+    font-size: 18px;
+  }
+}
+
+/* Disabled state for all buttons */
+.btn-setuju:disabled,
+.btn-tolak:disabled,
+.button-info:disabled {
+  background-color: #b0b0b0;
+  border-color: #b0b0b0;
+  color: #ffffff;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Disabled state for icon inside the buttons */
+.btn-setuju:disabled i,
+.btn-tolak:disabled i,
+.button-info:disabled i {
+  color: #ffffff; /* White icon when disabled */
+}
+
+/* Disabled state for the .button-info class */
+.button-info:disabled {
+  background-color: #b0b0b0;
+  border-color: #b0b0b0;
+}
+
+/* Optional: Change background for the link button in disabled state */
+a button:disabled {
+  pointer-events: none;
+}
+
+
 

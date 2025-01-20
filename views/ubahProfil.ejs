@@ -1,0 +1,76 @@
+<%- include('layout/header.ejs', { currentPath: currentPath }) %>
+
+<html>
+<head>
+    <title>Profile Page</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+</head>
+<style>
+.buttons {
+  display: flex;
+  justify-content: right;
+  margin-right: 12px;
+}
+.buttons button {
+  padding: 10px 20px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 15px;
+  font-size: 14px;
+  min-width: 100px;
+  max-width: 130px;
+  transition: all 0.3s ease;
+}
+</style>
+<body class="main-body">
+    <div class="profile-container">
+        <div class="profile-section">
+            <div class="profile-pic">
+                <img src="/image/logo.png" alt="Profile picture" width="150" height="150"/>
+                <a href="#">Ubah Profil</a>
+            </div>
+            <div class="form-section">
+                <div class="form-group">
+                    <div>
+                        <label for="name">Nama</label>
+                        <input type="text" id="name" value="John Doe" placeholder="John Doe" />
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" value="john.doe@example.com" placeholder="john.doe@example.com" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <label for="nip">NIP</label>
+                        <input type="text" id="nip" value="198504122010051001" placeholder="198504122010051001" />
+                    </div>
+                    <div>
+                        <label for="unit">Unit Kerja</label>
+                        <input type="text" id="unit" value="Departemen IT" placeholder="Departemen IT" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <label for="phone">Nomor Telepon</label>
+                        <input type="text" id="phone" value="081234567890" placeholder="081234567890" />
+                    </div>
+                    <div>
+                        <label for="position">Jabatan</label>
+                        <input type="text" id="position" value="Senior Developer" placeholder="Senior Developer" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="buttons" style="display: flex; gap: 15px;">
+            <a href="profil">
+            <button class="batal-profile">Batal</button>
+            </a>
+            <a href="profil">
+            <button class="simpan-profile">Simpan</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

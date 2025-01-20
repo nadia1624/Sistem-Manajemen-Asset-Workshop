@@ -23,7 +23,9 @@ authRouter.get('/ubahPass', (req, res) => {
     res.render('ubahPass', { currentPath: req.path });
 });
 
-
+authRouter.get('/logout', (req, res) => {
+    res.render('login', { currentPath: req.path });
+});
 
 
 module.exports = authRouter

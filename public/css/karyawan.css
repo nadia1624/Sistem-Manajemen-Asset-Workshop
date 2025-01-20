@@ -66,7 +66,7 @@ html {
 }
 
 .table-responsive {
-  overflow-x: auto;
+  
   margin: 15px 0;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -96,7 +96,7 @@ html {
 .table-container {
   background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  overflow-x: auto;
+  
 }
 
 .table-compact {
@@ -208,8 +208,10 @@ td img {
 
   .table-compact th,
   .table-compact td {
-    padding: 8px;
-    font-size: 12px;
+    background-color: #f8f8f8;
+            position: sticky;
+            top: 0;
+            z-index: 1;
   }
 
   button.btn {

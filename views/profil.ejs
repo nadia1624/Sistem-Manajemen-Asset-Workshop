@@ -89,19 +89,12 @@
             max-width: 180px;
             transition: all 0.3s ease;
         }
-        .buttons .change-password {
-            background-color: #fff;
-            color: #000;
+        .ubahpassword , .ubahprofil{
+            background-color: #f44336;
+            color: white;
         }
-        .buttons .change-password:hover {
-            background-color: #f0f0f0;
-        }
-        .buttons .update-profile {
-            background-color: #b30000;
-            color: #fff;
-        }
-        .buttons .update-profile:hover {
-            background-color: #990000;
+        .ubahpassword:hover , .ubahprofil:hover {
+            background-color: #d32f2f;
         }
         @media (max-width: 768px) {
             .profile-section {
@@ -134,7 +127,7 @@
         <div class="profile-section">
             <div class="profile-pic">
                 <img src="/image/logo.png" alt="Profile picture" width="150" height="150"/>
-                <a href="#">Ubah Profil</a>
+                <a href="#">Ganti Foto</a>
             </div>
             <div class="form-section">
                 <div class="form-group">
@@ -171,12 +164,13 @@
         </div>
         <div class="buttons">
             <a href="ubahPass">
-            <button class="change-password">Ubah Password</button>
+                <button class="ubahpassword">Ubah Password</button>
             </a>
             <a href="ubahProfil">
-            <button class="update-profile">Ubah Profil</button>
+                <button class="ubahprofil">Ubah Profil</button>
             </a>
         </div>
+
     </div>
 </body>
 </html>

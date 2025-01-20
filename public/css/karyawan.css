@@ -59,6 +59,95 @@ html {
   font-size: 24px;
 }
 
+/* Dropdown Container */
+#profileDropdown {
+  position: absolute;
+  right: 0;
+  top: 60px; /* Sesuaikan dengan tinggi navbar/icon */
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+/* Tampilkan Dropdown */
+#profileDropdown.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Dropdown Items */
+#profileDropdown a {
+  display: block;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+#profileDropdown a:last-child {
+  border-bottom: none;
+}
+
+#profileDropdown a:hover {
+  background-color: #d32f2f;
+  color: white;
+  border-radius: 10px;
+}
+
+/* Profil Icon Button */
+#profileButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #f3f4f6;
+  border-radius: 50%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Ikon */
+#profileButton svg {
+  width: 24px;
+  height: 24px;
+  color: #4b5563;
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+  #profileDropdown {
+    top: 50px;
+    width: 180px;
+  }
+
+  #profileDropdown a {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  #profileButton {
+    width: 36px;
+    height: 36px;
+  }
+
+  #profileButton svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
 .container-fluid {
   width: 100%;
   margin: 0 auto;
@@ -219,20 +308,17 @@ td img {
 
 /*Permintaaan dan penyerahan Karyawan*/
 .status-badge {
-  display: inline-flex;
-  justify-content: center; 
-  align-items: center; 
-  padding: 5px 12px;
-  font-size: 14px;
+  justify-content: center;
+  align-items: center;
+  padding: 7px 10px;
+  font-size: 12px;
   font-weight: bold;
   color: black;
   border-radius: 15px;
   text-transform: capitalize;
   line-height: 1.5;
-  height: 35px;
-  min-width: 120px;
-  width: 90px;
-  text-align: center;
+  height: 30px;
+  width: 100%;
 }
 
 .status-badge.disetujui { 
@@ -241,6 +327,7 @@ td img {
 
 .status-badge.ditolak { 
   background-color: #DD5F61;
+  color: white;
 }
 
 .status-badge.diproses {
@@ -248,11 +335,12 @@ td img {
 }
 
 .status-badge.returned {
-  background-color: #4CAF50;
+  background-color: #A2E180;
 }
 
 .status-badge.Notreturned {
-  background-color: #f44336;
+  color: white;
+  background-color: #DD5F61;
 }
 
 @media (max-width: 768px) {

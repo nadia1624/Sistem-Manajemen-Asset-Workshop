@@ -54,16 +54,16 @@
    </style>
    
 
-    <main class="content">
+   <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Peminjaman Aset</h3>
         <div class="search-bar">
-            <input placeholder="Search..." type="text"/>
+            <input placeholder="Search..." type="text" />
             <i class="fas fa-search"></i>
         </div>
     </div>
     <div class="container-fluid px-4">
-        <div class="table-responsive">
+        <div class="table-scroll">
             <table class="table-compact">
                 <thead>
                     <tr>
@@ -77,9 +77,6 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                </table>
-                <div class="table-scroll">
-                <table class="table-compact">
                 <tbody>
                     <% const dataDummy = [
                         { no: 1, nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis" },
@@ -87,7 +84,7 @@
                         { no: 3, nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi" },
                         { no: 1, nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis" },
                         { no: 2, nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru" },
-                        { no: 3, nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi" }
+                        { no: 3, nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi" },
                     ]; %>
 
                     <% dataDummy.forEach((item) => { %>
@@ -95,26 +92,25 @@
                             <td><%= item.no %></td>
                             <td><%= item.nama %></td>
                             <td>
-                                <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>"/>
+                                <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>" />
                             </td>
                             <td><%= item.kategori %></td>
                             <td><%= item.deskripsi %></td>
                             <td>
-                              <!-- Tambahkan atribut onclick -->
-                              <button class="btn btn-success" onclick="openModal()">
-                                <i class="fa-solid fa-check"></i> Check
-                              </button>
+                                <button class="btn btn-success" onclick="openModal()">
+                                    <i class="fa-solid fa-check"></i> Check
+                                </button>
                             </td>
                             <td>
-                              <button class="btn btn-secondary" style="background-color: #ccc;" onclick="openReturnModal()">
-                                  <i class="fa-solid fa-arrow-rotate-left"></i> Return
-                              </button>
-                          </td>
-                            <td >
-                              <button class="btn-action" >
-                                  <i class="fa-solid fa-download" style="font-size: 16px;"></i>
-                              </button>
-                          </td>
+                                <button class="btn btn-secondary" style="background-color: #ccc;" onclick="openReturnModal()">
+                                    <i class="fa-solid fa-arrow-rotate-left"></i> Return
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn-action">
+                                    <i class="fa-solid fa-download" style="font-size: 16px;"></i>
+                                </button>
+                            </td>
                         </tr>
                     <% }); %>
                 </tbody>

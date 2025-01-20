@@ -400,7 +400,9 @@ td button i {
   background-color: white;
   padding: 20px;
   border-radius: 10px;
-  width: 400px;
+  max-width: 400px;
+  max-height: 90%;
+  margin: 0 auto;
   text-align: center;
   position: relative;
 }
@@ -473,6 +475,8 @@ form input::placeholder {
   margin-top: 15%;
   float: right;
   text-align: left;
+  min-width: 120px;
+  padding: 10px 20px;
 }
 
 .cancel-btn:hover {
@@ -531,7 +535,6 @@ th {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background: white;
   overflow: hidden;
-
 }
 
 .table-compact {
@@ -603,15 +606,30 @@ th {
   font-size: 13px;
 }
 
+.grid-form {
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
 .form-compact {
   padding: 0 15px;
 }
 
 .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   margin-bottom: 15px;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
@@ -623,6 +641,10 @@ th {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
+}
+
+.button-container {
+  text-align: center;
 }
 
 /* Responsive adjustments */
@@ -833,14 +855,12 @@ th {
   transform: rotate(90deg);
 }
 
-
 .btn-setuju,
 .btn-tolak,
 .btn-info 
 
 /* Gaya untuk tombol serahkan dan generate yang serupa */
 .btn-setuju, .btn-tolak, .btn-info, .btn-serahkan, .btn-generate {
-
   padding: 4px 8px; /* Mengurangi padding */
   font-size: 12px; /* Ukuran teks lebih kecil */
   border-radius: 4px; /* Mengurangi border radius sedikit */
@@ -874,11 +894,10 @@ a i {
 .button-konfirmasi {
   display: flex;
   justify-content: center;
-  gap: 10px; 
+  gap: 10px;
   margin-top: 20px;
   cursor: pointer;
 }
-
 
 .custom-td {
   padding: 10px 15px; /* px-4 py-2 */
@@ -902,12 +921,9 @@ a i {
   width: 85%;
 }
 
-
-
-
 .status-badge {
-  justify-content: center; 
-  align-items: center; 
+  justify-content: center;
+  align-items: center;
   padding: 7px 10px;
   font-size: 12px;
   font-weight: bold;
@@ -920,16 +936,18 @@ a i {
 }
 
 /* Warna untuk masing-masing status */
-.status-badge.telahdiserahkan , .status-badge.disetujui { 
-  background-color: #A2E180; /* Hijau untuk disetujui */
+.status-badge.telahdiserahkan,
+.status-badge.disetujui {
+  background-color: #a2e180; /* Hijau untuk disetujui */
 }
 
-.status-badge.belumdiserahkan , .status-badge.ditolak{ 
-  background-color: #DD5F61; /* Merah untuk ditolak */
+.status-badge.belumdiserahkan,
+.status-badge.ditolak {
+  background-color: #dd5f61; /* Merah untuk ditolak */
 }
 
 .status-badge.diproses {
-  background-color: #FDEC80; /* Kuning untuk diproses */
+  background-color: #fdec80; /* Kuning untuk diproses */
 }
 
 .button-edit {
@@ -1382,12 +1400,11 @@ h1 {
   margin-bottom: 20px;
 }
 .container2 {
-  border: 1px solid #000;
-  border-radius: 10px;
+  border: 2px solid #232323;
+  border-radius: 15px;
   padding: 20px;
   margin-bottom: 20px;
   width: 100%;
-  max-width: 1100px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1406,27 +1423,42 @@ h1 {
   font-size: 14px; /* Ukuran teks */
   font-weight: bold;
 }
+
+.container2 .details2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  margin-left: 10px; /* Tambahkan jarak antara gambar dan teks */
+}
+.container2 .details2 p {
+  margin: 15px 0; /* Tambahkan jarak antar tulisan */
+  font-size: 14px; /* Ukuran teks */
+  font-weight: bold;
+}
+
+/*
 .user-container {
   border: 1px solid #000;
   border-radius: 10px;
-  padding: 20px; /* Kurangi padding agar elemen tidak terlalu jauh dari tepi */
+  padding: 20px; //Kurangi padding agar elemen tidak terlalu jauh dari tepi
   width: 100%;
   height: 100%;
   max-width: 1100px;
   max-height: 200px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex; /* Gunakan flexbox */
-  flex-direction: column; /* Atur elemen dalam kolom */
-  align-items: flex-start; /* Pastikan konten rata kiri */
-  justify-content: flex-start; /* Pastikan konten mulai dari atas */
+  display: flex; // Gunakan flexbox
+  flex-direction: column; //Atur elemen dalam kolom
+  align-items: flex-start;// Pastikan konten rata kiri
+  justify-content: flex-start; //Pastikan konten mulai dari atas
 }
 
 .user-container p {
-  margin: 10px 0; /* Tambahkan jarak antar paragraf */
-  font-size: 14px; /* Ukuran teks */
+  margin: 10px 0; //Tambahkan jarak antar paragraf
+  font-size: 14px; // Ukuran teks
   font-weight: bold;
-}
+} */
 
 /* Setuju (Agree) button */
 .btn-setuju {
@@ -1458,8 +1490,8 @@ h1 {
 
 /* Hover state */
 .btn-setuju:hover {
-  background-color: #C2EF97;
-  border-color: #C2EF97;
+  background-color: #c2ef97;
+  border-color: #c2ef97;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -1507,8 +1539,11 @@ h1 {
   height: 40px;
 
   /* Base styles */
+
   background-color: #ff3333;
   border: 2px solid #ff3333;
+  background-color: #dd5f61;
+  border: 2px solid #dd5f61;
   border-radius: 12px;
   color: #ffffff;
   cursor: pointer;
@@ -1600,6 +1635,3 @@ h1 {
 a button:disabled {
   pointer-events: none;
 }
-
-
-

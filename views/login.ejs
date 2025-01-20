@@ -30,27 +30,30 @@
      WELCOME TO
     </h1>
     <h2 class="text-2xl font-bold mb-10">
-     INVENTRACK
+     SIMAW
     </h2>
     <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8 min-h-[430px]">
       <h3 class="text-3xl font-bold mb-10 text-center mt-6">
         SIGN IN
       </h3>
-      <form class="space-y-7">
+      <form class="space-y-7" method="POST" action="/checklogin">
         <div>
-          <label class="block text-sm font-bold text-gray-700" for="nip">
-            NIP
+          <label class="block text-sm font-bold text-gray-700" for="email">
+            Email
           </label>
-          <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" id="nip" name="nip" placeholder="NIP Pengguna" type="text" />
+          <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" id="email" name="email" placeholder="Masukan Email" type="text" />
         </div>
         <div>
           <label class="block text-sm font-bold text-gray-700" for="password">
             Password
           </label>
-          <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" id="password" name="password" placeholder="Password" type="password" />
+          <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" id="password" name="password" placeholder="Masukan Password" type="password" />
         </div>
+                <% if (typeof error !== 'undefined' && error) { %>
+          <p style="color: red;"><%= error %></p>
+        <% } %>
         <div class="text-center">
-          <button class="mt-6 py-2 px-14 bg-red-600 text-white text-xs font-bold rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" type="submit">
+          <button type="submit" class="mt-6 py-2 px-14 bg-red-600 text-white text-xs font-bold rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" >
             SIGN IN
           </button>
         </div>

@@ -24,7 +24,11 @@ const DetailPemeliharaan = db.define(
             primaryKey : true,
             allowNull : false
         }
-
+    }, 
+    {
+        tableName: "detail_pemeliharaans",
+        underscored: true,
+        timestamps: true
     }
 )
 

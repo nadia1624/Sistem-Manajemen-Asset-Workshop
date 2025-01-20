@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/karyawan/daftar-aset', (req, res) => {
-    res.render('pengguna/pengelolaanAset/daftar-aset', { req: req });
+    res.render('karyawan/daftarAset/daftar-aset', { req: req });
 });
 
 router.get('/admin/pengelolaan-aset', (req, res) => {

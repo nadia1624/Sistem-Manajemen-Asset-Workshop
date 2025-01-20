@@ -22,45 +22,44 @@
             <a href="riwayatVendor" class="button active">Riwayat Pengembalian</a>
         </div>
     
-        <div class="table-responsive">
-            <table class="table-compact">
-                <thead>
-                    <tr>
-                        <th width="5%">No</th>
-                        <th width="15%">Serial Number</th>
-                        <th width="15%">Nama Aset</th>
-                        <th width="15%">Deskripsi</th>
-                        <th width="15%">Gambar</th>
-                        <th width="12%">Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-            <div class="table-scroll">
-                <table class="table-compact">
-                    <tbody>
-                        <% for (let i = 1; i <= 10; i++) { %>
-                        <tr>
-                            <td width="5%">1</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">
-                                <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
-                            </td>
-                            <td width="12%">
-                                <a href="detailAsetRiwayat">
-                                <button id="infoButton" class="button-info" style="margin-right: 10px;">
-                                    <i class="fa-solid fa-circle-info"></i>  
-                                </button> 
-                                </a>
-                            </td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <div class="table-bungkus">
+                    <div class="table-scroll">
+                        <table class="table-compact">
+                            <thead>
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="15%">Serial Number</th>
+                                    <th width="15%">Nama Aset</th>
+                                    <th width="15%">Deskripsi</th>
+                                    <th width="15%">Gambar</th>
+                                    <th width="12%">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td width="5%">1</td>
+                                    <td width="15%">Lorem Ipsum</td>
+                                    <td width="15%">Lorem Ipsum</td>
+                                    <td width="15%">Lorem Ipsum</td>
+                                    <td width="15%">
+                                        <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
+                                    </td>
+                                    <td width="12%">
+                                        <a href="detailAsetRiwayat">
+                                        <button id="infoButton" class="button-info" style="margin-right: 10px;">
+                                            <i class="fa-solid fa-circle-info"></i>  
+                                        </button> 
+                                        </a>
+                                    </td>
+                                </tr> 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
     </div>
 </main>
 

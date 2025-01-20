@@ -16,45 +16,47 @@
         </div>
     </div>
     <div class="container-fluid px-4">
-        <div class="table-responsive">
-            <table class="table-compact">
-                <thead>
-                    <tr>
-                        <th width="5%">No</th>
-                        <th width="15%">Nama Kategori</th>
-                        <th width="15%">Jadwal</th>
-                        <th width="15%">Jenis Pemeliharaan</th>
-                        <th width="15%">Status Pemeliharaan</th>
-                        <th width="20%">Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-            <div class="table-scroll">
-                <table class="table-compact">
-                    <tbody>
-                        <% for (let i = 1; i <= 10; i++) { %>
-                            <tr style="text-align: center;">
-                                <td width="5%"><%= i %></td>
-                                <td width="15%">Lorem Ipsum</td>
-                                <td width="15%">Lorem Ipsum</td>
-                                <td width="15%">Lorem Ipsum</td>
-                                <td width="15%" class="custom-td">
-                                    <span class="custom-span" style="background-color: #A2E180; font: black;">Telah Dilakukan</span>
-                                </td>
-                                <td width="20%">
-                                    <a href="pemeliharaan-aset/detail">
-                                        <button class="button-arrow">
-                                            <i class="fa-solid fa-arrow-right"></i>
-                                        </button>
-                                    </a>
-                                    <button class="button-delete">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <div class="table-bungkus">
+                    <div class="table-scroll">
+                        <table class="table-compact">
+                            <thead>
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="17%">Nama Kategori</th>
+                                    <th width="15%">Jadwal</th>
+                                    <th width="18%">Jenis Pemeliharaan</th>
+                                    <th width="20%">Status Pemeliharaan</th>
+                                    <th width="15%">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (let i = 1; i <= 10; i++) { %>
+                                    <tr>
+                                        <td width="5%"><%= i %></td>
+                                        <td width="17%">Lorem Ipsum</td>
+                                        <td width="15%">Lorem Ipsum</td>
+                                        <td width="18%">Lorem Ipsum</td>
+                                        <td width="20%" class="custom-td">
+                                            <span class="custom-span" style="background-color: #A2E180; font: black;">Telah Dilakukan</span>
+                                        </td>
+                                        <td width="15%">
+                                            <button class="button-delete">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                            <a href="pemeliharaan-aset/detail">
+                                                <button class="button-arrow">
+                                                    <i class="fa-solid fa-arrow-right"></i>
+                                                </button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

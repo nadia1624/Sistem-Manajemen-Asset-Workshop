@@ -9,83 +9,81 @@
         </div>
     </div>
     <div class="container-fluid px-4">
-        <div class="table-responsive">
-            <table class="table-compact">
-                <thead>
-                    <tr>
-                        <th width="5%">No</th>
-                        <th width="10%">Tanggal</th>
-                        <th width="10%">Nama</th>
-                        <th width="10%">Unit Kerja</th>
-                        <th width="15%">Nama Aset</th>
-                        <th width="15%">Gambar</th>
-                        <th width="15%">Status</th>
-                        <th width="20%">Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-            <div class="table-scroll">
-                <table class="table-compact">
-                    <tbody>
-                        <% const data = [
-                            { no: 1, tanggal: "2025-01-17", nama: "John Doe", unitKerja: "IT Department", namaAset: "Laptop", gambar: "https://placehold.co/100x100", keterangan: "Keperluan kerja", status: "Diproses" },
-                            { no: 2, tanggal: "2025-01-15", nama: "Jane Smith", unitKerja: "HR Department", namaAset: "Printer", gambar: "https://placehold.co/100x100", keterangan: "Dokumen penting", status: "Disetujui" },
-                            { no: 3, tanggal: "2025-01-12", nama: "Alice Brown", unitKerja: "Finance", namaAset: "Scanner", gambar: "https://placehold.co/100x100", keterangan: "Laporan keuangan", status: "Ditolak" },
-                            { no: 4, tanggal: "2025-01-17", nama: "John Doe", unitKerja: "IT Department", namaAset: "Laptop", gambar: "https://placehold.co/100x100", keterangan: "Keperluan kerja", status: "Diproses" },
-                            { no: 5, tanggal: "2025-01-15", nama: "Jane Smith", unitKerja: "HR Department", namaAset: "Printer", gambar: "https://placehold.co/100x100", keterangan: "Dokumen penting", status: "Disetujui" },
-                            { no: 6, tanggal: "2025-01-12", nama: "Alice Brown", unitKerja: "Finance", namaAset: "Scanner", gambar: "https://placehold.co/100x100", keterangan: "Laporan keuangan", status: "Ditolak" },
-                        ]; %>
-                    
-                        <% data.forEach((item) => { %>
-                            <tr>
-                                <td width="5%"><%= item.no %></td>
-                                <td width="10%"><%= item.tanggal %></td>
-                                <td width="10%"><%= item.nama %></td>
-                                <td width="10%"><%= item.unitKerja %></td>
-                                <td width="15%"><%= item.namaAset %></td>
-                                <td width="15%">
-                                    <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>" />
-                                </td>
-                                <td width="15%">
-                                    <% if (item.status === "Disetujui") { %>
-                                        <div class="status-badge disetujui">Disetujui</div>
-                                    <% } else if (item.status === "Ditolak") { %>
-                                        <div class="status-badge ditolak">Ditolak</div>
-                                    <% } else if (item.status === "Diproses") { %>
-                                        <div class="status-badge diproses">Diproses</div>
-                                    <% } %>
-                                </td>
-                                <td width="20%">
-                                    <% if (item.status === "Diproses") { %>
-                                        <button class="btn-setuju" onclick="showModal('setuju')">
-                                            <i class="fas fa-check" ></i>
-                                        </button>
-                                        <button class="btn-tolak" onclick="showModal('tolak')">
-                                            <i class="fas fa-times" ></i>
-                                        </button>
-                                        <a href="detailPermintaan" >
-                                            <button href="/detailInfo" class="button-info">
-                                                <i class="fas fa-info-circle"></i>
-                                            </button>
-                                        </a>
-                                    <% } else if (item.status === "Disetujui" || item.status === "Ditolak") { %>
-                                        <button class="btn-setuju"  disabled>
-                                            <i class="fas fa-check" ></i>
-                                        </button>
-                                        <button class="btn-tolak" disabled>
-                                            <i class="fas fa-times" ></i>
-                                        </button>
-                                        <a href="detailPermintaan" >
-                                            <button href="/detailInfo" class="button-info">
-                                                <i class="fas fa-info-circle"></i>
-                                            </button>
-                                        </a>
-                                    <% } %>
-                                </td>
-                            </tr>
-                        <% }); %>
-                    </tbody>    
-                </table>
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <div class="table-bungkus">
+                    <div class="table-scroll">
+                        <table class="table-compact">
+                            <thead>
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="10%">Tanggal</th>
+                                    <th width="15%">Nama</th>
+                                    <th width="10%">Unit Kerja</th>
+                                    <th width="10%">Nama Aset</th>
+                                    <th width="15%">Gambar</th>
+                                    <th width="15%">Status</th>
+                                    <th width="20%">Aksi</th>
+                                </tr>
+                            </thead>
+                                <tbody>
+                                    <% const data = [
+                                        { no: 1, tanggal: "2025-01-17", nama: "John Doe", unitKerja: "IT Department", namaAset: "Laptop", gambar: "https://placehold.co/100x100", keterangan: "Keperluan kerja", status: "Diproses" },
+                                        { no: 2, tanggal: "2025-01-15", nama: "Jane Smith", unitKerja: "HR Department", namaAset: "Printer", gambar: "https://placehold.co/100x100", keterangan: "Dokumen penting", status: "Disetujui" },
+                                        { no: 3, tanggal: "2025-01-12", nama: "Alice Brown", unitKerja: "Finance", namaAset: "Scanner", gambar: "https://placehold.co/100x100", keterangan: "Laporan keuangan", status: "Ditolak" },
+                                    ]; %>
+                                
+                                    <% data.forEach((item) => { %>
+                                        <tr>
+                                            <td width="5%"><%= item.no %></td>
+                                            <td width="10%"><%= item.tanggal %></td>
+                                            <td width="15%"><%= item.nama %></td>
+                                            <td width="10%"><%= item.unitKerja %></td>
+                                            <td width="10%"><%= item.namaAset %></td>
+                                            <td width="15%">
+                                                <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>" />
+                                            </td>
+                                            <td width="15%">
+                                                <% if (item.status === "Disetujui") { %>
+                                                    <div class="status-badge disetujui">Disetujui</div>
+                                                <% } else if (item.status === "Ditolak") { %>
+                                                    <div class="status-badge ditolak">Ditolak</div>
+                                                <% } else if (item.status === "Diproses") { %>
+                                                    <div class="status-badge diproses">Diproses</div>
+                                                <% } %>
+                                            </td>
+                                            <td width="20%">
+                                                <% if (item.status === "Diproses") { %>
+                                                    <button class="btn-setuju" onclick="showModal('setuju')">
+                                                        <i class="fas fa-check" ></i>
+                                                    </button>
+                                                    <button class="btn-tolak" onclick="showModal('tolak')">
+                                                        <i class="fas fa-times" ></i>
+                                                    </button>
+                                                    <a href="detailPermintaan" >
+                                                        <button href="/detailInfo" class="button-info">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </button>
+                                                    </a>
+                                                <% } else if (item.status === "Disetujui" || item.status === "Ditolak") { %>
+                                                    <button class="btn-setuju"  disabled>
+                                                        <i class="fas fa-check" ></i>
+                                                    </button>
+                                                    <button class="btn-tolak" disabled>
+                                                        <i class="fas fa-times" ></i>
+                                                    </button>
+                                                    <a href="detailPermintaan" >
+                                                        <button href="/detailInfo" class="button-info">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </button>
+                                                    </a>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>    
+                            </table>
+                        </div>
             </div>
         </div>
     </div>

@@ -14,46 +14,46 @@
             <a href="pengembalianAset" class="button active">Daftar Pengembalian</a>
             <a href="riwayatPengembalian" class="button inactive">Riwayat Pengembalian</a>
         </div>
-        <div class="table-responsive">
-            <table class="table-compact">
-                <thead>
-                    <tr>
-                        <th width="5%">No</th>
-                        <th width="15%">Nama</th>
-                        <th width="15%">Unit Kerja</th>
-                        <th width="15%">Nama Barang</th>
-                        <th width="15%">Serial Number</th>
-                        <th width="15%">Bukti Gambar</th>
-                        <th width="20%">Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-            <div class="table-scroll">
-                <table class="table-compact">
-                    <tbody>
-                        <% for (let i = 1; i <= 10; i++) { %>
-                        <tr>
-                            <td width="5%">1</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td>
-                                <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
-                            </td>
-                            <td width="20%">
-                                <button class="btn btn-action">
-                                    <i class="fas fa-check"></i> Selesai
-                                </button>
-                            </td>
-                        </tr>
-                        <% } %>
-                        
-                    </tbody>
-                </table>
-            
+            <div class="table-wrapper">
+                <div class="table-responsive">
+                    <div class="table-bungkus">
+                        <div class="table-scroll">
+                            <table class="table-compact">
+                                <thead>
+                                    <tr>
+                                        <th width="5%">No</th>
+                                        <th width="15%">Nama</th>
+                                        <th width="15%">Unit Kerja</th>
+                                        <th width="15%">Nama Barang</th>
+                                        <th width="15%">Serial Number</th>
+                                        <th width="15%">Bukti Gambar</th>
+                                        <th width="20%">Aksi</th>
+                                    </tr>
+                                </thead>
+                                    <tbody>
+                                        <% for (let i = 1; i <= 10; i++) { %>
+                                        <tr>
+                                            <td width="5%">1</td>
+                                            <td width="15%">Lorem Ipsum</td>
+                                            <td width="15%">Lorem Ipsum</td>
+                                            <td width="15%">Lorem Ipsum</td>
+                                            <td width="15%">Lorem Ipsum</td>
+                                            <td>
+                                                <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
+                                            </td>
+                                            <td width="20%">
+                                                <button class="btn btn-action">
+                                                    <i class="fas fa-check"></i> Selesai
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
     </div>
 </main>
 

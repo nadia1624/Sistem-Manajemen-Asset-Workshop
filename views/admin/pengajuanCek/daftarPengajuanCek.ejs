@@ -10,49 +10,53 @@
     </div>
 
     <div class="container-fluid px-4">
-        <div class="table-responsive">
-            <table class="table-compact">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Serial Number</th>
-                        <th>Nama Aset</th>
-                        <th>Gambar Aset</th>
-                        <th>Status Cek</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td width="5%">1</td>
-                        <td width="15%">Lorem Ipsum</td>
-                        <td width="15%">Lorem Ipsum</td>
-                        <td>
-                            <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
-                        </td>
-                        <td class="custom-td">
-                            <span class="custom-span">Belum diperbaiki</span>
-                          </td>
-                          
-                        
-                          <td>
-                            <button id="editButton" class="button-edit" style="margin-right: 10px;">
-                                <i class="fa-regular fa-pen-to-square"></i>
-                            </button>
-                            <a href="detailPengajuanCek">
-                            <button id="infoButton" class="button-info" style="margin-right: 10px;">
-                                <i class="fa-solid fa-circle-info"></i>
-                            </button>
-                            </a>
-                            <button id="finishButton" class="btn">
-                                <i class="fas fa-check"></i> Selesai
-                            </button>
-                        </td>
-                    </tr>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <div class="table-bungkus">
+                    <div class="table-scroll">
+                        <table class="table-compact">
+                            <thead>
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="15%">Serial Number</th>
+                                    <th width="20%">Nama Aset</th>
+                                    <th width="15%">Gambar Aset</th>
+                                    <th width="20%">Status Cek</th>
+                                    <th width="25%">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td width="5%">1</td>
+                                    <td width="15%">Lorem Ipsum</td>
+                                    <td width="20%">Lorem Ipsum</td>
+                                    <td width="15%">
+                                        <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
+                                    </td>
+                                    <td  width="20%" class="custom-td">
+                                        <span class="custom-span">Belum diperbaiki</span>
+                                    </td>
+                                    <td  width="25%">
+                                        <button id="editButton" class="button-edit" style="margin-right: 10px;">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </button>
+                                        <a href="detailPengajuanCek">
+                                        <button id="infoButton" class="button-info" style="margin-right: 10px;">
+                                            <i class="fa-solid fa-circle-info"></i>
+                                        </button>
+                                        </a>
+                                        <button id="finishButton" class="btn">
+                                            <i class="fas fa-check"></i> Selesai
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>   
     </div>
 </main>
 

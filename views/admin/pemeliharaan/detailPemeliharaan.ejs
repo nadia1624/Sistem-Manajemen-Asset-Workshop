@@ -4,11 +4,11 @@
     <div class="header-content">
         <div class="title-section">
             <a href="/admin/pemeliharaan-aset">
-                <button class="back-button">
-                    <i class="fa-solid fa-arrow-left"></i>
+                <button id="" style="display: flex; align-items: center;">
+                    <i class="fa-solid fa-arrow-left" style="font-weight: bold; font-size: 20px; margin-right: 10px;"></i>
+                    <span style="font-size: 24px; font-weight: bold; font-family: Raleway;">Detail Pemeliharaan Aset</span>
                 </button>
             </a>
-        <h3 style="font-weight: bold;">Detail Pemeliharaan Aset</h3>
         </div>  
         <div class="header-content">
             <div class="search-bar" style="margin-right: 30px;">
@@ -23,43 +23,45 @@
         </div>
     </div>
     <div class="container-fluid px-4">
-        <div class="table-responsive">
-            <table class="table-compact">
-                <thead>
-                    <tr>
-                        <th width="15%">No</th>
-                        <th width="20%">Gambar Aset</th>
-                        <th width="15%">Serial Number</th>
-                        <th width="15%">Nama Aset</th>
-                        <th width="15%">Kondisi Aset</th>
-                        <th width="15%">Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-            <div class="table-scroll">
-                <table class="table-compact">
-                    <tbody>
-                        <% for (let i = 1; i <= 10; i++) { %>
-                        <tr>
-                            <td width="15%"><%= i %></td>
-                            <td width="20%">
-                                <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
-                            </td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">
-                                <button class="button-edit">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                    </button>
-                            </td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                </table>
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <div class="table-bungkus">
+                <div class="table-scroll">
+                    <table class="table-compact">
+                        <thead>
+                            <tr>
+                                <th width="15%">No</th>
+                                <th width="20%">Gambar Aset</th>
+                                <th width="15%">Serial Number</th>
+                                <th width="15%">Nama Aset</th>
+                                <th width="15%">Kondisi Aset</th>
+                                <th width="15%">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let i = 1; i <= 10; i++) { %>
+                            <tr>
+                                <td width="15%"><%= i %></td>
+                                <td width="20%">
+                                    <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
+                                </td>
+                                <td width="15%">Lorem Ipsum</td>
+                                <td width="15%">Lorem Ipsum</td>
+                                <td width="15%">Lorem Ipsum</td>
+                                <td width="15%">
+                                    <button class="button-edit">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                        </button>
+                                </td>
+                            </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-        </div>
-        </div>
+    </div>
 </main>
 <!-- Pop-Up Modal Konfirmasi -->
 <div id="addModal" class="popup-modal" >

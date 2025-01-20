@@ -243,6 +243,7 @@ th,
 td {
   padding: 15px;
   text-align: center;
+  vertical-align: middle;
 }
 
 th {
@@ -255,25 +256,68 @@ thead {
   background-color: #fff;
 }
 
-/* Scrollable tbody */
-.table-scroll {
-  overflow-x: auto;
-  overflow-y: auto;
-  height: 66vh; /* Menggunakan 50% dari tinggi layar */
-  max-height: 480px; /* Maksimal tinggi tabel */
+.table-bungkus {
+  position: relative;
+  width: 100%;
+  height: 80%;
+  max-height: 480px;
 }
 
-/* Media Query untuk layar kecil, misalnya untuk smartphone */
+/* Responsive styles */
 @media (max-width: 768px) {
+  .table-bungkus {
+    max-height: 40vh;
+  }
   .table-scroll {
-    height: 40vh; /* Mengatur tinggi tabel untuk layar lebih kecil */
+    max-height: calc(40vh - 48px);
   }
 }
 
-/* Media Query untuk tablet atau layar besar */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .table-bungkus {
+    max-height: 45vh;
+  }
+  .table-scroll {
+    max-height: calc(45vh - 48px);
+  }
+}
+
+/* Scrollable tbody */
+.table-scroll {
+  overflow-y: auto;
+  max-height: calc(600px - 48px); /* 48px adalah perkiraan tinggi thead */
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Media Query untuk layar kecil, misalnya untuk smartphone */
+.table-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+@media (max-width: 768px) {
+  .table-scroll {
+      max-height: 40vh;
+  }
+}
+
 @media (min-width: 769px) and (max-width: 1024px) {
   .table-scroll {
-    height: 45vh; /* Mengatur tinggi tabel untuk tablet */
+      max-height: 45vh;
   }
 }
 
@@ -307,10 +351,6 @@ td:first-child {
 }
 .btn i {
   margin-right: 5px;
-}
-td {
-  text-align: center;
-  vertical-align: middle;
 }
 
 td img {
@@ -405,6 +445,14 @@ td button i {
   margin: 0 auto;
   text-align: center;
   position: relative;
+}
+
+#editModal .modal-content {
+  max-width: 550px;
+}
+
+#addModal .modal-content {
+  max-width: 550px;
 }
 
 .modal-content h3 {
@@ -518,18 +566,22 @@ th {
 
 .container-fluid {
   width: 100%;
+  height: auto;
   margin: 0 auto;
   padding: 0 15px;
 }
 
 .table-wrapper {
   margin: 15px 0;
+  height: auto;
   border-radius: 14px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background: white;
 }
 
 .table-responsive {
+  position: relative;
+  height: 100%;
   margin: 15px 0;
   border-radius: 14px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -544,21 +596,34 @@ th {
   border-collapse: collapse;
 }
 
-.table-compact th {
+.table-compact thead {
   position: sticky;
   top: 0;
+  z-index: 2; /* Naikkan z-index */
   background: white;
-  z-index: 1;
-  padding: 12px 8px;
-  font-size: 14px;
-  text-align: center;
+}
+
+.table-compact thead tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table-compact th {
   border-bottom: 1px solid #e2e8f0;
+}
+
+.table-compact tbody {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .table-compact th,
 .table-compact td {
   padding: 12px 8px;
   font-size: 14px;
+  text-align: center;
 }
 
 .table-header table {
@@ -634,6 +699,11 @@ th {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+
+.form-group select {
+  margin-top: 5px;
+  height: 41.5px;
 }
 
 .button-group {
@@ -906,12 +976,13 @@ a i {
 
 .custom-span {
   display: inline-block;
-  padding: 12px 24px; /* px-6 py-3 */
-  font-size: 14px; /* text-sm */
-  font-weight: 600; /* font-semibold */
+  padding: 8px 28px; /* px-6 py-3 */
+  font-size: 12px; /* text-sm */
+  font-weight: bold; /* font-semibold */
   color: #232323; /* text-gray-700 */
   background-color: #d1d5db; /* bg-gray-300 */
   border-radius: 30px; /* rounded-[16px] */
+  width: auto;
 }
 
 .status-badge {
@@ -965,7 +1036,6 @@ a i {
   padding: 0;
   margin-top: 8px;
   margin-bottom: 8px;
-  margin-left: 12px;
   margin-right: 12px;
 
   /* Box shadow for depth */
@@ -1039,6 +1109,7 @@ a i {
   margin: 0;
   margin-top: 8px;
   margin-bottom: 8px;
+  margin-right: 12px;
 
   /* Box shadow for depth */
   box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
@@ -1548,6 +1619,8 @@ h1 {
   padding: 0;
   margin-top: 8px;
   margin-bottom: 8px;
+  margin-left: 12px;
+  margin-right: 12px;
 
   /* Box shadow for depth */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

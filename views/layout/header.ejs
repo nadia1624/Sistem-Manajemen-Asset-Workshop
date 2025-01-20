@@ -90,7 +90,10 @@
         <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
           <a href="/profil" class="block px-4 py-2 text-gray-700">Lihat Profil</a>
           <a href="/ubahPass" class="block px-4 py-2 text-gray-700">Ubah Password</a>
-          <a href="/logout" class="block px-4 py-2 text-gray-700">Logout</a>
+          <form id="logoutForm" action="/logout" method="POST" style="display:none;"></form>
+          <a href="#" class="block px-4 py-2 text-gray-700" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+          
+          
         </div>
       </div>
       

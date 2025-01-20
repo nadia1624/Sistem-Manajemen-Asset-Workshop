@@ -1,17 +1,19 @@
 const express = require("express");
-const route = require('./routes/index')
+const http = require('http');
 const path = require('path');
 const bodyParser = require('body-parser')
-const User = require('./models/user')
-const Kategori = require('./models/kategori')
-const Aset = require('./models/aset')
-const Permintaan = require('./models/permintaan')
-const Penyerahan = require('./models/penyerahan')
-const Pengembalian = require('./models/pengembalian')
-const PengajuanCek = require('./models/pengajuanCek')
-const PengembalianVendor = require('./models/pengembalianVendor')
-const Pemeliharaan = require('./models/pemeliharaan')
-const DetailPemeliharaan = require('./models/detailPemeliharaan')
+const cookieParser = require('cookie-parser');  
+const route = require('./routes/index')
+// const User = require('./models/user')
+// const Kategori = require('./models/kategori')
+// const Aset = require('./models/aset')
+// const Permintaan = require('./models/permintaan')
+// const Penyerahan = require('./models/penyerahan')
+// const Pengembalian = require('./models/pengembalian')
+// const PengajuanCek = require('./models/pengajuanCek')
+// const PengembalianVendor = require('./models/pengembalianVendor')
+// const Pemeliharaan = require('./models/pemeliharaan')
+// const DetailPemeliharaan = require('./models/detailPemeliharaan')
 
 
 const db = require("./config/db");
@@ -22,6 +24,8 @@ const PORT = process.env.PORT;
 const app = express();
 
 app.use(express.json())
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 app.use(route)
 
   
@@ -32,7 +36,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-//db.sync({alter: true})
+app.get('/', (req, res) => {
+    res.render('login');
+  });
+
+// db.sync({alter: true})
+
 
 
 app.listen(PORT, () => {

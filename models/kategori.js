@@ -12,7 +12,7 @@ const Kategori = db.define (
        nama_kategori : {
         type : Sequelize.STRING, 
         allowNull : false
-       } 
+       }
     }, 
     {
         tableName: "kategoris",

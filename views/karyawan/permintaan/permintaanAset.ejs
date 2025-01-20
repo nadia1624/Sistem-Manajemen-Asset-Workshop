@@ -40,9 +40,9 @@
       <table class="table-compact">
         <tbody>
           <% const dataDummy = [
-              { no: 1, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis", status: "disetujui" },
-              { no: 2, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru", status: "ditolak" },
-              { no: 3, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi", status: "diproses" }
+              { no: 1, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis", status: "Disetujui" },
+              { no: 2, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru", status: "Ditolak" },
+              { no: 3, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi", status: "Diproses" },
           ]; %>
 
           <% dataDummy.forEach((item) => { %>
@@ -55,15 +55,21 @@
                   </td>
                   <td><%= item.kategori %></td>
                   <td><%= item.deskripsi %></td>
+                  <td width="15%">
+                    <% if (item.status === "Disetujui") { %>
+                        <div class="status-badge disetujui">Disetujui</div>
+                    <% } else if (item.status === "Ditolak") { %>
+                        <div class="status-badge ditolak">Ditolak</div>
+                    <% } else if (item.status === "Diproses") { %>
+                        <div class="status-badge diproses">Diproses</div>
+                    <% } %>
+                </td>
                   <td>
-                      <span class="status-badge <%= item.status %>"><%= item.status %></span>
-                  </td>
-                  <td>
-                      <% if (item.status === "disetujui") { %>
+                      <% if (item.status === "Disetujui") { %>
                         <button class="btn btn-upload" onclick="openModal('uploadModal')">
                           <i class="fa-solid fa-arrow-up-from-bracket"></i>Upload TTD
                         </button>
-                      <% } else if (item.status === "diproses") { %>
+                      <% } else if (item.status === "Diproses") { %>
                         <button class="btn btn-batal" onclick="openModal('cancelModal')">
                           <i class="fa-solid fa-circle-xmark"></i>Batalkan
                         </button>

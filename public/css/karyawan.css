@@ -219,20 +219,17 @@ td img {
 
 /*Permintaaan dan penyerahan Karyawan*/
 .status-badge {
-  display: inline-flex;
-  justify-content: center; 
-  align-items: center; 
-  padding: 5px 12px;
-  font-size: 14px;
+  justify-content: center;
+  align-items: center;
+  padding: 7px 10px;
+  font-size: 12px;
   font-weight: bold;
   color: black;
   border-radius: 15px;
   text-transform: capitalize;
   line-height: 1.5;
-  height: 35px;
-  min-width: 120px;
-  width: 90px;
-  text-align: center;
+  height: 30px;
+  width: 100%;
 }
 
 .status-badge.disetujui { 
@@ -241,6 +238,7 @@ td img {
 
 .status-badge.ditolak { 
   background-color: #DD5F61;
+  color: white;
 }
 
 .status-badge.diproses {
@@ -252,6 +250,7 @@ td img {
 }
 
 .status-badge.Notreturned {
+  color: white;
   background-color: #DD5F61;
 }
 

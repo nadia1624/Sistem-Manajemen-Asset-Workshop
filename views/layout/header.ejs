@@ -64,18 +64,19 @@
             { title: 'Riwayat', path: '/karyawan/riwayatKaryawan' }
           ]; %>
   
-          <% navItems.forEach((item, index) => { %>
-            <a
-              href="<%= item.path %>"
-              class="<%= 
-                currentPath === item.path 
-                  ? 'px-5 py-2 bg-red-600 text-white rounded-full font-bold hover:bg-red-800 transition-colors' 
-                  : (index === 0 ? 'ml-0' : 'ml-8') + ' text-gray-800 hover:text-gray-400 font-bold'
-              %>"
-            >
-              <%= item.title %>
-            </a>
-          <% }); %>
+  <% navItems.forEach((item, index) => { %>
+    <a
+      href="<%= item.path %>"
+      class="<%= 
+        currentPath === item.path 
+          ? 'px-5 py-2 bg-red-600 text-white rounded-full font-bold hover:bg-red-800 transition-colors' 
+          : 'text-gray-800 hover:text-gray-400 font-bold'
+      %> <%= index === 0 ? 'ml-0' : 'ml-8' %>"
+    >
+      <%= item.title %>
+    </a>
+  <% }); %>
+  
         </div>
       </div>
   

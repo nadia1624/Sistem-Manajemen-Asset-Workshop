@@ -77,11 +77,17 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
+                </table>
+                <div class="table-scroll">
+                <table class="table-compact">
                 <tbody>
                     <% const dataDummy = [
                         { no: 1, nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis" },
                         { no: 2, nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru" },
                         { no: 3, nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi" },
+                        { no: 1, nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis" },
+                        { no: 2, nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru" },
+                        { no: 3, nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi" }
                     ]; %>
 
                     <% dataDummy.forEach((item) => { %>
@@ -130,16 +136,19 @@
   </div>
 </div>
 
- <!-- Modal Return -->
- <div id="returnModal" class="modal">
+<!-- Modal Return -->
+<div id="returnModal" class="modal">
   <div class="modal-content">
-      <h3>Pengembalian Aset</h3>
-      <p>Apakah kamu yakin akan mengembalikan aset <span id="returnAssetName"></span>?</p>
-      <div class="modal-actions" style="display: flex; justify-content: center; margin-top: 20px;">
-        <button type="button" class="cancel-btn" onclick="closeReturnModal()">Tidak</button>
-        <button type="button" class="finish-btn" onclick="submitComplaint()">Ya</button>
+    <span class="close-btn" onclick="closeReturnModal()">&times;</span>
+    <h3>Pengembalian Aset</h3>
+    <p>Apakah kamu yakin akan mengembalikan aset <span id="returnAssetName"></span>?</p>
+    <div class="modal-actions" style="display: flex; justify-content: center; margin-top: 20px;">
+      <button type="button" class="cancel-btn" onclick="closeReturnModal()">Tidak</button>
+      <button type="button" class="finish-btn" onclick="confirmReturn()">Ya</button>
     </div>
+  </div>
 </div>
+
 
 <script>
   // Open Modal
@@ -173,8 +182,9 @@ function closeReturnModal() {
 }
 
 function confirmReturn() {
-    alert("Pengembalian aset berhasil dikonfirmasi!");
-    closeReturnModal();
+    // Tampilkan pesan sukses
+    alert("Pengembalian aset berhasil dikonfirmasi");
+    closeReturnModal(); // Tutup modal setelah konfirmasi
 }
 </script>
 

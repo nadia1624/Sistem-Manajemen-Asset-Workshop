@@ -246,12 +246,12 @@ td img {
 }
 
 .status-badge.returned {
-  background-color: #4CAF50;
+  background-color: #A2E180;
 }
 
 .status-badge.Notreturned {
-  background-color: #f44336;
   color: white;
+  background-color: #DD5F61;
 }
 
 @media (max-width: 768px) {

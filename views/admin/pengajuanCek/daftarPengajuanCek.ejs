@@ -14,47 +14,51 @@
             <table class="table-compact">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Serial Number</th>
-                        <th>Nama Aset</th>
-                        <th>Gambar Aset</th>
-                        <th>Status Cek</th>
-                        <th>Aksi</th>
+                        <th width="5%">No</th>
+                        <th width="15%">Serial Number</th>
+                        <th width="15%">Nama Aset</th>
+                        <th width="15%">Gambar Aset</th>
+                        <th width="15%">Status Cek</th>
+                        <th width="20%">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td width="5%">1</td>
-                        <td width="15%">Lorem Ipsum</td>
-                        <td width="15%">Lorem Ipsum</td>
-                        <td>
-                            <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
-                        </td>
-                        <td class="custom-td">
-                            <span class="custom-span">Belum diperbaiki</span>
-                          </td>
-                          
-                        
-                          <td>
-                            <button id="editButton" class="button-edit" style="margin-right: 10px;">
-                                <i class="fa-regular fa-pen-to-square"></i>
-                            </button>
-                            <a href="detailPengajuanCek">
-                            <button id="infoButton" class="button-info" style="margin-right: 10px;">
-                                <i class="fa-solid fa-circle-info"></i>
-                            </button>
-                            </a>
-                            <button id="finishButton" class="btn">
-                                <i class="fas fa-check"></i> Selesai
-                            </button>
-                        </td>
-                    </tr>
-                    </tr>
-                </tbody>
             </table>
+            <div class="table-scroll">
+                <table class="table-compact">
+                    <tbody>
+                        <% for (let i = 1; i <= 10; i++) { %>
+                        <tr>
+                            <td width="5%">1</td>
+                            <td width="15%">Lorem Ipsum</td>
+                            <td width="15%">Lorem Ipsum</td>
+                            <td width="15%">
+                                <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
+                            </td>
+                            <td class="custom-td" width="15%">
+                                <span class="custom-span">Belum diperbaiki</span>
+                            </td>
+                            <td width="20%">
+                                <button class="button-edit" style="margin-right: 2px;">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
+                                <a href="detailPengajuanCek">
+                                    <button class="button-info" style="margin-right: 5px;">
+                                        <i class="fa-solid fa-circle-info"></i>
+                                    </button>
+                                </a>
+                                <button class="btn">
+                                    <i class="fas fa-check"></i> Selesai
+                                </button>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </main>
+
 
 <!-- Popup Modal -->
 <div id="addModal" class="popup-modal" style="display: none;">

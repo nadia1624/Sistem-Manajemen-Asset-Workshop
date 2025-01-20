@@ -75,6 +75,7 @@
             <div class="table-scroll">
                 <table class="table-compact">
                     <tbody></tbody>
+                    <% for (let i = 1; i <= 10; i++) { %>
                         <tr>
                             <td width="5%">1</td>
                             <td width="15%">Lorem Ipsum</td>
@@ -86,11 +87,11 @@
                                 <span class="custom-span">Belum diproses</span>
                               </td>
                             <td width="20%">
-                                <button id="editButton" class="button-edit" style="margin-right: 10px;">
+                                <button id="editButton" class="button-edit" style="margin-right: 2px;">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </button>
                                 <a href="detailAsetKaryawan">
-                                <button id="infoButton" class="button-info" style="margin-right: 10px;">
+                                <button id="infoButton" class="button-info" style="margin-right: 5px;">
                                     <i class="fa-solid fa-circle-info"></i>  
                                 </button>  
                             </a>         
@@ -99,7 +100,7 @@
                                 </button>
                             </td>
                         </tr>
-                        
+                        <% } %>
                     </tbody>
                 </table>
         </div>

@@ -937,6 +937,7 @@ a i {
 .status-badge.belumdiserahkan,
 .status-badge.ditolak {
   background-color: #dd5f61; /* Merah untuk ditolak */
+  color: white;
 }
 
 .status-badge.diproses {

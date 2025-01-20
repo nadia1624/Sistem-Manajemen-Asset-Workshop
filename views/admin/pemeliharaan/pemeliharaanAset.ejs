@@ -1,6 +1,5 @@
 <%- include("../../layout/sidebar.ejs") %>
 
-
 <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Pemeliharaan Aset</h3>
@@ -34,32 +33,33 @@
                 <table class="table-compact">
                     <tbody>
                         <% for (let i = 1; i <= 10; i++) { %>
-                        <tr>
-                            <td width="5%"><%= i %></td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%">Lorem Ipsum</td>
-                            <td width="15%" class="custom-td">
-                                <span class="custom-span" style="background-color: #A2E180; font: black;">Telah Dilakukan</span>
-                            </td>
-                            <td width="20%">
-                                <a href="pemeliharaan-aset/detail">
-                                <button  class="button-arrow">
-                                    <i class="fa-solid fa-arrow-right"></i>
+                            <tr style="text-align: center;">
+                                <td width="5%"><%= i %></td>
+                                <td width="15%">Lorem Ipsum</td>
+                                <td width="15%">Lorem Ipsum</td>
+                                <td width="15%">Lorem Ipsum</td>
+                                <td width="15%" class="custom-td">
+                                    <span class="custom-span" style="background-color: #A2E180; font: black;">Telah Dilakukan</span>
+                                </td>
+                                <td width="20%">
+                                    <a href="pemeliharaan-aset/detail">
+                                        <button class="button-arrow">
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </button>
+                                    </a>
+                                    <button class="button-delete">
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
-                                </a>
-                                <button class="button-delete">
-                                    <i class="fa-solid fa-trash"></i>
-                                    </button>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                         <% } %>
                     </tbody>
                 </table>
+            </div>
         </div>
-        </div>
-        </div>
+    </div>
 </main>
+
 <div id="addModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
@@ -72,7 +72,6 @@
                 <option value="Kategori 2">Kategori 2</option>
                 <option value="Kategori 3">Kategori 3</option>
             </select>
-
 
             <label for="jadwal" class="left-label">Jadwal</label>
             <input type="date" id="jadwal" name="jadwal" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10" required>
@@ -97,7 +96,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
     // Mendapatkan elemen modal dan tombol
@@ -161,6 +159,3 @@
         }
     };
 </script>
-
-</body>
-</html>

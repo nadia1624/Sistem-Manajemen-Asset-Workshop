@@ -152,36 +152,6 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    let activeTab = localStorage.getItem("activeTab");
-    let buttons = document.querySelectorAll(".button");
-
-    // Jika ada tab yang aktif yang disimpan di localStorage
-    if (activeTab) {
-        buttons.forEach(btn => {
-            if (btn.getAttribute("href") === activeTab) {
-                btn.classList.add("active");
-            } else {
-                btn.classList.remove("active");
-            }
-        });
-    }
-
-    // Mengatur kelas 'active' ketika tombol diklik
-    buttons.forEach(btn => {
-        btn.addEventListener('click', function (event) {
-            event.preventDefault();
-            let href = btn.getAttribute("href");
-            localStorage.setItem("activeTab", href);
-            buttons.forEach(button => button.classList.remove("active"));
-            btn.classList.add("active");
-            window.location.href = href;
-        });
-    });
-});
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
         const modal = document.getElementById("addModal");
         const closeBtn = document.getElementById("closeBtn");
         const editForm = document.getElementById("editForm");

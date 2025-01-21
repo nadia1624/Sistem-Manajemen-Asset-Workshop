@@ -1,17 +1,22 @@
-const express = require('express')
+const express = require('express');
+const peminjamanControllers = require('../controllers/peminjamanControllers');
+const verifyToken = require('../middleware/validtokenMiddleware');
+const role = require("../middleware/checkroleMiddleware");
 
 const peminjamanRouter = express.Router()
 
 
-//karyawan
-peminjamanRouter.get('/karyawan/peminjamanAset', (req, res) => {
-    const currentPath = req.path; // Dapatkan path saat ini
-    res.render('karyawan/peminjaman/peminjamanAset', { currentPath }); // Kirim currentPath ke template
-});
+peminjamanRouter.get('/karyawan/peminjamanAset', 
+    verifyToken, 
+    role("karyawan"), 
+    peminjamanControllers.getPeminjaman
+);
 
 peminjamanRouter.get('/karyawan/laporanCek', (req, res) => {
-    const currentPath = req.path; // Dapatkan path saat ini
-    res.render('karyawan/peminjaman/laporanCek', { currentPath }); // Kirim currentPath ke template
+    const currentPath = req.path; 
+    res.render('karyawan/peminjaman/laporanCek', { currentPath }); 
 });
+
+peminjamanRouter.post('/karyawan/peminjamanAset/cek/:penyerahanId', verifyToken, role('karyawan'), peminjamanControllers.createPengajuanCek )
 
 module.exports = peminjamanRouter

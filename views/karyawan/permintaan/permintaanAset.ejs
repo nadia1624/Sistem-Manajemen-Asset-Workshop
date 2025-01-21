@@ -39,37 +39,36 @@
     <div class="table-scroll">
       <table class="table-compact">
         <tbody>
-          <% const dataDummy = [
+          <% const listPermintaan = [
               { no: 1, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis", status: "Disetujui" },
               { no: 2, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru", status: "Ditolak" },
               { no: 3, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi", status: "Diproses" },
           ]; %>
-
-          <% dataDummy.forEach((item) => { %>
+          <% listPermintaan.forEach((permintaan, index) => { %>
               <tr>
-                  <td><%= item.no %></td>
-                  <td><%= item.tanggal %></td>
-                  <td><%= item.nama %></td>
+                  <td><%= permintaan.no %></td>
+                  <td><%= permintaan.tanggal %></td>
+                  <td><%= permintaan.nama %></td>
                   <td>
-                      <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>"/>
+                      <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.gambar %>"/>
                   </td>
-                  <td><%= item.kategori %></td>
-                  <td><%= item.deskripsi %></td>
+                  <td><%= permintaan.kategori %></td>
+                  <td><%= permintaan.deskripsi %></td>
                   <td width="15%">
-                    <% if (item.status === "Disetujui") { %>
+                    <% if (permintaan.status === "Disetujui") { %>
                         <div class="status-badge disetujui">Disetujui</div>
-                    <% } else if (item.status === "Ditolak") { %>
+                    <% } else if (permintaan.status === "Ditolak") { %>
                         <div class="status-badge ditolak">Ditolak</div>
-                    <% } else if (item.status === "Diproses") { %>
+                    <% } else if (permintaan.status === "Diproses") { %>
                         <div class="status-badge diproses">Diproses</div>
                     <% } %>
                 </td>
                   <td>
-                      <% if (item.status === "Disetujui") { %>
+                      <% if (permintaan.status === "Disetujui") { %>
                         <button class="btn btn-upload" onclick="openModal('uploadModal')">
                           <i class="fa-solid fa-arrow-up-from-bracket"></i>Upload TTD
                         </button>
-                      <% } else if (item.status === "Diproses") { %>
+                      <% } else if (permintaan.status === "Diproses") { %>
                         <button class="btn btn-batal" onclick="openModal('cancelModal')">
                           <i class="fa-solid fa-circle-xmark"></i>Batalkan
                         </button>
@@ -83,22 +82,10 @@
 </div>
 </div>
 </main>
+</body>
 
-<!-- Modal Pop-Up Tanda Tangan -->
-<div id="uploadModal" class="modal">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
-    <h3>Upload Tanda Tangan</h3>
-    <form id="uploadForm">
-      <label for="signatureInput">Pilih file tanda tangan:</label>
-      <input type="file" id="signatureInput" accept="image/*" required />
-      <div class="modal-actions">
-          <button type="button" class="btn cancel-btn" onclick="closeModal('uploadModal')">Batal</button>
-        <button type="submit" class="btn finish-btn" onclick="submitUpload()">Upload</button>
-      </div>
-    </form>
-  </div>
-</div>
+
+
 
 <!-- Modal Pop-Up Cancel Permintaan -->
 <div id="cancelModal" class="modal">
@@ -113,4 +100,64 @@
   </div>
 </div>
 
-</body>
+<!-- Modal Pop-Up Tanda Tangan -->
+<div id="uploadModal" class="modal">
+  <div class="modal-content" >
+    <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
+    <h3>Upload Tanda Tangan</h3>
+    <form id="uploadForm">
+      <label for="signatureInput">Pilih file tanda tangan:</label>
+      <input type="file" id="signatureInput" accept="image/*" required />
+      <div class="modal-actions">
+          <button type="button" class="btn cancel-btn" onclick="closeModal('uploadModal')">Batal</button>
+        <button type="submit" class="btn finish-btn" onclick="submitUpload()">Upload</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  // Fungsi untuk membuka modal
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+  }
+
+  // Fungsi untuk menutup modal
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'none';
+  }
+
+  // Fungsi untuk menghandle pengiriman file upload
+  function submitUpload() {
+    const signatureInput = document.getElementById('signatureInput');
+    if (signatureInput.files.length === 0) {
+      alert("Silakan pilih file tanda tangan terlebih dahulu.");
+      return;
+    }
+    // Logika untuk mengupload file tanda tangan (misalnya mengirim data ke server)
+    alert("Tanda tangan berhasil diupload!");
+    closeModal('uploadModal');
+  }
+
+  // Fungsi untuk mengonfirmasi pembatalan permintaan
+  function confirmCancel() {
+    alert("Permintaan telah dibatalkan!");
+    closeModal('cancelModal');
+    // Logika untuk membatalkan permintaan di server dapat ditambahkan di sini
+  }
+
+  // Menutup modal jika user mengklik di luar modal
+  window.onclick = function (event) {
+    const uploadModal = document.getElementById('uploadModal');
+    const cancelModal = document.getElementById('cancelModal');
+    if (event.target === uploadModal) {
+      closeModal('uploadModal');
+    }
+    if (event.target === cancelModal) {
+      closeModal('cancelModal');
+    }
+  }
+</script> 

@@ -20,7 +20,7 @@ const Pemeliharaan = db.define(
         },
         status_pemeliharaan : {
             type : Sequelize.ENUM, 
-            values : ['belum terlaksana', 'sudah terlaksana'],
+            values : ['belum terlaksana', 'sudah terlaksana', 'tidak terlaksana'],
             allowNull : false
         },
         kategoriId : {

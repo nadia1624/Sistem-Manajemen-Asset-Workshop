@@ -18,7 +18,6 @@ button {
 }
 
 body,
-table,
 button,
 input {
   margin: 0;
@@ -38,26 +37,32 @@ html {
 }
 
 .content {
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 0px 20px;
   max-width: 95%;
   margin: 20px auto;
-  overflow-y: auto;
+  
 }
 
 .header-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
-  padding-left: 20px;
+  padding-right: 16px;
+  padding-left: 16px;
+  padding-bottom: 16px;
 }
 
 .header-content h3 {
   font-weight: 500;
   font-size: 24px;
 }
+
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 
 /* Dropdown Container */
 #profileDropdown {
@@ -150,16 +155,34 @@ html {
 
 .container-fluid {
   width: 100%;
+  height: auto;
   margin: 0 auto;
   padding: 0 15px;
 }
 
-.table-responsive {
-  
+.table-wrapper {
   margin: 15px 0;
-  border-radius: 10px;
+  height: auto;
+  border-radius: 14px;
+  background: white;
+}
+
+.table-responsive {
+  position: relative;
+  height: auto;
+  width: 100%;
+  margin: 15px 0;
+  border-radius: 14px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background: white;
+  overflow: hidden;
+}
+
+.table-bungkus {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 200px;
 }
 
 .header h1 {
@@ -189,30 +212,129 @@ html {
 }
 
 .table-compact {
+  width: auto;
+  min-width: 1200px; 
+  margin-bottom: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table-compact thead {
+  width: auto;
+  position: sticky;
+  top: 0;
+  z-index: 2; /* Naikkan z-index */
+  background: white;
+}
+
+.table-compact thead tr {
   width: 100%;
-  min-width: 800px; 
+  table-layout: fixed;
+}
+
+.table-compact th {
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.table-compact td {
+  font-size: 12px;
+}
+
+.table-compact tr {
+  width: 100%;
+  display: table-row; /* Tambahkan ini */
+}
+
+.table-compact tbody {
+  width: 100%; /* Ubah dari auto ke 100% */
+  table-layout: fixed; /* Inherit dari parent table */
+}
+
+.table-compact th,
+.table-compact td {
+  padding: 12px 8px;
+  text-align: center;
 }
 
 th, td {
   padding: 15px;
   text-align: center;
-  vertical-align: middle; 
-  width: 12%;
-
+  vertical-align: middle;
 }
-th:nth-child(1), td:nth-child(1) {
+
+/* th:nth-child(1), td:nth-child(1) {
   width: 5%; 
-}
+} */
 
-thead, th {
+th {
   background-color: #fff;
   color: #000;
   font-weight: bold;
 }
 
+thead {
+  background-color: #fff;
+}
+
+
 .table-scroll {
-  max-height: 420px; 
   overflow-y: auto;
+  overflow-x: auto;
+  width: 100%;
+  max-height: calc(600px - 48px); /* 48px adalah perkiraan tinggi thead */
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .table-bungkus {
+    max-height: 40vh;
+  }
+  .table-scroll {
+    max-height: calc(40vh - 48px);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .table-bungkus {
+    max-height: 45vh;
+  }
+  .table-scroll {
+    max-height: calc(45vh - 48px);
+  }
+}
+
+/* Media Query untuk layar kecil, misalnya untuk smartphone */
+.table-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+@media (max-width: 768px) {
+  .table-scroll {
+      max-height: 40vh;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .table-scroll {
+      max-height: 45vh;
+  }
 }
 
 .table-scroll table {
@@ -221,22 +343,23 @@ thead, th {
 }
 
 tr:nth-child(even) {
-  background-color: #f5f5f5;
+  background-color: #ffffff;
 }
 
 tr:nth-child(odd) {
   background-color: #ffecec;
 }
 
+/*
 td {
   text-align: center;
   vertical-align: middle;
   font-size: 12px;
-}
+} */
 
 td img {
-  max-width: 75px;
-  max-height: 75px;
+  max-width: 100px;
+  max-height: 100px;
   display: block;
   margin: 0 auto;
 }
@@ -285,29 +408,6 @@ td img {
   color: white;
 }
 
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .search-bar input {
-    width: 100%;
-  }
-
-  .table-compact th,
-  .table-compact td {
-    background-color: #f8f8f8;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-  }
-
-  button.btn {
-    font-size: 12px;
-  }
-}
-
 /*Permintaaan dan penyerahan Karyawan*/
 .status-badge {
   justify-content: center;
@@ -349,7 +449,7 @@ td img {
   .status-badge {
     width: auto;
     height: 30px;
-    font-size: 13px;
+    font-size: 12px;
     padding: 4px 8px;
   }
 }
@@ -691,6 +791,20 @@ label {
   .buttons button {
       flex: 1;
       max-width: none;
+  }
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+@media (max-width: 768px) {
+  .grid-cols-1 {
+      gap: 1.5rem;
+  }
+  
+  .aspect-square {
+      max-height: 300px;
   }
 }
 

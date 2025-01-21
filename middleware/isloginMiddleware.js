@@ -14,7 +14,6 @@ function isLogin(req, res, next) {
             message: "Gagal untuk melakukan verifikasi token.",
           });
       }
-
       req.userId = decoded.id;
       req.userRole = decoded.role;
       req.userEmail = decoded.email;
@@ -27,6 +26,7 @@ function isLogin(req, res, next) {
       req.userGambar = decoded.gambar;
 
     });
+    console.log(token)
     if (req.userRole == "karyawan") {
       return res.redirect("/karyawan/daftar-aset");
     } else if (req.userRole == "admin") {

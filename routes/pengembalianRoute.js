@@ -1,4 +1,7 @@
-const express = require('express')
+const express = require('express');
+const pengembalianControllers = require('../controllers/pengembalianControllers');
+const verifyToken = require('../middleware/validtokenMiddleware');
+const role = require("../middleware/checkroleMiddleware");
 
 const pengembalianRouter = express.Router()
 
@@ -15,5 +18,10 @@ pengembalianRouter.get('/karyawan/riwayatKaryawan', (req, res) => {
 });
 
 //karyawan
+pengembalianRouter.post('/karyawan/return/:idpenyerahan', 
+    verifyToken, 
+    role("karyawan"), 
+    pengembalianControllers.returnAset
+);
 
 module.exports = pengembalianRouter

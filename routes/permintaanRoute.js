@@ -1,22 +1,34 @@
-const express = require('express')
-
-
-const permintaanRouter = express.Router()
+const express = require('express');
+const permintaanRouter = express.Router();
+const PermintaanController = require('../controllers/PermintaanControllers');
+const verifyToken= require ('../middleware/validtokenMiddleware');
+const role = require("../middleware/checkroleMiddleware");
+const { Aset } = require('../models'); // Menambahkan Aset model
 
 //admin
-permintaanRouter.get('/admin/permintaanAset', (req, res) => {
-    res.render('admin/permintaan/permintaanAset');
-});
+  // Endpoint untuk admin: Bisa melihat semua permintaan aset dari semua karyawan
+  permintaanRouter.get(
+    '/admin/permintaanAset',
+    verifyToken,
+    role("admin"),
+    PermintaanController.getPermintaanAsetAdmin
+  );
+  
 
-permintaanRouter.get('/admin/detailPermintaan', (req, res) => {
+permintaanRouter.get('/admin/detailPermintaan',verifyToken, role("admin"), (req, res) => {
     res.render('admin/permintaan/detailPermintaan');
 });
 
 //karyawan
-permintaanRouter.get('/karyawan/permintaanAset', (req, res) => {
-    const currentPath = req.path; // Dapatkan path saat ini
-    res.render('karyawan/permintaan/permintaanAset', { currentPath }); // Kirim currentPath ke template
-});
 
+// Endpoint untuk karyawan: Hanya bisa melihat permintaan aset mereka sendiri
+permintaanRouter.get(
+    '/karyawan/permintaanAset',
+    verifyToken,
+    role("karyawan"),
+    PermintaanController.getPermintaanAsetKaryawan
+  );
+// Endpoint untuk membuat permintaan aset oleh karyawan
+permintaanRouter.post('/karyawan/permintaanAset', verifyToken, role("karyawan"), PermintaanController.createPermintaanAset);
 
 module.exports = permintaanRouter

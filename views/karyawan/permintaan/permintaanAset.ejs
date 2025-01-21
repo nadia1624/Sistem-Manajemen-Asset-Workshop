@@ -29,6 +29,76 @@
                     <th>Deskripsi</th>
                     <th>Status</th>
                     <th>Aksi</th>
+                </tr>
+            </thead>
+ <tbody>
+           <% listPermintaan.forEach((permintaan, index) => { %>
+              <tr>
+                  <td><%= permintaan.no %></td>
+                  <td><%= permintaan.tanggal %></td>
+                  <td><%= permintaan.nama %></td>
+                  <td>
+                      <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.gambar %>"/>
+                  </td>
+                  <td><%= permintaan.kategori %></td>
+                  <td><%= permintaan.deskripsi %></td>
+                  <td width="15%">
+                    <% if (permintaan.status === "Disetujui") { %>
+                        <div class="status-badge disetujui">Disetujui</div>
+                    <% } else if (permintaan.status === "Ditolak") { %>
+                        <div class="status-badge ditolak">Ditolak</div>
+                    <% } else if (permintaan.status === "Diproses") { %>
+                        <div class="status-badge diproses">Diproses</div>
+                    <% } %>
+                </td>
+                  <td>
+                      <% if (permintaan.status === "Disetujui") { %>
+                        <button class="btn btn-upload" onclick="openModal('uploadModal')">
+                          <i class="fa-solid fa-arrow-up-from-bracket"></i>Upload TTD
+                        </button>
+                      <% } else if (permintaan.status === "Diproses") { %>
+                        <button class="btn btn-batal" onclick="openModal('cancelModal')">
+                          <i class="fa-solid fa-circle-xmark"></i>Batalkan
+                        </button>
+                      <% } %>
+                       </td>                                  
+                      </tr>
+                   <% }); %>
+                </tbody>
+               </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+
+
+
+<!-- Modal Pop-Up Cancel Permintaan -->
+<div id="cancelModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('cancelModal')">&times;</span>
+    <h3>Konfirmasi Pembatalan</h3>
+    <p>Apakah Anda yakin ingin membatalkan permintaan ini?</p>
+    <div class="modal-actions">
+      <button type="button" class="btn cancel-btn"  onclick="closeModal('cancelModal')">Tidak</button>
+      <button type="submit" class="btn finish-btn" onclick="confirmCancel()">Ya</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Pop-Up Tanda Tangan -->
+<div id="uploadModal" class="modal">
+  <div class="modal-content" >
+    <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
+    <h3>Upload Tanda Tangan</h3>
+    <form id="uploadForm">
+      <label for="signatureInput">Pilih file tanda tangan:</label>
+      <input type="file" id="signatureInput" accept="image/*" required />
+      <div class="modal-actions">
+=======
                   </tr>
                 </thead>
                 <tbody>
@@ -95,6 +165,7 @@
     </div>
   </div>
 
+
   <!-- Modal Pop-Up Cancel Permintaan -->
   <div id="cancelModal" class="modal">
     <div class="modal-content">
@@ -108,4 +179,51 @@
     </div>
   </div>
 
+
+<script>
+  // Fungsi untuk membuka modal
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+  }
+
+  // Fungsi untuk menutup modal
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'none';
+  }
+
+  // Fungsi untuk menghandle pengiriman file upload
+  function submitUpload() {
+    const signatureInput = document.getElementById('signatureInput');
+    if (signatureInput.files.length === 0) {
+      alert("Silakan pilih file tanda tangan terlebih dahulu.");
+      return;
+    }
+    // Logika untuk mengupload file tanda tangan (misalnya mengirim data ke server)
+    alert("Tanda tangan berhasil diupload!");
+    closeModal('uploadModal');
+  }
+
+  // Fungsi untuk mengonfirmasi pembatalan permintaan
+  function confirmCancel() {
+    alert("Permintaan telah dibatalkan!");
+    closeModal('cancelModal');
+    // Logika untuk membatalkan permintaan di server dapat ditambahkan di sini
+  }
+
+  // Menutup modal jika user mengklik di luar modal
+  window.onclick = function (event) {
+    const uploadModal = document.getElementById('uploadModal');
+    const cancelModal = document.getElementById('cancelModal');
+    if (event.target === uploadModal) {
+      closeModal('uploadModal');
+    }
+    if (event.target === cancelModal) {
+      closeModal('cancelModal');
+    }
+  }
+</script> 
+
 </body>
+</html?

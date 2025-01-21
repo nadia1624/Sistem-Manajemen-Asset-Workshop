@@ -37,7 +37,7 @@
 
   .btn-action i {
     font-size: 12px;
-    margin-right: 5px;
+    margin: 0 2px;
   }
 
   td button {
@@ -55,14 +55,10 @@
    
 
    <main class="content">
-    <div class="header-content">
-        <h3 style="font-weight: bold;">Peminjaman Aset</h3>
-        <div class="search-bar">
-            <input placeholder="Search..." type="text" />
-            <i class="fas fa-search"></i>
-        </div>
-    </div>
     <div class="container-fluid px-4">
+      <div class="table-wrapper">
+        <div class="table-responsive">
+          <div class="table-bungkus">
         <div class="table-scroll">
             <table class="table-compact">
                 <thead>
@@ -115,6 +111,9 @@
                     <% }); %>
                 </tbody>
             </table>
+          </div>
+          </div>
+          </div>
         </div>
     </div>
 </main>

@@ -1,19 +1,35 @@
+<body>
+  <% const currentPath = req.path; %>
+  <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
 
-  <body>
+  <!-- Card Grid -->
+  <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 mx-auto">
+    <div id="cardContainer" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Cards will be inserted here by JavaScript -->
+    </div>
+  </div>
 
-    <% const currentPath = req.path; %>
-    <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
-    
-    <!-- Card Grid -->
-    <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 mx-auto">
-      <div id="cardContainer" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Cards will be inserted here by JavaScript -->
+  <!-- Modal -->
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <span id="close" class="close-btn">&times;</span>
+      <h3 id="modalTitle"></h3>
+      <p id="modalContent">Apakah Anda yakin ingin membuat permintaan untuk aset ini?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn cancel-btn">
+          Tidak
+        </button>
+        <button type="submit" class="btn finish-btn">
+          Ya
+        </button>
       </div>
     </div>
+  </div>
+  
 
-    <script>
-      // Dummy data array
-      const dummyData = [
+  <script>
+
+     const dummyData = [
         {
           id: 1,
           title: "[Jenis Barang 1]",
@@ -63,11 +79,12 @@
           image: "/api/placeholder/400/300",
         },
       ];
-
+      
+    
       // Function to create card HTML
       function createCard(item) {
         return `
-                <a href="${item.link}" class="group flex flex-col h-full bg-white border border-gray-200 shadow-sm rounded-xl hover:shadow-md transition-shadow duration-300">
+                <a href="/karyawan/detail-aset" class="group flex flex-col h-full bg-white border-2 border-grey shadow-sm rounded-xl hover:border-black hover:shadow-md transition duration-300">
             <div class="h-52 flex flex-col justify-center items-center bg-gray-100 rounded-t-xl">
                 <img class="w-full h-full object-cover rounded-t-xl" src="${item.image}" alt="${item.title}">
             </div>
@@ -108,9 +125,47 @@
         toggleButton.addEventListener("click", function () {
           mobileMenu.classList.toggle("hidden");
         });
-      });
-    </script>
+      });      
+      
+      
+ function showModal(title) {
+  const modal = document.getElementById("addModal");
+  const modalTitle = document.getElementById("modalTitle");
 
-    <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
-  </body>
-</html>
+  modalTitle.textContent = `Permintaan untuk ${title}`;
+  modal.style.display = "flex"; // Menyesuaikan dengan class modal baru
+}
+
+function hideModal() {
+  const modal = document.getElementById("addModal");
+  modal.style.display = "none"; // Menyesuaikan dengan class modal baru
+}
+
+
+      // Event listener untuk tombol request pada card
+      document.getElementById("cardContainer").addEventListener("click", (event) => {
+        const button = event.target.closest(".request-btn");
+        if (button) {
+          const title = button.getAttribute("data-title");
+          showModal(title);
+        }
+
+
+
+      // Event listener untuk tombol "Tutup" modal
+      document.getElementById("close").addEventListener("click", hideModal);
+
+      // Event listener untuk tombol "Tidak" pada modal
+      document.querySelector(".cancel-btn").addEventListener("click", hideModal);
+
+      document.querySelector(".finish-btn").addEventListener("click", () => {
+        hideModal();
+        alert("Permintaan aset telah dibuat!");
+        window.location.href = "/karyawan/permintaanAset"; // Ganti dengan URL halaman tujuan
+      });
+
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+</body>

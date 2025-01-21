@@ -39,22 +39,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% for (let i = 1; i <= 10; i++) { %>
+                            <% detailPemeliharaan.forEach((detail, index) => { %>
                             <tr>
-                                <td width="15%"><%= i %></td>
+                                <td width="15%"><%= index+1 %></td>
                                 <td width="20%">
                                     <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
                                 </td>
-                                <td width="15%">Lorem Ipsum</td>
-                                <td width="15%">Lorem Ipsum</td>
-                                <td width="15%">Lorem Ipsum</td>
+                                <td width="15%"><%= detail.Aset.serial_number%></td>
+                                <td width="15%"><%= detail.Aset.nama_barang %></td>
+                                <td width="15%"><%= detail.Aset.kondisi_aset %></td>
                                 <td width="15%">
                                     <button class="button-edit">
                                         <i class="fa-regular fa-pen-to-square"></i>
                                         </button>
                                 </td>
                             </tr>
-                            <% } %>
+                            <% }) %>
                             </tbody>
                         </table>
                     </div>

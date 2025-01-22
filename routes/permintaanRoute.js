@@ -1,10 +1,9 @@
 const express = require('express');
 const permintaanRouter = express.Router();
-const PermintaanController = require('../controllers/PermintaanControllers');
+const PermintaanController = require('../controllers/permintaanControllers');
 const verifyToken= require ('../middleware/validtokenMiddleware');
 const role = require("../middleware/checkroleMiddleware");
-const { Aset } = require('../models'); // Menambahkan Aset model
-
+const upload = require('../middleware/uploadMiddleware');
 //admin
   // Endpoint untuk admin: Bisa melihat semua permintaan aset dari semua karyawan
   permintaanRouter.get(
@@ -14,24 +13,51 @@ const { Aset } = require('../models'); // Menambahkan Aset model
     PermintaanController.getPermintaanAsetAdmin
   );
   
+// Route untuk menampilkan detail permintaan berdasarkan ID
+permintaanRouter.get(
+  '/admin/permintaanAset/:id',
+  verifyToken,
+  role("admin"),
+  PermintaanController.getDetailPermintaanAset
+);
 
-permintaanRouter.get('/admin/detailPermintaan',verifyToken, role("admin"), (req, res) => {
-    res.render('admin/permintaan/detailPermintaan');
-});
-
+// Endpoint untuk admin: Mengubah status permintaan aset (Setujui, Tolak)
+permintaanRouter.patch(
+  '/admin/permintaanAset/:id/status',
+  verifyToken,
+  role("admin"),
+  PermintaanController.updateStatusPermintaanAset
+);
+  
 //karyawan
 
 // Endpoint untuk karyawan: Hanya bisa melihat permintaan aset mereka sendiri
 
 
-  permintaanRouter.get(
+permintaanRouter.get(
     '/karyawan/permintaanAset',
     verifyToken,
     role("karyawan"),
     PermintaanController.getPermintaanAsetKaryawan
   );
   
+  // Endpoint untuk menghapus permintaan aset oleh karyawan
+permintaanRouter.delete(
+  '/karyawan/permintaanAset/:id',
+  verifyToken,
+  role("karyawan"),
+  PermintaanController.deletePermintaanAset
+);
+
 // Endpoint untuk membuat permintaan aset oleh karyawan
 permintaanRouter.post('/karyawan/permintaanAset', verifyToken, role("karyawan"), PermintaanController.createPermintaanAset);
+
+permintaanRouter.post(
+  '/karyawan/permintaanAset/uploadTandaTangan',
+  verifyToken,
+  role("karyawan"), // Hanya karyawan yang bisa upload tanda tangan untuk permintaannya
+  upload.single('signature'),
+  PermintaanController.uploadTandaTangan
+);
 
 module.exports = permintaanRouter

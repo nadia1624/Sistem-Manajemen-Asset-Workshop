@@ -79,10 +79,10 @@
                                           <td><%= penyerahan.Permintaan.Aset.nama_barang %></td>
                                           <td>
                                               <img class="img-fluid" alt="Gambar Aset: <%= penyerahan.Permintaan.Aset.nama_barang %>"
-                                                   src="<%= penyerahan.Permintaan.Aset.gambar || '/path/to/default-image.jpg' %>" />
+                                                   src="<%= penyerahan.Permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
                                           </td>
                                           <td><%= penyerahan.Permintaan.Aset.Kategori ? penyerahan.Permintaan.Aset.Kategori.nama_kategori : 'N/A' %></td>
-                                          <td><%= penyerahan.Permintaan.Aset.deskripsi || 'Deskripsi tidak tersedia' %></td>
+                                          <td><%= penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Deskripsi tidak tersedia' %></td>
                                           <td>
                                               <button class="btn btn-success" onclick="openModal('<%= penyerahan.id %>')">
                                                   <i class="fa-solid fa-check"></i> Check

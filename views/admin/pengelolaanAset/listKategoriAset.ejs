@@ -20,22 +20,24 @@
                                 <tr>
                                     <th width="5%">No</th>
                                     <th width="15%">Kategori</th>
+                                    <th width="17%">Deskripsi</th>
                                     <th width="15%">Gambar</th>
-                                    <th width="15%">Jumlah Aset</th>
-                                    <th width="25%">Kondisi Aset</th>
-                                    <th width="25%">Aksi</th>
+                                    <th width="10%">Jumlah Aset</th>
+                                    <th width="18%">Kondisi Aset</th>
+                                    <th width="20%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td width="5%">1</td>
-                                    <td width="15%">Lorem Ipsum</td>
+                                    <td width="15%">[nama_kategori]</td>
+                                    <td width="17%">[deskripsi]</td>
                                     <td width="15%">
-                                        <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
+                                        <img class="img-fluid" alt="[gambar]" src="https://placehold.co/100x100" />
                                     </td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="25%">Lorem Ipsum</td>
-                                    <td width="25%">
+                                    <td width="10%">[jumlah aset]</td>
+                                    <td width="18%">[jumlah kondisi_aset]</td>
+                                    <td width="20%">
                                         <button class="button-delete">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
@@ -58,14 +60,22 @@
     </div>
 </main>
 
-<!-- Modal untuk Edit Kategori -->
+<!-- Modal untuk Tambah Kategori -->
 <div id="addModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeAddBtn">&times;</span>
         <h3>Tambah Data Kategori</h3>
-        <form id="addForm">
+        <form action="/admin/tambah-kategori" method="POST" enctype="multipart/form-data">
             <label for="addNamaKategori" class="left-label">Nama Kategori</label>
             <input type="text" id="addNamaKategori" name="namaKategori" placeholder="Masukkan nama kategori" required>
+
+            <label for="addDeskripsi" class="left-label">Deskripsi</label>
+            <input type="text" id="addDeskripsi" name="deskripsi" placeholder="Masukkan deskripsi kategori" required>
+
+            <div class="form-group">
+                <label for="imageCategory" class="left-label">Bukti Gambar</label>
+              <input type="file" name="gambar" required>
+              </div>
             <button type="submit" class="btn finish-btn">Simpan</button>
         </form>
     </div>
@@ -79,6 +89,12 @@
       <form id="editForm">
           <label for="editNamaKategori" class="left-label">Nama Kategori</label>
           <input type="text" id="editNamaKategori" name="namaKategori" placeholder="Masukkan nama kategori" required>
+        
+          <div class="form-group">
+          <label for="imageProof" class="left-label">Bukti Gambar</label>
+        <input type="file" id="imageProof" name="imageProof" required>
+        </div>
+
           <button type="submit" class="btn finish-btn">Simpan</button>
       </form>
   </div>
@@ -176,11 +192,24 @@
     };
 
   // Form submit handlers
-  document.getElementById('addForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const newKategoriName = document.getElementById('addNamaKategori').value;
-      // Tambahkan logika untuk menyimpan kategori baru
-      addModal.style.display = 'none';
+    document.getElementById('addForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Mencegah pengiriman form default
+
+    const form = new FormData(this); // Mengambil data dari form termasuk file
+
+    fetch('/admin/tambah-kategori', {
+        method: 'POST',
+        body: form, // Kirim data form
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(data.message); // Menampilkan pesan error atau sukses
+        }
+    })
+    .catch(error => console.error('Error:', error));
+    
+    addModal.style.display = 'none'; // Menutup modal setelah pengiriman
   });
 
   document.getElementById('editForm').addEventListener('submit', function(event) {

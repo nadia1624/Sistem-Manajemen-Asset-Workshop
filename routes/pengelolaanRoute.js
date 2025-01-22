@@ -1,6 +1,9 @@
 const express = require('express');
 const verifyToken = require ('../middleware/validtokenMiddleware');
 const role = require("../middleware/checkroleMiddleware");
+const upload = require('../middleware/uploadMiddleware');
+const { tambahKategori } = require('../controllers/pengelolaanController');
+
 
 const router = express.Router();
 
@@ -15,6 +18,8 @@ router.get('/karyawan/detail-aset', verifyToken, role('karyawan') ,(req, res) =>
 router.get('/admin/pengelolaan-aset', verifyToken, role('admin'), (req, res) => {
     res.render('admin/pengelolaanAset/listKategoriAset', { req: req });
 });
+
+router.post('/admin/tambah-kategori', verifyToken, role('admin'), upload.single('gambar'), tambahKategori);
 
 router.get('/admin/list-aset', verifyToken, role('admin'), (req, res) => {
     res.render('admin/pengelolaanAset/listAset', { req: req });

@@ -23,18 +23,10 @@ const Aset = db.define(
             type : Sequelize.STRING,
             allowNull : true
         },
-        gambar : {
-            type : Sequelize.STRING,
-            allowNull : true,
-        },
         kondisi_aset : {
             type :  Sequelize.ENUM,
             values : ["baik", "rusak ringan", "rusak berat"],
             allowNull : false
-        },
-        deskripsi : {
-            type : Sequelize.STRING,
-            allowNull : true
         },
         cara_dapat : {
             type : Sequelize.ENUM,

@@ -81,32 +81,30 @@
       ];
       
     
-      // Function to create card HTML
-      function createCard(item) {
-        return `
-                <a href="/karyawan/detail-aset" class="group flex flex-col h-full bg-white border-2 border-grey shadow-sm rounded-xl hover:border-black hover:shadow-md transition duration-300">
-            <div class="h-52 flex flex-col justify-center items-center bg-gray-100 rounded-t-xl">
-                <img class="w-full h-full object-cover rounded-t-xl" src="${item.image}" alt="${item.title}">
-            </div>
-            <div class="p-4 md:p-6">
-                <h3 class="text-xl font-semibold text-gray-800">
-                    ${item.title}
-                </h3>
-                <p class="mt-2 text-gray-600">
-                    ${item.description}
-                </p>
-            </div>
-            <div class="p-4 md:p-6 mt-auto text-right">
-                <button type="button" class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg bg-red-600 text-red-500 hover:bg-red-800 disabled:opacity-50 disabled:pointer-events-none">
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                </button>
-            </div>
-        </a>
-    `;
-      }
-
+    // Function to create card HTML
+    function createCard(item) {
+      return `
+        <div class="group flex flex-col h-full bg-white border-2 border-gray-200 shadow-sm rounded-xl hover:border-black hover:shadow-md transition duration-300">
+          <a href="/karyawan/detail-aset" class="block h-52 bg-gray-100 rounded-t-xl overflow-hidden">
+            <img class="w-full h-full object-cover" src="${item.image}" alt="${item.title}">
+          </a>
+          <div class="p-4 md:p-6">
+            <h3 class="text-xl font-semibold text-gray-800">${item.title}</h3>
+            <p class="mt-2 text-gray-600">${item.description}</p>
+          </div>
+          <div class="p-4 md:p-6 mt-auto text-right">
+            <button
+              type="button"
+              class="request-btn inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-800"
+              data-title="${item.title}">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }
       // Function to render all cards
       function renderCards() {
         const container = document.getElementById("cardContainer");
@@ -168,4 +166,7 @@ function hideModal() {
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+
 </body>
+
+</html>

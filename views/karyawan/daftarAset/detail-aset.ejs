@@ -42,13 +42,70 @@
                         
                         <!-- Action Button -->
                         <div class="mt-auto pt-8">
-                            <button class="w-full bg-[#C2EF97] text-black text-base font-bold py-3 rounded-full hover:brightness-95 transition-all duration-200">
-                                Ajukan Pinjaman
-                             </button>
+                            <button 
+                            type="button"
+                                id="requestButton" onclick="showModal('addModal')"
+                                class="w-full bg-[#C2EF97] text-black text-base font-bold py-3 rounded-full hover:brightness-95 transition-all duration-200" >
+                                Ajukan Pinjaman</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Modal -->
+  <!-- Modal -->
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <span id="close" class="close-btn">&times;</span>
+      <h3 id="modalTitle"></h3>
+      <p id="modalContent">Apakah Anda yakin ingin membuat permintaan untuk aset ini?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn cancel-btn">
+          Tidak
+        </button>
+        <button type="submit" class="btn finish-btn">
+          Ya
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fungsi untuk menampilkan modal
+    function showModal(title) {
+  const modal = document.getElementById("addModal");
+  const modalTitle = document.getElementById("modalTitle");
+
+  modalTitle.textContent = `Permintaan untuk ${title}`;
+  modal.style.display = "flex"; // Menyesuaikan dengan class modal baru
+}
+  
+function hideModal() {
+  const modal = document.getElementById("addModal");
+  modal.style.display = "none"; // Menyesuaikan dengan class modal baru
+}
+
+    // Event listener untuk tombol "Ajukan Pinjaman"
+    document.getElementById("requestButton").addEventListener("click", () => {
+      showModal("[Nama Barang]"); // Ganti dengan data dinamis jika diperlukan
+    });
+  
+    // Event listener untuk tombol "Tutup" di modal
+    document.getElementById("close").addEventListener("click", hideModal);
+  
+    // Event listener untuk tombol "Tidak" di modal
+    document.querySelector(".cancel-btn").addEventListener("click", hideModal);
+  
+    // Event listener untuk tombol "Ya" di modal
+    document.querySelector(".finish-btn").addEventListener("click", () => {
+      hideModal();
+      alert("Permintaan aset telah dibuat!");
+      window.location.href = "/karyawan/permintaanAset"; // Ganti URL sesuai kebutuhan
+    });
+  </script>
+  
+  
 </body>
+</html>

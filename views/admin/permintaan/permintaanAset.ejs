@@ -29,25 +29,25 @@
                             <tbody>
                                 <% listPermintaan.forEach((permintaan, index) => { %>
                                     <tr>
-                                        <td><%= index + 1 %></td>
-                                        <td><%= permintaan.tanggal_permintaan %></td>
-                                        <td><%= permintaan.User.nama %></td>
-                                        <td><%= permintaan.User.unit_kerja %></td>
-                                        <td><%= permintaan.Aset.nama_barang %></td>
-                                        <td>
+                                        <td width="5%"><%= index + 1 %></td>
+                                        <td width="10%"><%= permintaan.tanggal_permintaan %></td>
+                                        <td width="15%"><%= permintaan.User.nama %></td>
+                                        <td width="10%"><%= permintaan.User.unit_kerja %></td>
+                                        <td width="10%"><%= permintaan.Aset.nama_barang %></td>
+                                        <td width="15%">
                                             <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.Aset.gambar %>" />
                                         </td>
-                                        <td>
-                                            <% if (item.status_permintaan === "Disetujui") { %>
+                                        <td width="15%">
+                                            <% if (permintaan.status_permintaan === "diterima") { %>
                                                 <div class="status-badge disetujui">Disetujui</div>
-                                            <% } else if (item.status_permintaan === "Ditolak") { %>
+                                            <% } else if (permintaan.status_permintaan === "ditolak") { %>
                                                 <div class="status-badge ditolak">Ditolak</div>
-                                            <% } else if (item.status_permintaan === "Diproses") { %>
+                                            <% } else if (permintaan.status_permintaan === "diproses") { %>
                                                 <div class="status-badge diproses">Diproses</div>
                                             <% } %>
                                         </td>
-                                        <td>
-                                            <% if (permintaan.status_permintaan === "Diproses") { %>
+                                        <td width="20%">
+                                            <% if (permintaan.status_permintaan === "diproses") { %>
                                                 <button class="btn-setuju" onclick="showModal('setuju')">
                                                     <i class="fas fa-check"></i>
                                                 </button>
@@ -59,7 +59,7 @@
                                                         <i class="fas fa-info-circle"></i>
                                                     </button>
                                                 </a>
-                                            <% } else if (permintaan.status_permintaan === "Disetujui" || permintaan.status_permintaan === "Ditolak") { %>
+                                            <% } else if (permintaan.status_permintaan === "diterima" || permintaan.status_permintaan === "ditolak" || permintaan.status_permintaan === "dicancel") { %>
                                                 <button class="btn-setuju" disabled>
                                                     <i class="fas fa-check"></i>
                                                 </button>

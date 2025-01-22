@@ -1,13 +1,13 @@
 <body>
-  <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
+  <%- include('../../layout/header.ejs') %>
 
   <style>
     th:nth-child(1), td:nth-child(1) { width: 5%; }
     th:nth-child(2), td:nth-child(2) { width: 10%; }
     th:nth-child(3), td:nth-child(3) { width: 15%; }
-    th:nth-child(4), td:nth-child(4) { width: 10%; }
+    th:nth-child(4), td:nth-child(4) { width: 25%; }
     th:nth-child(5), td:nth-child(5) { width: 10%; }
-    th:nth-child(6), td:nth-child(6) { width: 25%; }
+    th:nth-child(6), td:nth-child(6) { width: 10%; }
     th:nth-child(7), td:nth-child(7) { width: 15%; }
     th:nth-child(8), td:nth-child(8) { width: 10%; }
   </style>
@@ -23,40 +23,40 @@
                   <tr>
                     <th>No</th>
                     <th>Tanggal</th>
-                    <th>Nama Barang</th>
+                    <th>Nama Aset</th>
+                    <th>Deskripsi</th>
                     <th>Gambar</th>
                     <th>Kategori</th>
-                    <th>Deskripsi</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
- <tbody>
+          <tbody>
            <% listPermintaan.forEach((permintaan, index) => { %>
               <tr>
-                  <td><%= permintaan.no %></td>
-                  <td><%= permintaan.tanggal %></td>
-                  <td><%= permintaan.nama %></td>
+                  <td><%= index + 1 %></td>
+                  <td><%= permintaan.tanggal_permintaan %></td>
+                  <td><%= permintaan.Aset.nama_barang %></td>
+                  <td><%= permintaan.Aset.deskripsi %></td>
                   <td>
-                      <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.gambar %>"/>
+                      <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.Aset.gambar %>"/>
                   </td>
-                  <td><%= permintaan.kategori %></td>
-                  <td><%= permintaan.deskripsi %></td>
+                  <td><%= permintaan.Aset.Kategori.nama_kategori %></td>
                   <td width="15%">
-                    <% if (permintaan.status === "Disetujui") { %>
+                    <% if (permintaan.status_permintaan === "diterima") { %>
                         <div class="status-badge disetujui">Disetujui</div>
-                    <% } else if (permintaan.status === "Ditolak") { %>
+                    <% } else if (permintaan.status_permintaan === "ditolak") { %>
                         <div class="status-badge ditolak">Ditolak</div>
-                    <% } else if (permintaan.status === "Diproses") { %>
+                    <% } else if (permintaan.status_permintaan === "diproses") { %>
                         <div class="status-badge diproses">Diproses</div>
                     <% } %>
                 </td>
                   <td>
-                      <% if (permintaan.status === "Disetujui") { %>
+                      <% if (permintaan.status_permintaan === "diterima") { %>
                         <button class="btn btn-upload" onclick="openModal('uploadModal')">
                           <i class="fa-solid fa-arrow-up-from-bracket"></i>Upload TTD
                         </button>
-                      <% } else if (permintaan.status === "Diproses") { %>
+                      <% } else if (permintaan.status_permintaan === "diproses") { %>
                         <button class="btn btn-batal" onclick="openModal('cancelModal')">
                           <i class="fa-solid fa-circle-xmark"></i>Batalkan
                         </button>
@@ -73,81 +73,6 @@
     </div>
   </main>
 
-
-
-
-<!-- Modal Pop-Up Cancel Permintaan -->
-<div id="cancelModal" class="modal">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeModal('cancelModal')">&times;</span>
-    <h3>Konfirmasi Pembatalan</h3>
-    <p>Apakah Anda yakin ingin membatalkan permintaan ini?</p>
-    <div class="modal-actions">
-      <button type="button" class="btn cancel-btn"  onclick="closeModal('cancelModal')">Tidak</button>
-      <button type="submit" class="btn finish-btn" onclick="confirmCancel()">Ya</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Pop-Up Tanda Tangan -->
-<div id="uploadModal" class="modal">
-  <div class="modal-content" >
-    <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
-    <h3>Upload Tanda Tangan</h3>
-    <form id="uploadForm">
-      <label for="signatureInput">Pilih file tanda tangan:</label>
-      <input type="file" id="signatureInput" accept="image/*" required />
-      <div class="modal-actions">
-=======
-                  </tr>
-                </thead>
-                <tbody>
-                  <% const dataDummy = [
-                      { no: 1, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Laptop untuk keperluan desain grafis", status: "Disetujui" },
-                      { no: 2, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", kategori: "Furniture", deskripsi: "Meja untuk ruang kerja baru", status: "Ditolak" },
-                      { no: 3, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", kategori: "Elektronik", deskripsi: "Printer untuk keperluan administrasi", status: "Diproses" },
-                  ]; %>
-        
-                  <% dataDummy.forEach((item) => { %>
-                      <tr>
-                          <td><%= item.no %></td>
-                          <td><%= item.tanggal %></td>
-                          <td><%= item.nama %></td>
-                          <td>
-                              <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>"/>
-                          </td>
-                          <td><%= item.kategori %></td>
-                          <td><%= item.deskripsi %></td>
-                          <td>
-                            <% if (item.status === "Disetujui") { %>
-                                <div class="status-badge disetujui">Disetujui</div>
-                            <% } else if (item.status === "Ditolak") { %>
-                                <div class="status-badge ditolak">Ditolak</div>
-                            <% } else if (item.status === "Diproses") { %>
-                                <div class="status-badge diproses">Diproses</div>
-                            <% } %>
-                        </td>
-                          <td>
-                              <% if (item.status === "Disetujui") { %>
-                                <button class="btn btn-upload" onclick="openModal('uploadModal')">
-                                  <i class="fa-solid fa-arrow-up-from-bracket"></i>Upload TTD
-                                </button>
-                              <% } else if (item.status === "Diproses") { %>
-                                <button class="btn btn-batal" onclick="openModal('cancelModal')">
-                                  <i class="fa-solid fa-circle-xmark"></i>Batalkan
-                                </button>
-                              <% } %>
-                          </td>                                  
-                      </tr>
-                  <% }); %>
-              </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
 
   <!-- Modal Pop-Up Tanda Tangan -->
   <div id="uploadModal" class="modal">
@@ -226,4 +151,4 @@
 </script> 
 
 </body>
-</html?
+</html>

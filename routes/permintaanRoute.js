@@ -22,12 +22,15 @@ permintaanRouter.get('/admin/detailPermintaan',verifyToken, role("admin"), (req,
 //karyawan
 
 // Endpoint untuk karyawan: Hanya bisa melihat permintaan aset mereka sendiri
-permintaanRouter.get(
+
+
+  permintaanRouter.get(
     '/karyawan/permintaanAset',
     verifyToken,
     role("karyawan"),
     PermintaanController.getPermintaanAsetKaryawan
   );
+  
 // Endpoint untuk membuat permintaan aset oleh karyawan
 permintaanRouter.post('/karyawan/permintaanAset', verifyToken, role("karyawan"), PermintaanController.createPermintaanAset);
 

@@ -3,44 +3,91 @@
 <main class="content">
     <div class="header-content">
         <td>
-            <a href="permintaanAset">
+            <a href="/admin/permintaanAset">
                 <button id="" style="display: flex; align-items: center;">
                     <i class="fa-solid fa-arrow-left" style="font-weight: bold; font-size: 20px; margin-right: 10px;"></i>
                     <span style="font-size: 24px; font-weight: bold; font-family: Raleway;">Detail Permintaan Aset</span>
                 </button>
             </a>
         </td>
-     </div>
+    </div>
 
     <body>
+        <!-- Detail Informasi Aset -->
         <div class="container-fluid px-4">
             <div class="container2">
-                <img alt="Placeholder image for product" height="150" src="https://placehold.co/100x100" width="200"/>
+                <h3>Detail Aset</h3>
+                <img 
+                    alt="Gambar Aset" 
+                    height="150" 
+                    src="<%= permintaan.Aset.Kategori.gambar || 'https://placehold.co/200x150' %>" 
+                    width="200"
+                />
                 <div class="details">
-                    <p>[Serial Number]</p>
-                    <p>[Nama Barang]</p>
-                    <p>[Kategori]</p>
-                    <p>[Deskripsi]</p>
-                </div>
-            </div>
-        </div>
-        <div class="container-fluid px-4">
-            <div class="container2">
-                <div class="details2">
-                    <p>[Tanggal]</p>
-                    <p>[Nama Karyawan]</p>
-                    <p>[Unit Kerja]</p>
-                    <p>[Status Permintaan]</p>
-                </div>
-                
-            </div>
+                     <p><strong>Serial Number</strong> : <%= permintaan.Aset.serial_number || 'Tidak Tersedia' %></p>
+                    <p><strong>Nama Barang</strong>    : <%= permintaan.Aset.nama_barang %></p>
+                    <p><strong>Kategori</strong>       : <%= permintaan.Aset.Kategori.nama_kategori %></p>
+                    <p><strong>Deskripsi</strong>      : <%= permintaan.Aset.Kategori.deskripsi || 'Tidak ada deskripsi.' %></p>
+               </div>
         </div>
 
+        <!-- Detail Informasi Peminjam -->
+        <!-- Detail Informasi Peminjam -->
+        <div class="container-fluid px-4">
+            <div class="container2">
+                <h3>Detail Peminjam</h3>
+                <div class="details2">
+                    <p><strong>Tanggal Permintaan</strong> : <%= permintaan.tanggal_permintaan %></p>
+                    <p><strong>Nama Karyawan</strong>     : <%= permintaan.User.nama %></p>
+                    <p><strong>Unit Kerja</strong>       : <%= permintaan.User.unit_kerja %></p>
+                    <p><strong>Status Permintaan</strong> : 
+                        <% if (permintaan.status_permintaan === "diterima") { %>
+                            <p> Disetujui</p>
+                        <% } else if (permintaan.status_permintaan === "ditolak") { %>
+                            <span > Ditolak</span>
+                        <% } else { %>
+                            <span > Diproses</span>
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+        </div>
 
     </body>
-   </html>
-   
+</main>
 
+<style>
+    /* General styling for the main container */
+.container-fluid {
+    margin-bottom: 20px;
+}
 
+.container2 {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin: 20px 0;
+}
 
- 
+.details, .details2 {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Styling for labels and values to align ":" */
+.details p, .details2 p {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif;
+}
+
+/* Ensure ":" is aligned */
+.details p strong, .details2 p strong {
+    display: inline-block;
+    width: 150px; /* Adjust as necessary for longer labels */
+    font-weight: bold;
+}
+</style>

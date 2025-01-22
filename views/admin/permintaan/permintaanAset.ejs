@@ -35,7 +35,7 @@
                                         <td width="10%"><%= permintaan.User.unit_kerja %></td>
                                         <td width="10%"><%= permintaan.Aset.nama_barang %></td>
                                         <td width="15%">
-                                            <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.Aset.gambar %>" />
+                                            <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.Aset.Kategori.gambar %>" />
                                         </td>
                                         <td width="15%">
                                             <% if (permintaan.status_permintaan === "diterima") { %>
@@ -48,25 +48,26 @@
                                         </td>
                                         <td width="20%">
                                             <% if (permintaan.status_permintaan === "diproses") { %>
-                                                <button class="btn-setuju" onclick="showModal('setuju')">
+                                                <button class="btn-setuju" onclick="showModal('setuju', '<%= permintaan.id %>')">
                                                     <i class="fas fa-check"></i>
                                                 </button>
-                                                <button class="btn-tolak" onclick="showModal('tolak')">
+                                                <button class="btn-tolak" onclick="showModal('tolak', '<%= permintaan.id %>')">
                                                     <i class="fas fa-times"></i>
                                                 </button>
-                                                <a href="/admin/permintaan/permintaanAset/<%= permintaan.id %>">
+                                                <a href="/admin/permintaanAset/<%= permintaan.id %>">
                                                     <button class="button-info">
-                                                        <i class="fas fa-info-circle"></i>
+                                                      <i class="fas fa-info-circle"></i>
                                                     </button>
-                                                </a>
-                                            <% } else if (permintaan.status_permintaan === "diterima" || permintaan.status_permintaan === "ditolak" || permintaan.status_permintaan === "dicancel") { %>
+                                                  </a>
+                                                  
+                                            <% } else { %>
                                                 <button class="btn-setuju" disabled>
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                                 <button class="btn-tolak" disabled>
                                                     <i class="fas fa-times"></i>
                                                 </button>
-                                                <a href="/admin/permintaan/permintaanAset/<%= permintaan.id %>">
+                                                <a href="/admin/permintaanAset/<%= permintaan.id %>">
                                                     <button class="button-info">
                                                         <i class="fas fa-info-circle"></i>
                                                     </button>
@@ -110,23 +111,49 @@
         if (type === "setuju") {
             modalTitle.textContent = "Setujui Permintaan";
             modalContent.textContent = "Apakah Anda yakin ingin menyetujui permintaan ini?";
-            finishBtn.onclick = function () {
-                modal.style.display = "none";
-                alert("Permintaan disetujui!");
-                // Tambahkan logika untuk mengubah status di server
+            finishBtn.onclick = async function () {
+                try {
+                    const response = await fetch(`/admin/permintaanAset/${permintaanId}/status`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status: "diterima" }),
+                    });
+                    if (response.ok) {
+                        alert("Permintaan berhasil disetujui!");
+                        location.reload();
+                    } else {
+                        alert("Gagal menyetujui permintaan.");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert("Terjadi kesalahan.");
+                }
             };
         } else if (type === "tolak") {
             modalTitle.textContent = "Tolak Permintaan";
             modalContent.textContent = "Apakah Anda yakin ingin menolak permintaan ini?";
-            finishBtn.onclick = function () {
-                modal.style.display = "none";
-                alert("Permintaan ditolak!");
-                // Tambahkan logika untuk mengubah status di server
+            finishBtn.onclick = async function () {
+                try {
+                    const response = await fetch(`/admin/permintaanAset/${permintaanId}/status`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status: "ditolak" }),
+                    });
+                    if (response.ok) {
+                        alert("Permintaan berhasil ditolak!");
+                        location.reload();
+                    } else {
+                        alert("Gagal menolak permintaan.");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert("Terjadi kesalahan.");
+                }
             };
         }
         modal.style.display = "flex";
     }
-
+    
     closeBtn.addEventListener("click", function () {
         modal.style.display = "none";
     });

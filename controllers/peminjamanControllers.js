@@ -17,11 +17,11 @@ const getPeminjaman = async (req, res) => {
                     include: [
                         {
                             model: Aset,
-                            attributes: ['nama_barang', 'gambar', 'deskripsi'],
+                            attributes: ['nama_barang'],
                             include: [
                                 {
                                     model: Kategori,
-                                    attributes: ['nama_kategori']
+                                    attributes: ['nama_kategori', 'gambar', 'deskripsi']
                                 }
                             ]
                         }

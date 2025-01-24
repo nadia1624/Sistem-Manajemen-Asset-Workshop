@@ -19,8 +19,9 @@ router.use(permintaanRoute)
 router.use(peminjamanRouter)
 router.use(pengajuanCekRouter)
 router.use(pengelolaanAsetRoute)
-router.use(penyerahanRoute);
+router.use(penyerahanRouter);
 router.use(pemeliharaanRouter)
+
 
 
 

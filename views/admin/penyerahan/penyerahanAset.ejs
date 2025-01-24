@@ -1,130 +1,211 @@
 <%- include("../../layout/sidebar.ejs") %>
 
 <main class="content">
-  <div class="header-content">
-    <h3 style="font-weight: bold;">Penyerahan Aset</h3>
-    <div class="search-bar">
-      <input placeholder="Search..." type="text" />
-      <i class="fas fa-search"></i>
+    <div class="header-content">
+      <h3 style="font-weight: bold;">Penyerahan Aset</h3>
+      <div class="search-bar">
+        <input placeholder="Search..." type="text" />
+        <i class="fas fa-search"></i>
+      </div>
     </div>
-  </div>
-  <div class="container-fluid px-4">
-    <div class="table-wrapper">
-      <div class="table-responsive">
-        <div class="table-bungkus">
-          <div class="table-scroll">
-            <table class="table-compact">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Nama</th>
-                  <th>Unit Kerja</th>
-                  <th>Nama Aset</th>
-                  <th>Kategori</th>
-                  <th>Gambar</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (penyerahanData && penyerahanData.length > 0) { %>
-                  <% penyerahanData.forEach((item, index) => { %>
+    <div class="container-fluid px-4">
+      <div class="table-wrapper">
+        <div class="table-responsive">
+          <div class="table-bungkus">
+            <div class="table-scroll">
+              <table class="table-compact">
+                <thead>
+                  <tr>
+                    <th width="5%">No</th>
+                    <th width="13%">Nama</th>
+                    <th width="13%">Unit Kerja</th>
+                    <th width="14%">Nama Aset</th>
+                    <th width="13%">Nama Penerima</th>
+                    <th width="15%">Bukti Penyerahan</th>
+                    <th width="15%">Status</th>
+                    <th width="10%">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% listPenyerahan.forEach((penyerahan, index) => { %>
                     <tr>
-                      <td><%= index + 1 %></td>
-                      <td><%= item.Permintaan?.Aset?.nama_penerima || '-' %></td>
-                      <td><%= item.Permintaan?.Aset?.unit_kerja || '-' %></td>
-                      <td><%= item.Permintaan?.Aset?.nama_aset || '-' %></td>
-                      <td><%= item.Permintaan?.Aset?.kategori || '-' %></td>
-                      <td>
-                        <% if (item.Permintaan?.Aset?.gambar) { %>
-                          <img class="img-fluid" src="<%= item.Permintaan.Aset.gambar %>" alt="Gambar Aset" />
-                        <% } else { %>
-                          Tidak ada gambar
+                      <td width="5%"><%= index + 1%></td>
+                      <td width="13%"><%= penyerahan.Permintaan.User.nama %></td>
+                      <td width="13%"><%= penyerahan.Permintaan.User.unit_kerja %></td>
+                      <td width="14%"><%= penyerahan.Permintaan.Aset.nama_barang %></td>
+                      <td width="13%">
+                          <% if (penyerahan.penerima) { %>
+                            <%= penyerahan.penerima %>
+                          <% } else { %>
+                            -
+                          <% } %>
+                      </td>
+                      <td width="15%">
+                          <% if (penyerahan.gambar_bukti) { %>
+                            <img class="img-fluid" alt="Bukti Penyerahan" src="/public/uploads/<%= penyerahan.gambar_bukti %>" />
+                          <% } else { %>
+                            <span>-</span>
+                          <% } %>
+                      </td>
+                      <td width="17%">
+                        <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
+                          <span class="custom-span" style="background-color: #dd5f61; font: black;">Belum Diserahkan</span>
+                        <% } else if (penyerahan.status_penyerahan === "sudah diserahkan") { %>
+                          <span class="custom-span" style="background-color: #A2E180; font: black;">Telah Diserahkan</span>
                         <% } %>
                       </td>
-                      <td>
-                        <% if (item.status_penyerahan === 'belum diserahkan') { %>
-                          <span style="background-color: #dd5f61; color: white; padding: 5px;">Belum Diserahkan</span>
-                        <% } else { %>
-                          <span style="background-color: #A2E180; color: black; padding: 5px;">Telah Diserahkan</span>
-                        <% } %>
-                      </td>
-                      <td>
-                        <% if (item.status_penyerahan === 'belum diserahkan') { %>
-                          <button class="btn btn-setuju" onclick="showModal('serahkan', '<%= item.id %>', '<%= item.Permintaan.Aset.nama_aset %>')">
-                            Serahkan
+                      <td width="10%">
+                        <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
+                          <button class="btn btn-setuju" style="background-color: #28a745; color: white;" onclick="showModal('<%= penyerahan.id %>', '<%= penyerahan.Permintaan.Aset.nama_barang %>', '<%= penyerahan.Permintaan.User.nama %>', '<%= penyerahan.Permintaan.User.unit_kerja %>')">
+                            <i class="fas fa-check"></i>
                           </button>
                         <% } else { %>
-                          <button class="btn btn-action">
-                            Unduh Dokumen
+                          <button class="btn btn-action" style="background-color: #ffffff; padding: 10px; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
+                            <i class="fa-solid fa-download" style="font-size: 15px;"></i>
                           </button>
                         <% } %>
                       </td>
                     </tr>
+
                   <% }); %>
-                <% } else { %>
-                  <tr>
-                    <td colspan="8">Tidak ada data penyerahan.</td>
-                  </tr>
-                <% } %>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</main>
+  </main>
+  
 
-
-    <!-- Modal -->
-    <div id="addModal" class="popup-modal">
-        <div class="modal-content">
-            <span id="close" class="close-btn" >&times;</span>
-            <h3 id="modalTitle"></h3>
-            <p id="modalContent"></p>
-            <div class="flex justify-center space-x-4">
-                <button type="button" class="btn cancel-btn">Tidak</button>
-                <button type="submit" class="btn finish-btn">Ya</button>
-            </div>
-        </div>
-    </div>
+<!-- Modal -->
+<div id="addModal" class="popup-modal">
+<div class="modal-content">
+    <span id="close" class="close-btn">&times;</span>
+    <h3 id="modalTitle">Konfirmasi Penyerahan Aset</h3>
+    <p id="modalContent"></p>
+    <form id="penyerahanForm" enctype="multipart/form-data">
+    <label for="namaKaryawan" class="left-label">Nama Peminjam</label>
+    <input 
+        type="text" 
+        id="namaKaryawan" 
+        name="namaKaryawan" 
+        value="" 
+        readonly 
+        required 
+    />
     
-<script>
-const modal = document.getElementById("addModal");
-const closeBtn = document.getElementById("close");
-const modalTitle = document.getElementById("modalTitle");
-const modalContent = document.getElementById("modalContent");
-const cancelBtn = document.querySelector(".cancel-btn");
+    <label for="unitKerja" class="left-label">Unit Kerja</label>
+    <input 
+        type="text" 
+        id="unitKerja" 
+        name="unitKerja" 
+        value="" 
+        readonly 
+        required 
+    />
+    
+    <label for="namaAset" class="left-label">Nama Aset</label>
+    <input 
+        type="text" 
+        id="namaAset" 
+        name="namaAset" 
+        value="" 
+        readonly 
+        required 
+    />
+    
+    <label for="namaPenerima" class="left-label">Nama Penerima:</label>
+    <input type="text" name="penerima" placeholder="Nama penerima" required />
+    
+    <label for="gambarBukti" class="left-label">Bukti Penyerahan:</label>
+    <input 
+        type="file" 
+        id="gambarBukti" 
+        name="gambar_bukti" 
+        class="form-control" 
+        accept="image/*" 
+        required 
+    />
+    
+    <div class="flex justify-center space-x-4">
+        <button type="button" class="btn cancel-btn">Tidak</button>
+        <button type="submit" class="btn finish-btn">Ya</button>
+    </div>
+    </form>
+    
+</div>
+</div>
+  
+  <script>
+  const modal = document.getElementById("addModal");
+  const closeBtn = document.getElementById("close");
+  const modalContent = document.getElementById("modalContent");
+  const cancelBtn = document.querySelector(".cancel-btn");
+  const penyerahanForm = document.getElementById("penyerahanForm");
+  
 
-// Function to show modal
-function showModal(action, no, namaAset) {
-    modal.style.display = "flex";
+  
+function showModal(id, namaAset, namaKaryawan, unitKerja) {
+  // Tampilkan modal
+  modal.style.display = "flex";
 
-    if (action === "serahkan") {
-        modalTitle.textContent = "Konfirmasi Penyerahan Aset";
-        modalContent.textContent = `Apakah Anda yakin ingin menyerahkan aset "${namaAset}" dengan nomor ${no}?`;
-    } else if (action === "generate") {
-        modalTitle.textContent = "Generate Dokumen";
-        modalContent.textContent = `Apakah Anda ingin mengunduh dokumen terkait aset "${namaAset}" dengan nomor ${no}?`;
-    }
+  // Isi konten modal
+  modalContent.textContent = `Apakah Anda yakin ingin menyerahkan aset "${namaAset}"?`;
+
+  // Isi form dengan data yang diterima
+  document.getElementById("namaKaryawan").value = namaKaryawan;
+  document.getElementById("unitKerja").value = unitKerja;
+  document.getElementById("namaAset").value = namaAset;
+
+  // Simpan ID ke dalam dataset form untuk submit
+  penyerahanForm.dataset.id = id;
 }
 
-// Close modal when clicking the close button
-closeBtn.onclick = function () {
-    addModal.style.display = "none";
-};
-
-// Close modal when clicking the cancel button
-cancelBtn.onclick = function () {
-    addModal.style.display = "none";
-};
-
-// Close modal when clicking outside the modal content
-window.onclick = function (event) {
+  // Close modal when clicking the close button
+  closeBtn.onclick = function () {
+    modal.style.display = "none";
+  };
+  
+  // Close modal when clicking the cancel button
+  cancelBtn.onclick = function () {
+    modal.style.display = "none";
+  };
+  
+  // Close modal when clicking outside the modal content
+  window.onclick = function (event) {
     if (event.target === modal) {
-        modal.style.display = "none";
+      modal.style.display = "none";
     }
-};
+  };
+  
+ // Event handler saat form disubmit
+ penyerahanForm.onsubmit = async function (event) {
+    event.preventDefault(); // Cegah reload halaman
+    const formData = new FormData(penyerahanForm); // Ambil data dari form
+    const id = penyerahanForm.dataset.id; // Ambil ID penyerahan dari dataset
 
-</script>
+    try {
+      // Kirim request ke server
+      const response = await fetch(`/penyerahan-aset/${id}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Aset berhasil diserahkan!");
+        location.reload(); // Reload halaman untuk memperbarui tampilan
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan:", error);
+      alert("Terjadi kesalahan saat menyerahkan aset. Silakan coba lagi.");
+    } finally {
+      modal.style.display = "none"; // Tutup modal
+    }
+  };
+  </script>
+  

@@ -35,7 +35,7 @@
                                         <td width="10%"><%= permintaan.User.unit_kerja %></td>
                                         <td width="10%"><%= permintaan.Aset.nama_barang %></td>
                                         <td width="15%">
-                                            <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.Aset.Kategori.gambar %>" />
+                                            <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= permintaan.Aset.Kategori.gambar %>" />
                                         </td>
                                         <td width="15%">
                                             <% if (permintaan.status_permintaan === "diterima") { %>

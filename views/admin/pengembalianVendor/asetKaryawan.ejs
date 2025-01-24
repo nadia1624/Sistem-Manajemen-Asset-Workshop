@@ -1,6 +1,7 @@
 <%- include("../../layout/sidebar.ejs") %>
 
 <style>
+    
     .popup-modal {
         display: none;
         position: fixed;
@@ -35,80 +36,96 @@
     display: block;
     text-align: left;
     margin-bottom: 5px;
-}
+    }
+    .status-sedang-diproses {
+        background-color: #FDEC80;
+    }
+    
+    .status-selesai {
+        background-color: #A2E180;
+    }
+    
+    .status-belum-diproses {
+        background-color: #DD5F61; /* Merah */
+        color: #fff;
+    }
 </style>
 
 <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Pengembalian Aset Vendor</h3>
         <div class="search-bar">
-            <input placeholder="Search..." type="text"/>
+            <input placeholder="Search..." type="text" />
             <i class="fas fa-search"></i>
         </div>
     </div>
     <div class="container-fluid px-4">
-        <!-- <div class="tabButton">
-            <a href="asetKaryawan" class="buttonActive" onclick="setActive(event, this)">Aset Karyawan</a>
-            <a href="asetGudang" class="button" onclick="setActive(event, this)">Aset Gudang</a>
-            <a href="riwayatVendor" class="button" onclick="setActive(event, this)">Riwayat Pengembalian</a>
-        </div> -->
-
         <div class="tabButton">
             <a href="asetKaryawan" class="button active">Aset Karyawan</a>
             <a href="asetGudang" class="button inactive">Aset Gudang</a>
             <a href="riwayatVendor" class="button inactive">Riwayat Pengembalian</a>
         </div>
-            <div class="table-wrapper">
-                <div class="table-responsive">
-                    <div class="table-bungkus">
-                        <div class="table-scroll">
-                            <table class="table-compact">
-                                <thead>
-                                    <tr>
-                                        <th width="5%">No</th>
-                                        <th width="15%">Serial Number</th>
-                                        <th width="15%">Nama Aset</th>
-                                        <th width="15%">Gambar</th>
-                                        <th width="15%">Status Vendor</th>
-                                        <th width="20%">Aksi</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                            <div class="table-scroll">
-                                <table class="table-compact">
-                                    <tbody></tbody>
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <div class="table-bungkus">
+                    <div class="table-scroll">
+                        <table class="table-compact">
+                            <thead>
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="15%">Serial Number</th>
+                                    <th width="15%">Nama Aset</th>
+                                    <th width="15%">Gambar</th>
+                                    <th width="15%">Status</th>
+                                    <th width="20%">Aksi</th>
+                                </tr>
+                            </thead>
+                           <tbody>
+                                    <% if (vendorSubmissions.length > 0) { %>
+                                        <% vendorSubmissions.forEach((submission, index) => { %>
+                                            <tr>
+                                                <td width="5%"><%= index + 1 %></td>
+                                                <td width="15%"><%= submission.PengajuanCek.Penyerahan.Permintaan.Aset.serial_number %></td>
+                                                <td width="15%"><%= submission.PengajuanCek.Penyerahan.Permintaan.Aset.nama_barang %></td>
+                                                <td width="15%">
+                                                        <img class="img-fluid" alt="Gambar Aset" src="<%= submission.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.gambar %>" />
+                                                </td>
+                                                <td width="15%" class="custom-td text-center align-middle">
+                                                    <span class="custom-span 
+                                                        <% if (submission.status_admin === 'belum diproses') { %>status-belum-diproses<% } %>
+                                                        <% if (submission.status_admin === 'sedang diproses') { %>status-sedang-diproses<% } %>
+                                                        <% if (submission.status_admin === 'selesai') { %>status-selesai<% } %>">
+                                                        <%= submission.status_admin %>
+                                                    </span>
+                                                </td>
+                                                
+                                                <td width="20%">
+                                                    <button id="editButton" class="button-edit" style="margin-right: 10px;">
+                                                        <i class="fa-regular fa-pen-to-square"></i>
+                                                    </button>
+                                                    <a href="/admin/detailAsetKaryawan/<%= submission.id %>">
+                                                        <button id="infoButton" class="button-info" style="margin-right: 10px;">
+                                                            <i class="fa-solid fa-circle-info"></i>
+                                                        </button>
+                                                    </a>
+                                                    <button id="finishButton" class="btn">
+                                                        <i class="fas fa-check"></i> Return
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
                                         <tr>
-                                            <td width="5%">1</td>
-                                            <td width="15%">Lorem Ipsum</td>
-                                            <td width="15%">Lorem Ipsum</td>
-                                            <td width="15%">
-                                                <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
-                                            </td>
-                                            <td width="15%" class="custom-td">
-                                                <span class="custom-span">Belum diproses</span>
-                                            </td>
-                                            <td width="20%">
-                                                <button id="editButton" class="button-edit" style="margin-right: 10px;">
-                                                    <i class="fa-regular fa-pen-to-square"></i>
-                                                </button>
-                                                <a href="detailAsetKaryawan">
-                                                <button id="infoButton" class="button-info" style="margin-right: 10px;">
-                                                    <i class="fa-solid fa-circle-info"></i>  
-                                                </button>  
-                                            </a>         
-                                                <button id="finishButton" class="btn">
-                                                    <i class="fas fa-check"></i> Return
-                                                </button>
-                                            </td>
+                                            <td colspan="6" style="text-align: center;">Tidak ada data pengembalian aset</td>
                                         </tr>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                    <% } %>
+                                </tbody>
+
+                        </table>
                     </div>
                 </div>
             </div>
+        </div>
     </div>
 </main>
 

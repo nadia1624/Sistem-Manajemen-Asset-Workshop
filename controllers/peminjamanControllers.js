@@ -1,8 +1,6 @@
 const express = require('express');
-const { Pengembalian, Penyerahan, Permintaan, Aset, User, PengajuanCek } = require('../models');
+const { Pengembalian, Penyerahan, Permintaan, Aset, User, PengajuanCek, Kategori } = require('../models');
 const { where } = require('sequelize');
-const Kategori = require('../models/kategori');
-
 
 const getPeminjaman = async (req, res) => {
     try {
@@ -17,7 +15,7 @@ const getPeminjaman = async (req, res) => {
                     include: [
                         {
                             model: Aset,
-                            attributes: ['nama_barang'],
+                            attributes: ['serial_number', 'nama_barang'],
                             include: [
                                 {
                                     model: Kategori,
@@ -25,7 +23,7 @@ const getPeminjaman = async (req, res) => {
                                 }
                             ]
                         }
-                    ]
+                    ]                    
                 }
             ],
             where: { status_penyerahan: 'sudah diserahkan' } // Pastikan hanya yang sudah diserahkan
@@ -38,7 +36,7 @@ const getPeminjaman = async (req, res) => {
     }
 };
 
-
+//button ajukan cek
 const createPengajuanCek = async (req, res) => {
     try {
         const { penyerahanId } = req.params;
@@ -58,9 +56,65 @@ const createPengajuanCek = async (req, res) => {
     }
 };
 
+//menampilkan laporan cek
+const getAllDataLaporancek = async (req, res) => {
+    try {
+        // Fetch all data with nested relationships
+        const laporanCekList = await PengajuanCek.findAll({
+            include: [
+                {
+                    model: Penyerahan,
+                    include: [
+                        {
+                            model: Permintaan,
+                            include: [
+                                {
+                                    model: Aset,
+                                    attributes: ['serial_number', 'nama_barang'], // Adjust attribute name if needed
+                                    include: [
+                                        {
+                                            model: Kategori,
+                                            attributes: ['gambar'], // Include category image
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+            order: [['tanggal_pengecekan', 'DESC']] // Urutkan berdasarkan tanggal pengecekan terbaru
+        });
+
+         // Format tanggal menggunakan Intl
+        //  const formattedData = laporanCekList.map((item) => ({
+        //     ...item.dataValues,
+        //     tanggal_pengecekan: item.tanggal_pengecekan
+        //         ? new Intl.DateTimeFormat('id-ID', {
+        //               day: '2-digit',
+        //               month: '2-digit',
+        //               year: 'numeric',
+        //           }).format(new Date(item.tanggal_pengecekan))
+        //         : '-', // Handle if date is null
+        // }));
+
+        // Render view dengan data yang sudah diformat
+        res.render('karyawan/peminjaman/laporanCek', { laporanCekList, currentPath: req.path });
+    } catch (error) {
+        // Log and handle errors
+        console.error('Error fetching laporan cek:', error);
+
+        res.status(500).json({
+            message: 'Terjadi kesalahan saat mengambil data laporan cek.',
+            error: error.message,
+        });
+    }
+};
+
 
 
 module.exports = {
     getPeminjaman,
-    createPengajuanCek
+    createPengajuanCek,
+    getAllDataLaporancek,
 };

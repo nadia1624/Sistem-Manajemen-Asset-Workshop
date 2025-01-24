@@ -408,6 +408,13 @@ td img {
   color: white;
 }
 
+.btn-upload.disabled {
+  background-color: #e0e0e0; 
+  color: #898989; 
+  border-color: #898989; 
+  cursor: not-allowed; 
+}
+
 /*Permintaaan dan penyerahan Karyawan*/
 .status-badge {
   justify-content: center;

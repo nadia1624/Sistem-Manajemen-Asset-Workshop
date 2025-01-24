@@ -1,7 +1,9 @@
-const express = require('express')
+const express = require('express');
+const vendorGudangControllers = require('../controllers/VendorGudangControllers');
 const karyawanVendorControllers = require('../controllers/karyawanVendorControllers');
 const verifyToken = require('../middleware/validtokenMiddleware');
 const role = require("../middleware/checkroleMiddleware");
+
 const pengembalianVendorRouter = express.Router()
 
 pengembalianVendorRouter.get('/admin/asetKaryawan', 
@@ -16,30 +18,28 @@ pengembalianVendorRouter.get('/admin/detailAsetKaryawan/:id',
     karyawanVendorControllers.getDetailAsetKaryawanVendor
 );
 
-//admin
-pengembalianVendorRouter.get('/admin/asetKaryawan', (req, res) => {
-    res.render('admin/pengembalianVendor/asetKaryawan');
-});
-pengembalianVendorRouter.get('/admin/asetGudang', (req, res) => {
-    res.render('admin/pengembalianVendor/asetGudang');
-});
-pengembalianVendorRouter.get('/admin/riwayatVendor', (req, res) => {
-    res.render('admin/pengembalianVendor/riwayatVendor');
-});
+pengembalianVendorRouter.get('/admin/asetGudang', 
+    verifyToken, 
+    role("admin"), 
+    vendorGudangControllers.getReturnGudang
+);
 
+pengembalianVendorRouter.get('/admin/riwayatVendor', 
+    verifyToken, 
+    role("admin"), 
+    vendorGudangControllers.getRiwayatPengembalianVendor
+);
 
-pengembalianVendorRouter.get('/admin/detailAsetKaryawan', (req, res) => {
-    res.render('admin/pengembalianVendor/detailAsetKaryawan');
-}); 
+pengembalianVendorRouter.get('/admin/detailAsetGudang/:id', 
+    verifyToken, 
+    role("admin"), 
+    vendorGudangControllers.getDetailVendorGudang
+);
 
-pengembalianVendorRouter.get('/admin/detailAsetGudang', (req, res) => {
-    res.render('admin/pengembalianVendor/detailAsetGudang');
-});
-pengembalianVendorRouter.get('/admin/detailAsetRiwayat', (req, res) => {
-    res.render('admin/pengembalianVendor/detailAsetRiwayat');
-
-});
-
-//karyawan
+pengembalianVendorRouter.get('/admin/detailAsetRiwayat/:id', 
+    verifyToken, 
+    role("admin"), 
+    vendorGudangControllers.getDetailRiwayatVendor
+);
 
 module.exports = pengembalianVendorRouter

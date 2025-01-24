@@ -26,28 +26,33 @@
                                     <th width="15%">Unit Kerja</th>
                                     <th width="15%">Nama Barang</th>
                                     <th width="15%">Serial Number</th>
+                                    <th width="15%">Kondisi</th>
+                                    <th width="15%">Keterangan</th>
                                     <th width="15%">Bukti Gambar</th>
-                                    <th width="20%">Aksi</th>
+                                    <th width="15%">Aksi</th>
                                 </tr>
                             </thead>
-                                <tbody>
+                            <tbody>
+                                <% riwayatList.forEach((pengembalian, index) => { %>
                                     <tr>
-                                        <td width="5%">1</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="15%">
-                                        <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
-                                    </td>
-                                    <td width="20%">
-                                        <button class="btn btn-action" style="background-color: #ffffff; padding: 10px; padding-right: 7px; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
-                                            <i class="fa-solid fa-download" style="font-size: 15px;"></i>
-                                        </button>
+                                        <td width="5"><%= index + 1 %></td>
+                                        <td width="15"><%= pengembalian.Penyerahan.Permintaan.User.nama %></td>
+                                        <td width="15"><%= pengembalian.Penyerahan.Permintaan.User.unit_kerja %></td>
+                                        <td width="15"><%= pengembalian.Penyerahan.Permintaan.Aset.nama_barang %></td>
+                                        <td width="15"><%= pengembalian.Penyerahan.Permintaan.Aset.serial_number %></td>
+                                        <td width="15"><%= pengembalian.kondisi_terakhir %></td>
+                                        <td width="15"><%= pengembalian.keterangan_kondisi || '-' %></td>
+                                        <td width="15">
+                                            <img class="img-fluid" alt="Bukti Gambar" src="/public/uploads/<%= pengembalian.gambar_bukti %>" />
+                                        </td>
+                                        <td width="15">
+                                            <button class="btn btn-action" style="background-color: #ffffff; padding: 10px; padding-right: 7px; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
+                                                <i class="fa-solid fa-download" style="font-size: 15px;"></i>
+                                            </button>
                                         </td>
                                     </tr>
-                                    
-                                </tbody>
+                                <% }); %>
+                            </tbody>
                             </table>
                         </div>
                     </div>

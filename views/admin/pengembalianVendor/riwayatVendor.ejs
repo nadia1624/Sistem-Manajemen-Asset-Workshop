@@ -38,24 +38,36 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td width="5%">1</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="15%">
-                                        <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
-                                    </td>
+                                <% if (pengembalian.length > 0) { %>
+                                    <% pengembalian.forEach((item, index) => { %>
+                                        <tr>
+                                            <td width="5%"><%= index + 1 %></td>
+                                            <td width="15%"><%= item.Aset ? item.Aset.serial_number : '-' %></td>
+                                            <td width="15%"><%= item.Aset ? item.Aset.nama_barang : '-' %></td>
+                                            <td width="15%"><%= item.Aset && item.Aset.Kategori ? item.Aset.Kategori.deskripsi : '-' %></td>
+                                            <td width="15%">
+                                                <% if (item.Aset && item.Aset.Kategori && item.Aset.Kategori.gambar) { %>
+                                                    <img class="img-fluid" alt="Bukti Gambar" src="<%= item.Aset.Kategori.gambar %>" width="100" height="100" />
+                                                <% } else { %>
+                                                    <img class="img-fluid" alt="No Image" src="https://placehold.co/100x100" />
+                                                <% } %>
+                                            </td>
                                     <td width="12%">
-                                        <a href="detailAsetRiwayat">
+                                        <a href="detailAsetRiwayat/<%= item.id %>">
                                         <button id="infoButton" class="button-info" style="margin-right: 10px;">
                                             <i class="fa-solid fa-circle-info"></i>  
                                         </button> 
                                         </a>
                                     </td>
-                                </tr> 
-                            </tbody>
-                        </table>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center">Tidak ada data pengembalian</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
                     </div>
                 </div>
             </div>

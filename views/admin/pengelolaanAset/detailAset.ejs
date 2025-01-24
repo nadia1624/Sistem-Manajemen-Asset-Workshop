@@ -4,10 +4,10 @@
 <main class="content">
     <div class="header-content">
         <div class="title-section">
-            <a href="/admin/list-aset">
+            <a href="/admin/list-aset/<%= aset.kategoriId %>">
                 <button id="" style="display: flex; align-items: center;">
                     <i class="fa-solid fa-arrow-left" style="font-weight: bold; font-size: 20px; margin-right: 10px;"></i>
-                    <span style="font-size: 24px; font-weight: bold; font-family: Raleway;">[Nama Kategori]</span>
+                    <span style="font-size: 24px; font-weight: bold; font-family: Raleway;"><%= kategori.nama_kategori %></span>
                 </button>
             </a>
         </div>
@@ -16,14 +16,37 @@
     <body>
         <div class="container-fluid px-4">
             <div class="container2">
-                <img alt="Placeholder image for product" height="150" src="https://placehold.co/100x100" width="200"/>
-                <div class="details">
-                    <p>[Nama Aset]</p>
-                    <p>[IP Address]</p>
-                    <p>[Cara Dapat]</p>
-                    <p>[Kondisi Aset]</p>
+                <div class="image-container">
+                    <!-- Placeholder for asset image -->
+                    <img src="https://placehold.co/300x300" alt="Asset Image">
                 </div>
-            </div>
+                <div class="details">
+                    <div class="info-item">
+                        <div class="info-label">Serial Number</div>
+                        <div class="info-value"><%= aset.serial_number %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Hostname</div>
+                        <div class="info-value"><%= aset.hostname %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Nama Aset</div>
+                        <div class="info-value"><%= aset.nama_barang %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">IP Address</div>
+                        <div class="info-value"><%= aset.ip_address %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Cara Dapat</div>
+                        <div class="info-value"><%= aset.cara_dapat %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Kondisi Aset</div>
+                        <div class="info-value"><%= aset.kondisi_aset %></div>
+                    </div>
+                </div>
+             </div>
         </div>
     </body>
 </main>

@@ -28,29 +28,44 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td width="5%">1</td>
-                                    <td width="15%">[nama_kategori]</td>
-                                    <td width="17%">[deskripsi]</td>
-                                    <td width="15%">
-                                        <img class="img-fluid" alt="[gambar]" src="https://placehold.co/100x100" />
-                                    </td>
-                                    <td width="10%">[jumlah aset]</td>
-                                    <td width="18%">[jumlah kondisi_aset]</td>
-                                    <td width="20%">
-                                        <button class="button-delete">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                        <button class="button-edit">
-                                            <i class="fa-regular fa-pen-to-square"></i>
-                                        </button>
-                                        <a href="/admin/list-aset">
-                                            <button class="button-arrow">
-                                                <i class="fa-solid fa-arrow-right"></i>
-                                            </button>
-                                        </a>
-                                    </td>
-                                </tr>
+                                <% if (kategori && kategori.length > 0) { %>
+                                    <% kategori.forEach((item, index) => { %>
+                                        <tr>
+                                            <td width="5%"><%= index + 1 %></td>
+                                            <td width="15%"><%= item.nama_kategori %></td>
+                                            <td width="17%"><%= item.deskripsi %></td>
+                                            <td width="15%">
+                                                <% if (item.gambar) { %>
+                                                    <img class="img-fluid" alt="<%= item.nama_kategori %>" src="/uploads/<%= item.gambar %>" />
+                                                <% } else { %>
+                                                    <img class="img-fluid" alt="Default" src="https://placehold.co/100x100" />
+                                                <% } %>
+                                            </td>
+                                            <td width="10%"><%= item.asetCount %></td>
+                                            <td width="18%">
+                                                Baik: <%= item.kondisiStats.baik %><br>
+                                                Rusak: <%= item.kondisiStats.rusak %>
+                                            </td>
+                                            <td width="20%">
+                                                <button class="button-delete">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                                <button class="button-edit" data-id="<%= item.id %>">
+                                                    <i class="fa-regular fa-pen-to-square"></i>
+                                                </button>
+                                                <a href="/admin/list-aset/<%= item.id %>">
+                                                    <button class="button-arrow">
+                                                        <i class="fa-solid fa-arrow-right"></i>
+                                                    </button>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7" class="text-center">Tidak ada data kategori.</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
@@ -58,6 +73,7 @@
             </div>
         </div>
     </div>
+    
 </main>
 
 <!-- Modal untuk Tambah Kategori -->
@@ -83,40 +99,61 @@
 
 <!-- Modal untuk Edit Kategori -->
 <div id="editModal" class="popup-modal">
-  <div class="modal-content">
-      <span class="close-btn" id="closeEditBtn">&times;</span>
-      <h3>Edit Data Kategori</h3>
-      <form id="editForm">
-          <label for="editNamaKategori" class="left-label">Nama Kategori</label>
-          <input type="text" id="editNamaKategori" name="namaKategori" placeholder="Masukkan nama kategori" required>
-        
-          <div class="form-group">
-          <label for="imageProof" class="left-label">Bukti Gambar</label>
-        <input type="file" id="imageProof" name="imageProof" required>
-        </div>
+    <div class="modal-content">
+        <span class="close-btn" id="closeEditBtn">&times;</span>
+        <h3>Edit Data Kategori</h3>
+        <form id="editForm" method="POST" enctype="multipart/form-data">
+            <div class="form-grid">
+                <div class="form-column">
+                    <div class="form-group">
+                        <input type="hidden" id="editKategoriId" name="id">
+                        <label for="editNamaKategori" class="left-label">Nama Kategori</label>
+                        <input type="text" id="editNamaKategori" name="namaKategori" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDeskripsi" class="left-label">Deskripsi</label>
+                        <input type="text" id="editDeskripsi" name="deskripsi" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editGambar" class="left-label">Ubah Gambar</label>
+                        <input type="file" id="editGambar" name="gambar">
+                    </div>
+                </div>
+                <div class="form-column">
+                        <div class="form-group">
+                            <img id="currentImage" src="" alt="Current Image" style="max-width: 200px; margin: 10px auto; display: block;">
+                        </div>
+                </div>
+            </div>
+  
+            <button type="submit" class="btn finish-btn">Simpan</button>
+        </form>
+    </div>
+ </div>
 
-          <button type="submit" class="btn finish-btn">Simpan</button>
-      </form>
-  </div>
-</div>
-
-<div id="deleteModal" class="popup-modal">
+  <!-- Modal untuk Hapus Kategori -->
+  <div id="deleteModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeDeleteModal">&times;</span>
         <h3>Konfirmasi Hapus Data</h3>
-        <p>Apakah kamu yakin ingin menghapus data [kategori] ini?</p>
+        <p>Apakah kamu yakin ingin menghapus kategori ini?</p>
+        <br>
+        <p>PENTING!!!</p>
+        <p>Semua data aset akan terhapus</p>
         <div class="flex justify-center space-x-4">
             <button type="button" class="btn cancel-btn">Tidak</button>
-            <button type="button" style="background-color: #B60017; color: #fff;" class="btn finish-btn">Ya</button>
+            <button type="button" class="btn finish-btn" style="background-color: #B60017; color: #fff;">Ya</button>
         </div>
     </div>
 </div>
 
 
 <script>
+    
   // Mendapatkan elemen modal dan tombol
   const addModal = document.getElementById("addModal");
   const editModal = document.getElementById("editModal");
+  const editForm = document.getElementById("editForm");
   const closeAddBtn = document.getElementById("closeAddBtn");
   const closeEditBtn = document.getElementById("closeEditBtn");
   const addCategoryButton = document.querySelector('.button-tambah');
@@ -130,15 +167,23 @@
   });
 
   // Menangani klik pada tombol edit
-  editButtons.forEach(button => {
-      button.addEventListener('click', function(event) {
-          event.preventDefault();
-          const row = this.closest('tr');
-          const kategoriName = row.querySelector('[data-kategori]')?.textContent || '';
-          document.getElementById('editNamaKategori').value = kategoriName;
-          editModal.style.display = 'flex';
-      });
-  });
+  document.querySelectorAll('.button-edit').forEach(button => {
+   button.addEventListener('click', function() {
+       const id = this.getAttribute('data-id');
+       const row = this.closest('tr');
+       const namaKategori = row.cells[1].textContent;
+       const deskripsi = row.cells[2].textContent;
+       const gambarSrc = row.querySelector('img').src;
+       
+       document.getElementById('editKategoriId').value = id;
+       document.getElementById('editNamaKategori').value = namaKategori;
+       document.getElementById('editDeskripsi').value = deskripsi;
+       document.getElementById('currentImage').src = gambarSrc;
+       
+       editForm.setAttribute('action', `/admin/edit-kategori/${id}`);
+       editModal.style.display = 'flex';
+   });
+});
 
   // Menangani klik pada tombol tutup untuk kedua modal
   closeAddBtn.addEventListener('click', function() {
@@ -164,26 +209,42 @@
     const cancelDeleteBtn = deleteModal.querySelector('.cancel-btn');
     const confirmDeleteBtn = deleteModal.querySelector('.finish-btn');
     const closeDeleteBtn = document.getElementById("closeDeleteModal");
+    let kategoriIdToDelete;
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); // Mencegah aksi default
-            deleteModal.style.display = 'flex'; // Menampilkan modal hapus
+    document.querySelectorAll('.button-delete').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        kategoriIdToDelete = this.closest('tr').querySelector('.button-edit').getAttribute('data-id');
+        deleteModal.style.display = 'flex';
+    });
+});
+
+document.querySelector('#deleteModal .finish-btn').addEventListener('click', async function() {
+    try {
+        const response = await fetch(`/admin/hapus-kategori/${kategoriIdToDelete}`, {
+            method: 'DELETE'
         });
-    });
 
-    closeDeleteBtn.addEventListener('click', function() {
-        deleteModal.style.display = 'none'; // Menyembunyikan modal
-    });
+        if (response.ok) {
+            window.location.href = '/admin/pengelolaan-aset';
+        } else {
+            throw new Error('Gagal menghapus kategori');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+    
+    deleteModal.style.display = 'none';
+});
 
-    cancelDeleteBtn.addEventListener('click', function() {
-        deleteModal.style.display = 'none'; // Menyembunyikan modal
-    });
+document.querySelector('#deleteModal .cancel-btn').addEventListener('click', () => {
+    deleteModal.style.display = 'none';
+});
 
-    confirmDeleteBtn.addEventListener('click', function() {
-        deleteModal.style.display = 'none'; // Menyembunyikan modal
-        alert("Data berhasil dihapus!"); // Ganti dengan logika hapus data
-    });
+document.getElementById('closeDeleteModal').addEventListener('click', () => {
+    deleteModal.style.display = 'none';
+});
+
 
     window.onclick = function(event) {
         if (event.target == deleteModal) {
@@ -212,14 +273,32 @@
     addModal.style.display = 'none'; // Menutup modal setelah pengiriman
   });
 
-  document.getElementById('editForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const updatedKategoriName = document.getElementById('editNamaKategori').value;
-      // Tambahkan logika untuk mengupdate kategori
-      editModal.style.display = 'none';
-  });
+  editForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const id = document.getElementById('editKategoriId').value;
 
-  
+    try {
+        const response = await fetch(`/admin/edit-kategori/${id}`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            alert('Kategori berhasil diupdate!');
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert(data.message || 'Gagal mengupdate kategori');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengupdate kategori');
+    }
+
+    editModal.style.display = 'none';
+});
+
 </script>
 
 </body>

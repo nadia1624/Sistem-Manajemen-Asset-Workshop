@@ -68,15 +68,20 @@
                     </tr>
 
                   <% }); %>
-                </tbody>
-              </table>
-            </div>
+                <% } else { %>
+                  <tr>
+                    <td colspan="8" class="text-center">Tidak ada data penyerahan.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
-  </main>
-  
+  </div>
+</main>
+
 
 <!-- Modal -->
 <div id="addModal" class="popup-modal">

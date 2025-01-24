@@ -13,156 +13,125 @@
   <div id="addModal" class="modal">
     <div class="modal-content">
       <span id="close" class="close-btn">&times;</span>
-      <h3 id="modalTitle"></h3>
-      <p id="modalContent">Apakah Anda yakin ingin membuat permintaan untuk aset ini?</p>
-      <div class="modal-actions">
-        <button type="button" class="btn cancel-btn">
-          Tidak
-        </button>
-        <button type="submit" class="btn finish-btn">
-          Ya
-        </button>
-      </div>
+      <form action="/karyawan/permintaanAset" method="POST">
+        <h3 id="modalTitle"></h3>
+        <p id="modalContent">Apakah Anda yakin ingin membuat permintaan untuk aset ini?</p>
+        <input type="hidden" name="serial_number" id="serialNumberInput">
+        <div class="modal-actions">
+          <button type="button" class="btn cancel-btn">Tidak</button>
+          <button type="submit" class="btn finish-btn">Ya</button>
+        </div>
+      </form>
     </div>
   </div>
   
 
   <script>
 
-     const dummyData = [
-        {
-          id: 1,
-          title: "[Jenis Barang 1]",
-          description: "Description for Asset 1",
-          image: "/api/placeholder/400/300",
-        },
-        {
-          id: 2,
-          title: "[Jenis Barang 2]",
-          description: "Description for Asset 2",
-          image: "/api/placeholder/400/300",
-        },
-        {
-          id: 3,
-          title: "[Jenis Barang 3]",
-          description: "Description for Asset 3",
-          image: "/api/placeholder/400/300",
-        },
-        {
-          id: 4,
-          title: "[Jenis Barang 4]",
-          description: "Description for Asset 4",
-          image: "/api/placeholder/400/300",
-        },
-        {
-          id: 5,
-          title: "[Jenis Barang 5]",
-          description: "Description for Asset 5",
-          image: "/api/placeholder/400/300",
-        },
-        {
-          id: 6,
-          title: "[Jenis Barang 6]",
-          description: "Description for Asset 6",
-          image: "/api/placeholder/400/300",
-        },
-        {
-          id: 7,
-          title: "[Jenis Barang 7]",
-          description: "Description for Asset 7",
-          image: "/api/placeholder/400/300",
-        },
-        {
-          id: 8,
-          title: "[Jenis Barang 8]",
-          description: "Description for Asset 8",
-          image: "/api/placeholder/400/300",
-        },
-      ];
-      
-    
-    // Function to create card HTML
-    function createCard(item) {
-      return `
-        <div class="group flex flex-col h-full bg-white border-2 border-gray-200 shadow-sm rounded-xl hover:border-black hover:shadow-md transition duration-300">
-          <a href="/karyawan/detail-aset" class="block h-52 bg-gray-100 rounded-t-xl overflow-hidden">
-            <img class="w-full h-full object-cover" src="${item.image}" alt="${item.title}">
-          </a>
-          <div class="p-4 md:p-6">
-            <h3 class="text-xl font-semibold text-gray-800">${item.title}</h3>
-            <p class="mt-2 text-gray-600">${item.description}</p>
-          </div>
-          <div class="p-4 md:p-6 mt-auto text-right">
-            <button
-              type="button"
-              class="request-btn inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-800"
-              data-title="${item.title}">
-              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      `;
-    }
-      // Function to render all cards
-      function renderCards() {
-        const container = document.getElementById("cardContainer");
-        const cardsHTML = dummyData.map((item) => createCard(item)).join("");
-        container.innerHTML = cardsHTML;
-      }
+const assets = JSON.parse('<%- JSON.stringify(assets) %>');
 
-      // Render cards when page loads
-      document.addEventListener("DOMContentLoaded", renderCards);
+// Event listener saat DOM dimuat
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById("cardContainer");
+  container.innerHTML = assets.map(createCard).join("");
 
-      // Simple toggle for mobile menu
-      document.addEventListener("DOMContentLoaded", function () {
-        const toggleButton = document.querySelector(".hs-collapse-toggle");
-        const mobileMenu = document.getElementById("navbar-collapse-mobile");
+  document.getElementById("close").addEventListener("click", hideModal);
+  document.querySelector(".cancel-btn").addEventListener("click", hideModal);
+  setupRequestButtons();
+});
 
-        toggleButton.addEventListener("click", function () {
-          mobileMenu.classList.toggle("hidden");
-        });
-      });      
-      
-      
- function showModal(title) {
+// Fungsi membuat card
+function createCard(item) {
+ const cardHtml = `
+   <div class="group flex flex-col h-full bg-white border-2 border-gray-200 shadow-sm rounded-xl hover:border-black hover:shadow-md transition duration-300" 
+        onclick="handleCardClick(event, '${item.id}')">
+     <div class="block h-full bg-gray-100 rounded-t-xl overflow-hidden">
+       <img class="w-full h-full object-cover" src="${item.image}" alt="${item.title}">
+     </div>
+     <div class="p-6 md:p-6">
+       <h3 class="text-xl font-semibold text-gray-800">${item.title}</h3>
+       <p class="mt-2 text-gray-600">${item.description}</p>
+     </div>
+     <div class="pl-6 pr-6 pt-2 pb-6 mt-auto flex justify-between items-center">
+       <p class="text-sm text-gray-500">Stok tersedia: ${item.stock}</p>
+       <button type="button"
+        class="request-btn inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-800"
+        data-serial="${item.serial_number}"
+        data-title="${item.title}">
+        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
+     </div>
+   </div>
+ `;
+ return cardHtml;
+}
+
+// Tambahkan ke setupRequestButtons
+function setupRequestButtons() {
+  document.querySelectorAll('.request-btn').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const title = button.dataset.title;
+      const serial = button.dataset.serial;
+      showModal(title, serial);
+    });
+  });
+}
+
+function handleCardClick(event, id) {
+ const button = event.target.closest('.request-btn');
+ if (button) {
+   showModal(button.dataset.title, button.dataset.serial);
+ } else {
+   window.location.href = `/karyawan/detail-aset/${id}`;
+ }
+}
+
+// Fungsi modal
+function showModal(title, serial_number) {
   const modal = document.getElementById("addModal");
   const modalTitle = document.getElementById("modalTitle");
-
+  document.getElementById("serialNumberInput").value = serial_number;
+  
   modalTitle.textContent = `Permintaan untuk ${title}`;
-  modal.style.display = "flex"; // Menyesuaikan dengan class modal baru
+  modal.style.display = "flex";
 }
 
 function hideModal() {
-  const modal = document.getElementById("addModal");
-  modal.style.display = "none"; // Menyesuaikan dengan class modal baru
+ document.getElementById("addModal").style.display = "none";
 }
 
+// Submit permintaan
+document.querySelector('.finish-btn').addEventListener('click', async () => {
+ const serial_number = document.querySelector('.finish-btn').dataset.serialNumber;
+ try {
+   const response = await fetch('/karyawan/permintaanAset', { // Sesuaikan dengan route
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json'
+     },
+     body: JSON.stringify({ serial_number })
+   });
 
-      // Event listener untuk tombol request pada card
-      document.getElementById("cardContainer").addEventListener("click", (event) => {
-        const button = event.target.closest(".request-btn");
-        if (button) {
-          const title = button.getAttribute("data-title");
-          showModal(title);
-        }
+   if (response.ok) {
+     hideModal();
+     window.location.href = '/karyawan/permintaan/permintaanAset';
+   } else {
+     const errorData = await response.json();
+     alert(errorData.message || 'Gagal membuat permintaan');
+   }
+ } catch (error) {
+   console.error('Error:', error);
+   alert('Terjadi kesalahan');
+ }
+});
 
+document.getElementById("requestButton").addEventListener("click", showModal);
+document.getElementById("close").addEventListener("click", hideModal);
+document.querySelector(".cancel-btn").addEventListener("click", hideModal);
 
-
-      // Event listener untuk tombol "Tutup" modal
-      document.getElementById("close").addEventListener("click", hideModal);
-
-      // Event listener untuk tombol "Tidak" pada modal
-      document.querySelector(".cancel-btn").addEventListener("click", hideModal);
-
-      document.querySelector(".finish-btn").addEventListener("click", () => {
-        hideModal();
-        alert("Permintaan aset telah dibuat!");
-        window.location.href = "/karyawan/permintaanAset"; // Ganti dengan URL halaman tujuan
-      });
-
-    });
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>

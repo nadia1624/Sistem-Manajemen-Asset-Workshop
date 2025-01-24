@@ -255,7 +255,7 @@ const editAset = async (req, res) => {
         if (!aset) {
             return res.status(404).json({ message: 'Aset tidak ditemukan' });
         }
-
+        
         await aset.update({
             hostname,
             nama_barang: namaAset,

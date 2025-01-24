@@ -1,5 +1,6 @@
 const { where } = require('sequelize');
-const { Pemeliharaan, DetailPemeliharaan, Kategori, Aset, sequelize } = require('../models');
+const { Pemeliharaan, DetailPemeliharaan, Kategori, Aset,Penyerahan, sequelize } = require('../models');
+const { Op } = require('sequelize');
 
 const createPemeliharaan = async (req, res) => {
     const transaction = await sequelize.transaction(); // Mulai transaksi
@@ -20,7 +21,11 @@ const createPemeliharaan = async (req, res) => {
 
         // 2. Ambil semua aset dari kategori yang dipilih
         const assets = await Aset.findAll({
-            where: { kategoriId },
+            where: { kategoriId, 
+                status_peminjaman : {
+                    [Op.ne]: "dipinjam" 
+                }
+             },
             transaction,
         });
 
@@ -113,6 +118,7 @@ const listPemeliharaan = async (req, res) => {
     }
 };
 
+
 const detailPemeliharaan = async (req,res) => {
     try {
         const pemeliharaanId = req.params.id;
@@ -129,8 +135,14 @@ const detailPemeliharaan = async (req,res) => {
                 }
             }
         })
+
+        const pemeliharaan = await Pemeliharaan.findOne({
+            where : {
+                id : pemeliharaanId
+            }
+        })
         
-        res.render('admin/pemeliharaan/detailPemeliharaan', {detailPemeliharaan})
+        res.render('admin/pemeliharaan/detailPemeliharaan', {detailPemeliharaan, pemeliharaanId, status_pemeliharaan : pemeliharaan.status_pemeliharaan  })
         
     } catch (error) {
         console.error('Error during detailPemeliharaan:', error);
@@ -157,11 +169,90 @@ const deletePemeliharaan = async (req,res) => {
         res.status(500).json({messege: 'Delete Pemeliharaan Eror', error: error.messege})
     }
 }
-    
+
+const updateStatus = async (req, res) => {
+    try {
+        const pemeliharaanId = req.params.id;
+        
+        await Pemeliharaan.update(
+            { status_pemeliharaan : 'sudah terlaksana'},
+            { where : { id : pemeliharaanId }}
+        )
+        res.redirect('/admin/pemeliharaan-aset')
+    } catch (error) {
+        console.error('Error during updateStatusPemeliharaan:', error);
+        res.status(500).json({messege: 'Update Status Pemeliharaan Eror', error: error.messege})
+    }
+}
+const updateKondisiAset = async (req, res) => {
+    try {
+        const { id, serial_number } = req.params; // Mengambil parameter
+        const { kondisi_aset, keterangan } = req.body; // Mengambil data dari request body
+
+        console.log("Pemeliharaan ID:", id, "Serial Number:", serial_number);
+        console.log("Kondisi Aset:", kondisi_aset, "Keterangan:", keterangan);
+
+        // Perbarui data di tabel DetailPemeliharaan
+        const detailUpdateResult = await DetailPemeliharaan.update(
+            { status_aset: kondisi_aset, keterangan },
+            { where: { pemeliharaanId: id, serial_number } }
+        );
+
+        // Validasi apakah data DetailPemeliharaan ditemukan
+        if (detailUpdateResult[0] === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Detail Pemeliharaan tidak ditemukan.",
+            });
+        }
+
+        // Perbarui data kondisi aset di tabel Aset
+        const asetUpdateResult = await Aset.update(
+            { kondisi_aset: kondisi_aset },
+            { where: { serial_number } }
+        );
+
+        // Validasi apakah data Aset ditemukan
+        if (asetUpdateResult[0] === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Aset tidak ditemukan.",
+            });
+        }
+
+        // Perbarui data di tabel Penyerahan
+        const penyerahanUpdateResult = await Penyerahan.update(
+            { kondisi_aset: kondisi_aset, keterangan },
+            { where: { serial_number } }
+        );
+
+        res.redirect(`/admin/pemeliharaan-aset/detail/${id}`)
+
+        // Jika semua pembaruan berhasil
+        // return res.status(200).json({
+        //     success: true,
+        //     message: "Kondisi Aset berhasil diperbarui di semua tabel.",
+        // });
+    } catch (error) {
+        console.error("Error during updateKondisiAset:", error);
+
+        // Tangani kesalahan dan kirimkan respons dengan status 500
+        return res.status(500).json({
+            success: false,
+            message: "Terjadi kesalahan saat memperbarui kondisi aset.",
+            error: error.message,
+        });
+    }
+};
+
+
+
 
 module.exports = {
     createPemeliharaan,
     listPemeliharaan,
     detailPemeliharaan,
-    deletePemeliharaan
+    deletePemeliharaan,
+    updateStatus,
+    updateKondisiAset
 }

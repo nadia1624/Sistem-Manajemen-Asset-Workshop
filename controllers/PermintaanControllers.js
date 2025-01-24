@@ -4,35 +4,26 @@ const path = require('path');
 // Controller untuk membuat permintaan aset oleh karyawan
 const createPermintaanAset = async (req, res) => {
   const { serial_number } = req.body;
-  const userId = req.userId; // Menggunakan user ID yang sudah didecode dari token
-
-  // Pastikan hanya karyawan yang bisa membuat permintaan
-  if (req.user.role !== 'karyawan') {
-    return res.status(403).json({ message: 'Akses terlarang. Hanya karyawan yang dapat membuat permintaan aset.' });
-  }
+  const userId = req.userId;
 
   if (!serial_number) {
     return res.status(400).json({ message: 'Serial number aset tidak ditemukan' });
   }
 
   try {
-    // Validasi apakah aset dengan serial_number ada
     const aset = await Aset.findOne({ where: { serial_number } });
     if (!aset) {
       return res.status(404).json({ message: 'Aset tidak ditemukan' });
     }
 
-    // Membuat permintaan aset baru
     await Permintaan.create({
       serial_number,
       userId,
-      status_permintaan: 'diproses', // Status awal permintaan
+      status_permintaan: 'diproses',
       tanggal_permintaan: new Date(),
     });
 
-    // Redirect ke halaman permintaan aset karyawan setelah berhasil
-    return res.redirect('/karyawan/permintaan/permintaanAset'); // Menggunakan redirect, bukan render
-
+    return res.redirect('/karyawan/permintaanAset');
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Terjadi kesalahan saat membuat permintaan' });

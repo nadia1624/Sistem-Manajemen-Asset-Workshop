@@ -2,18 +2,12 @@ const express = require('express');
 const verifyToken = require ('../middleware/validtokenMiddleware');
 const role = require("../middleware/checkroleMiddleware");
 const upload = require('../middleware/uploadMiddleware');
-const { tampilkanAsetBerdasarkanKategori, tampilkanKategori, tambahKategori, tampilkanEditKategori, editKategori, tambahAset, editAset, hapusKategori, tampilkanEditAset, hapusAset, tampilkanDetailAset } = require('../controllers/pengelolaanController');
-
-
+const { tampilkanAsetBerdasarkanKategori, tampilkanKategori, tambahKategori, tampilkanEditKategori, editKategori, tambahAset, editAset, hapusKategori, tampilkanEditAset, hapusAset, tampilkanDetailAset, tampilkanDaftarAsetKaryawan, tampilkanDetailAsetKaryawan } = require('../controllers/pengelolaanController');
 const router = express.Router();
 
-router.get('/karyawan/daftar-aset', verifyToken, role('karyawan') ,(req, res) => {
-    res.render('karyawan/daftarAset/daftar-aset', { req: req });
-});
+router.get('/karyawan/daftar-aset', verifyToken, role('karyawan'), tampilkanDaftarAsetKaryawan);
 
-router.get('/karyawan/detail-aset', verifyToken, role('karyawan') ,(req, res) => {
-    res.render('karyawan/daftarAset/detail-aset', { req: req });
-});
+router.get('/karyawan/detail-aset/:id', verifyToken, role('karyawan'), tampilkanDetailAsetKaryawan);
 
 router.get('/admin/pengelolaan-aset', verifyToken, role('admin'), tampilkanKategori);
 

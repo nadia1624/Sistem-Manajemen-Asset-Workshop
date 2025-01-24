@@ -3,11 +3,11 @@
 
   <style>
     th:nth-child(1), td:nth-child(1) { width: 5%; }
-    th:nth-child(2), td:nth-child(2) { width: 10%; }
+    th:nth-child(2), td:nth-child(2) { width: 15%; }
     th:nth-child(3), td:nth-child(3) { width: 15%; }
-    th:nth-child(4), td:nth-child(4) { width: 25%; }
+    th:nth-child(4), td:nth-child(4) { width: 15%; }
     th:nth-child(5), td:nth-child(5) { width: 10%; }
-    th:nth-child(6), td:nth-child(6) { width: 10%; }
+    th:nth-child(6), td:nth-child(6) { width: 15%; }
     th:nth-child(7), td:nth-child(7) { width: 15%; }
     th:nth-child(8), td:nth-child(8) { width: 10%; }
   </style>
@@ -32,48 +32,52 @@
                 </tr>
             </thead>
           <tbody>
-           <% listPermintaan.forEach((permintaan, index) => { %>
-              <tr>
-                  <td><%= index + 1 %></td>
-                  <td><%= permintaan.tanggal_permintaan %></td>
-                  <td><%= permintaan.Aset.nama_barang %></td>
-                  <td><%= permintaan.Aset.Kategori.deskripsi %></td>
-                  <td>
-                      <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.Aset.Kategori.gambar %>"/>
+          <% if (listPermintaan && listPermintaan.length > 0) { %>
+            <% listPermintaan.forEach((permintaan, index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= permintaan.tanggal_permintaan %></td>
+                    <td><%= permintaan.Aset.nama_barang %></td>
+                    <td><%= permintaan.Aset.Kategori.deskripsi %></td>
+                    <td>
+                        <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.Aset.Kategori.gambar %>"/>
+                    </td>
+                    <td><%= permintaan.Aset.Kategori.nama_kategori %></td>
+                    <td width="15%">
+                      <% if (permintaan.status_permintaan === "diterima") { %>
+                          <div class="status-badge disetujui">Disetujui</div>
+                      <% } else if (permintaan.status_permintaan === "ditolak") { %>
+                          <div class="status-badge ditolak">Ditolak</div>
+                      <% } else if (permintaan.status_permintaan === "diproses") { %>
+                          <div class="status-badge diproses">Diproses</div>
+                      <% } %>
                   </td>
-                  <td><%= permintaan.Aset.Kategori.nama_kategori %></td>
-                  <td width="15%">
+                  <td>
                     <% if (permintaan.status_permintaan === "diterima") { %>
-                        <div class="status-badge disetujui">Disetujui</div>
-                    <% } else if (permintaan.status_permintaan === "ditolak") { %>
-                        <div class="status-badge ditolak">Ditolak</div>
+                      <% if (permintaan.tandaTanganAda) { %>
+                        <!-- Tombol Nonaktif Jika TTD Sudah Ada -->
+                        <button class="btn btn-upload disabled">
+                          <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload TTD
+                        </button>
+                      <% } else { %>
+                        <!-- Tombol Aktif Jika TTD Belum Ada -->
+                        <button class="btn btn-upload" onclick="openModal('uploadModal', '<%= permintaan.id %>')">
+                          <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload TTD
+                        </button>
+                      <% } %>
                     <% } else if (permintaan.status_permintaan === "diproses") { %>
-                        <div class="status-badge diproses">Diproses</div>
-                    <% } %>
-                </td>
-                <td>
-                  <% if (permintaan.status_permintaan === "diterima") { %>
-                    <% if (permintaan.tandaTanganAda) { %>
-                      <!-- Tombol Nonaktif Jika TTD Sudah Ada -->
-                      <button class="btn btn-upload disabled">
-                        <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload TTD
-                      </button>
-                    <% } else { %>
-                      <!-- Tombol Aktif Jika TTD Belum Ada -->
-                      <button class="btn btn-upload" onclick="openModal('uploadModal', '<%= permintaan.id %>')">
-                        <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload TTD
+                      <button class="btn btn-batal" onclick="openModal('cancelModal', '<%= permintaan.id %>')">
+                        <i class="fa-solid fa-circle-xmark"></i> Batalkan
                       </button>
                     <% } %>
-                  <% } else if (permintaan.status_permintaan === "diproses") { %>
-                    <button class="btn btn-batal" onclick="openModal('cancelModal', '<%= permintaan.id %>')">
-                      <i class="fa-solid fa-circle-xmark"></i> Batalkan
-                    </button>
-                  <% } %>
-                </td>
-                
-                                               
+                  </td>                         
+                        </tr>
+                    <% }); %>
+                  <% } else { %>
+                      <tr>
+                          <td colspan="8" class="text-center">Tidak ada permintaan aset.</td>
                       </tr>
-                   <% }); %>
+                  <% } %>
                 </tbody>
                </table>
             </div>

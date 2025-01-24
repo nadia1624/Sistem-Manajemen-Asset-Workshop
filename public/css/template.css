@@ -125,7 +125,8 @@ h2,
 h3,
 h4,
 h5,
-h6 {
+h6,
+.info-label {
   font-family: "Raleway", sans-serif;
   font-weight: bold;
 }
@@ -437,9 +438,9 @@ td button i {
 
 .modal-content {
   background-color: white;
-  padding: 20px;
+  padding: 20px 30px;
   border-radius: 10px;
-  max-width: 400px;
+  max-width: 430px;
   max-height: 90%;
   margin: 0 auto;
   text-align: center;
@@ -457,6 +458,11 @@ td button i {
 .modal-content h3 {
   margin-top: 30px;
   margin-bottom: 30px;
+  font-size: large;
+}
+
+.modal-content p {
+  font-size: 14px;
 }
 
 .close-btn {
@@ -478,6 +484,7 @@ form input {
   margin-top: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
+  font-size: 14px;
 }
 
 form input::placeholder {
@@ -1695,4 +1702,18 @@ h1 {
 /* Optional: Change background for the link button in disabled state */
 a button:disabled {
   pointer-events: none;
+}
+
+.info-item {
+  margin-bottom: 15px;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.info-value {
+  color: #666;
 }

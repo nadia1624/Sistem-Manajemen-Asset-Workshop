@@ -1,18 +1,17 @@
 <%- include("../../layout/sidebar.ejs") %>
 
-
 <main class="content">
     <div class="header-content">
         <div class="title-section">
             <a href="/admin/pengelolaan-aset">
                 <button id="" style="display: flex; align-items: center;">
                     <i class="fa-solid fa-arrow-left" style="font-weight: bold; font-size: 20px; margin-right: 10px;"></i>
-                    <span style="font-size: 24px; font-weight: bold; font-family: Raleway;">[Nama Kategori]</span>
+                    <span style="font-size: 24px; font-weight: bold; font-family: Raleway;"><%= kategori.nama_kategori %></span>
                 </button>
             </a>
         </div>
         <div class="button-tambah">
-            <button>
+            <button id="addAsetButton">
                 <i class="fas fa-plus"></i> Tambah
             </button>
         </div>
@@ -26,34 +25,44 @@
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
-                                    <th width="20%">Serial Number</th>
-                                    <th width="20%">Nama Aset</th>
+                                    <th width="15%">Serial Number</th>
+                                    <th width="15%">Nama Aset</th>
+                                    <th width="10%">Cara Dapat</th>
                                     <th width="15%">Kondisi Aset</th>
                                     <th width="15%">Status Pinjam</th>
                                     <th width="25%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td width="5%">1</td>
-                                    <td width="20%">Lorem Ipsum</td>
-                                    <td width="20%">Lorem Ipsum</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="25%">
-                                        <button class="button-delete">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                        <button class="button-edit">
-                                            <i class="fa-regular fa-pen-to-square"></i>
-                                        </button>
-                                        <a href="/admin/info-aset">
-                                            <button class="button-info">
-                                                <i class="fa-solid fa-circle-info"></i>
-                                            </button>
-                                        </a>
-                                    </td>
-                                </tr>
+                                <% if (aset && aset.length > 0) { %>
+                                    <% aset.forEach((item, index) => { %>
+                                        <tr>
+                                            <td width="5%"><%= index + 1 %></td>
+                                            <td width="15%"><%= item.serial_number %></td>
+                                            <td width="15%"><%= item.nama_barang %></td>
+                                            <td width="10%"><%= item.cara_dapat %></td>
+                                            <td width="15%"><%= item.kondisi_aset %></td>
+                                            <td width="15%"><%= item.status_peminjaman %></td>
+                                            <td width="25%">
+                                                <button class="button-delete" data-id="<%= item.serial_number %>">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                                <button class="button-edit" data-id="<%= item.serial_number %>">
+                                                    <i class="fa-regular fa-pen-to-square"></i>
+                                                </button>
+                                                <a href="/admin/info-aset/<%= item.serial_number %>">
+                                                    <button class="button-info">
+                                                        <i class="fa-solid fa-circle-info"></i>
+                                                    </button>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center">Tidak ada aset untuk kategori ini.</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
@@ -68,9 +77,9 @@
     <div class="modal-content">
         <span class="close-btn" id="closeAddBtn">&times;</span>
         <h3>Tambah Data Aset</h3>
-        <form id="addForm" class="grid-form">
+        <form id="addForm" class="grid-form" action="/admin/tambah-aset" method="POST">
+            <input type="hidden" name="kategoriId" value="<%= kategori.id %>"> <!-- Menyimpan ID kategori -->
             <div class="form-grid">
-                <!-- Column 1 -->
                 <div class="form-column">
                     <div class="form-group">
                         <label for="serialNumber" class="left-label">Serial Number</label>
@@ -85,121 +94,109 @@
                         <input type="text" id="namaAset" name="namaAset" placeholder="Masukkan Nama Aset" required>
                     </div>
                     <div class="form-group">
-                        <label for="deskripsi" class="left-label">Deskripsi</label>
-                        <input type="text" id="deskripsi" name="deskripsi" placeholder="Masukkan Deskripsi" required>
-                    </div>
-                    
-                </div>
- 
-                <!-- Column 2 -->
-                <div class="form-column">
-                    <div class="form-group">
                         <label for="ipAddress" class="left-label">IP Address</label>
                         <input type="text" id="ipAddress" name="ipAddress" placeholder="Masukkan IP Address" required>
                     </div>
+                </div>
+                <div class="form-column">
                     <div class="form-group">
                         <label for="caraDapat" class="left-label">Cara Dapat</label>
-                        <select id="caraDapat" name="caraDapat">
+                        <select id="caraDapat" name="caraDapat" required>
                             <option value="" disabled selected>Pilih Cara Dapat</option>
-                            <option value="Baik">Cara Dapat 1</option>
-                            <option value="Rusak Ringan">Cara Dapat 2</option>
-                            <option value="Rusak Berat">Cara Dapat 3</option>
+                            <option value="beli">Beli</option>
+                            <option value="sewa">Sewa</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="kondisiAset" class="left-label">Kondisi Aset</label>
-                        <select id="kondisiAset" name="kondisiAset">
+                        <select id="kondisiAset" name="kondisiAset" required>
                             <option value="" disabled selected>Pilih Kondisi Aset</option>
-                            <option value="Baik">Baik</option>
-                            <option value="Rusak Ringan">Rusak Ringan</option>
-                            <option value="Rusak Berat">Rusak Berat</option>
+                            <option value="baik">Baik</option>
+                            <option value="rusak ringan">Rusak Ringan</option>
+                            <option value="rusak berat">Rusak Berat</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="statusPinjam" class="left-label">Status Pinjam</label>
-                        <input type="text" id="statusPinjam" name="statusPinjam" placeholder="Masukkan Status Pinjam" required>
+                        <select id="statusPinjam" name="statusPinjam" required>
+                            <option value="" disabled selected>Pilih Status Pinjam</option>
+                            <option value="tersedia">Tersedia</option>
+                            <option value="sedang diajukan">Sedang Diajukan</option>
+                            <option value="dipinjam">Dipinjam</option>
+                        </select>
                     </div>
                 </div>
             </div>
-            
             <div class="button-container">
                 <button type="submit" class="btn finish-btn">Simpan</button>
             </div>
         </form>
     </div>
- </div>
+</div>
 
-<!-- Modal untuk Edit Kategori -->
+<!-- Modal Edit Aset -->
 <div id="editModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeEditBtn">&times;</span>
         <h3>Edit Data Aset</h3>
-        <form id="editForm" class="grid-form">
+        <form id="editForm" method="POST">
             <div class="form-grid">
-                <!-- Column 1 -->
                 <div class="form-column">
+                    <input type="hidden" name="kategoriId" value="<%= kategori.id %>">
                     <div class="form-group">
-                        <label for="serialNumber" class="left-label">Serial Number</label>
-                        <input type="text" id="serialNumber" name="serialNumber" placeholder="Masukkan serial number" readonly required>
+                        <label for="editSerialNumber" class="left-label">Serial Number</label>
+                        <input type="text" id="editSerialNumber" name="serialNumber" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="hostname" class="left-label">Hostname</label>
-                        <input type="text" id="hostname" name="hostname" placeholder="Masukkan hostname" readonly required>
+                        <label for="editHostname" class="left-label">Hostname</label>
+                        <input type="text" id="editHostname" name="hostname" required>
                     </div>
                     <div class="form-group">
-                        <label for="namaAset" class="left-label">Nama Aset</label>
-                        <input type="text" id="namaAset" name="namaAset" placeholder="Masukkan Nama Aset" readonly required>
+                        <label for="editNamaAset" class="left-label">Nama Aset</label>
+                        <input type="text" id="editNamaAset" name="namaAset" required>
                     </div>
                     <div class="form-group">
-                        <label for="deskripsi" class="left-label">Deskripsi</label>
-                        <input type="text" id="deskripsi" name="deskripsi" placeholder="Masukkan Deskripsi" readonly required>
+                        <label for="editIpAddress" class="left-label">IP Address</label>
+                        <input type="text" id="editIpAddress" name="ipAddress" required>
                     </div>
-                    
                 </div>
-
-                <!-- Column 2 -->
                 <div class="form-column">
                     <div class="form-group">
-                        <label for="ipAddress" class="left-label">IP Address</label>
-                        <input type="text" id="ipAddress" name="ipAddress" placeholder="Masukkan IP Address" readonly required>
-                    </div>
-                    <div class="form-group">
-                        <label for="caraDapat" class="left-label">Cara Dapat</label>
-                        <select id="caraDapat" name="caraDapat">
-                            <option value="" disabled selected>Pilih Cara Dapat</option>
-                            <option value="Baik">Cara Dapat 1</option>
-                            <option value="Rusak Ringan">Cara Dapat 2</option>
-                            <option value="Rusak Berat">Cara Dapat 3</option>
+                        <label for="editCaraDapat" class="left-label">Cara Dapat</label>
+                        <select id="editCaraDapat" name="caraDapat" required>
+                            <option value="beli">Beli</option>
+                            <option value="sewa">Sewa</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="kondisiAset" class="left-label">Kondisi Aset</label>
-                        <select id="kondisiAset" name="kondisiAset">
-                            <option value="" disabled selected>Pilih Kondisi Aset</option>
-                            <option value="Baik">Baik</option>
-                            <option value="Rusak Ringan">Rusak Ringan</option>
-                            <option value="Rusak Berat">Rusak Berat</option>
+                        <label for="editKondisiAset" class="left-label">Kondisi Aset</label>
+                        <select id="editKondisiAset" name="kondisiAset" required>
+                            <option value="baik">Baik</option>
+                            <option value="rusak ringan">Rusak Ringan</option>
+                            <option value="rusak berat">Rusak Berat</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="statusPinjam" class="left-label">Status Pinjam</label>
-                        <input type="text" id="statusPinjam" name="statusPinjam" placeholder="Masukkan Status Pinjam" required>
+                        <label for="editStatusPinjam" class="left-label">Status Pinjam</label>
+                        <select id="editStatusPinjam" name="statusPinjam" required>
+                            <option value="tersedia">Tersedia</option>
+                            <option value="sedang diajukan">Sedang Diajukan</option>
+                            <option value="dipinjam">Dipinjam</option>
+                        </select>
                     </div>
                 </div>
             </div>
-            
-            <div class="button-container">
-                <button type="submit" class="btn finish-btn">Simpan</button>
-            </div>
+            <button type="submit" class="btn finish-btn">Simpan</button>
         </form>
     </div>
-</div>  
+</div>
+
 
 <div id="deleteModal" class="popup-modal">
     <div class="modal-content">
         <span class="close-btn" id="closeDeleteModal">&times;</span>
         <h3>Konfirmasi Hapus Data</h3>
-        <p>Apakah kamu yakin ingin menghapus data [serial_number] ini?</p>
+        <p>Apakah kamu yakin ingin menghapus data <span id="deleteSerialNumber"></span> ini?</p>
         <div class="flex justify-center space-x-4">
             <button type="button" class="btn cancel-btn">Tidak</button>
             <button type="button" style="background-color: #B60017; color: #fff;" class="btn finish-btn">Ya</button>
@@ -208,85 +205,187 @@
 </div>
 
 <script>
-  // Mendapatkan elemen modal dan tombol
-  const addModal = document.getElementById("addModal");
+    // Mendapatkan elemen modal dan tombol
+    const addModal = document.getElementById("addModal");
     const editModal = document.getElementById("editModal");
-    const closeEditBtn = document.getElementById("closeEditBtn");
-    const editForm = document.getElementById('editForm');
     const deleteModal = document.getElementById("deleteModal");
-    const addAsetButton = document.querySelector('.button-tambah');
-    const cancelDeleteBtn = deleteModal.querySelector('.cancel-btn');
-    const confirmDeleteBtn = deleteModal.querySelector('.finish-btn');
     const closeAddBtn = document.getElementById("closeAddBtn");
+    const closeEditBtn = document.getElementById("closeEditBtn");
     const closeDeleteBtn = document.getElementById("closeDeleteModal");
-    
+    const addAsetButton = document.querySelector('.button-tambah');
     const deleteButtons = document.querySelectorAll('.button-delete');
-    const openEditModalBtns = document.querySelectorAll('.button-edit');
+    const editButtons = document.querySelectorAll('.button-edit');
+    
 
-    openEditModalBtns.forEach((btn) => {
-    btn.addEventListener('click', function () {
-            editModal.style.display = 'flex'; // Tampilkan modal
-        });
+    // Menangani klik pada tombol "Tambah Aset"
+    addAsetButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        addModal.style.display = 'flex';
     });
 
-      // Menangani klik pada tombol "Tambah Kategori"
-  addAsetButton.addEventListener('click', function(event) {
-      event.preventDefault();
-      addModal.style.display = 'flex';
-  });
-
-    // Menangani klik pada tombol tutup untuk kedua modal
+    // Menangani klik pada tombol tutup untuk modal
     closeAddBtn.addEventListener('click', function() {
-      addModal.style.display = 'none';
-  });
-
-    // Menangani tombol close modal
-    closeEditBtn.addEventListener('click', function () {
-        editModal.style.display = 'none'; // Sembunyikan modal
+        addModal.style.display = 'none';
     });
 
-    // Menutup modal jika klik di luar area modal
-    window.addEventListener('click', function (event) {
+    closeEditBtn.addEventListener('click', function() {
+        editModal.style.display = 'none';
+    });
+
+
+    // Menangani klik di luar modal untuk menutupnya
+    window.addEventListener('click', function(event) {
         if (event.target == addModal) {
-          addModal.style.display = 'none';
-      }
+            addModal.style.display = 'none';
+        }
         if (event.target == editModal) {
             editModal.style.display = 'none';
         }
-    });
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); // Mencegah aksi default
-            deleteModal.style.display = 'flex'; // Menampilkan modal hapus
-        });
-    });
-
-    closeDeleteBtn.addEventListener('click', function() {
-        deleteModal.style.display = 'none'; // Menyembunyikan modal
-    });
-
-    cancelDeleteBtn.addEventListener('click', function() {
-        deleteModal.style.display = 'none'; // Menyembunyikan modal
-    });
-
-    confirmDeleteBtn.addEventListener('click', function() {
-        deleteModal.style.display = 'none'; // Menyembunyikan modal
-        alert("Data berhasil dihapus!"); // Ganti dengan logika hapus data
-    });
-
-    window.onclick = function(event) {
         if (event.target == deleteModal) {
-            deleteModal.style.display = 'none'; // Menyembunyikan modal saat klik di luar modal
+            deleteModal.style.display = 'none';
         }
-    };
-
-        // Form submit handlers
-    document.getElementById('addForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const newAsetName = document.getElementById('addNamaAset').value;
-        addModal.style.display = 'none';
     });
+
+    // Menangani klik pada tombol edit
+    document.querySelectorAll('.button-edit').forEach(button => {
+    button.addEventListener('click', async function() {
+        const serialNumber = this.getAttribute('data-id');
+        const row = this.closest('tr');
+        
+        // Get data from table row
+        document.getElementById('editSerialNumber').value = serialNumber;
+        document.getElementById('editNamaAset').value = row.querySelector('td:nth-child(3)').textContent;
+        document.getElementById('editKondisiAset').value = row.querySelector('td:nth-child(4)').textContent;
+        document.getElementById('editStatusPinjam').value = row.querySelector('td:nth-child(5)').textContent;
+
+        // Fetch additional data
+        try {
+            const response = await fetch(`/admin/edit-aset/${serialNumber}`);
+            const aset = await response.json();
+            
+            document.getElementById('editHostname').value = aset.hostname;
+            document.getElementById('editIpAddress').value = aset.ip_address;
+            document.getElementById('editCaraDapat').value = aset.cara_dapat;
+            
+            editForm.setAttribute('action', `/admin/edit-aset/${serialNumber}`);
+            editModal.style.display = 'flex';
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Gagal mengambil data aset');
+        }
+    });
+});
+
+
+    // Form submit handlers
+document.getElementById('addForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => data[key] = value);
+
+    try {
+        const response = await fetch('/admin/tambah-aset', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message);
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
+    
+    addModal.style.display = 'none';
+});
+
+document.getElementById('editForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const serialNumber = document.getElementById('editSerialNumber').value;
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch(`/admin/edit-aset/${serialNumber}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else if (response.ok) {
+            window.location.reload();
+        } else {
+            const error = await response.json();
+            alert(error.message || 'Gagal mengupdate aset');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengupdate aset');
+    }
+});
+
+document.getElementById('closeEditBtn').addEventListener('click', function() {
+    document.getElementById('editModal').style.display = 'none';
+});
+
+window.addEventListener('click', function(e) {
+    if (e.target == document.getElementById('editModal')) {
+        document.getElementById('editModal').style.display = 'none';
+    }
+});
+
+// Delete button handlers
+deleteButtons.forEach(button => {
+    button.addEventListener('click', function(event) {
+        event.preventDefault();
+        const serialNumber = this.getAttribute('data-id');
+        document.getElementById('deleteSerialNumber').textContent = serialNumber;
+        deleteModal.style.display = 'flex';
+    });
+});
+
+// Delete confirmation handler
+const confirmDeleteBtn = deleteModal.querySelector('.finish-btn');
+confirmDeleteBtn.addEventListener('click', async function() {
+    const serialNumber = document.getElementById('deleteSerialNumber').textContent;
+    
+    try {
+        const response = await fetch(`/admin/hapus-aset/${serialNumber}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.location.reload();
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Gagal menghapus aset');
+    }
+    
+    deleteModal.style.display = 'none';
+});
+
+// Cancel delete
+deleteModal.querySelector('.cancel-btn').addEventListener('click', function() {
+    deleteModal.style.display = 'none';
+});
 
 </script>
 

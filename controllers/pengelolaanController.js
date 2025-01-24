@@ -322,6 +322,91 @@ const tampilkanDetailAset = async (req, res) => {
     }
 };
 
+const tampilkanDaftarAsetKaryawan = async (req, res) => {
+  try {
+    const kategoris = await Kategori.findAll({
+      include: [{
+        model: Aset,
+        where: {
+          kondisi_aset: 'baik',
+          status_peminjaman: 'tersedia'
+        },
+        required: true,
+        attributes: ['serial_number']
+      }],
+      attributes: ['id', 'nama_kategori', 'deskripsi', 'gambar'],
+      group: ['Kategori.id']
+    });
+
+    const formattedKategoris = await Promise.all(kategoris.map(async (kategori) => {
+      const stockCount = await Aset.count({
+        where: {
+          kategoriId: kategori.id,
+          kondisi_aset: 'baik',
+          status_peminjaman: 'tersedia'
+        }
+      });
+
+      return {
+        id: kategori.id,
+        title: kategori.nama_kategori,
+        description: kategori.deskripsi,
+        image: `/uploads/${kategori.gambar}`, // Sesuaikan dengan path penyimpanan gambar
+        stock: stockCount,
+        serial_number: kategori.Asets[0].serial_number
+      };
+    }));
+
+    res.render('karyawan/daftarAset/daftar-aset', {
+      assets: formattedKategoris,
+      req: req,
+      currentPath: req.path
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data aset' });
+  }
+};
+
+const tampilkanDetailAsetKaryawan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const kategori = await Kategori.findOne({
+      where: { id },
+      include: [{
+        model: Aset,
+        where: {
+          kondisi_aset: 'baik',
+          status_peminjaman: 'tersedia'
+        },
+        attributes: ['nama_barang', 'serial_number']
+      }],
+      attributes: ['nama_kategori', 'deskripsi', 'gambar']
+    });
+ 
+    if (!kategori) {
+      return res.status(404).json({ message: 'Kategori tidak ditemukan' });
+    }
+ 
+    res.render('karyawan/daftarAset/detail-aset', {
+      kategori: {
+        nama_barang: kategori.Asets[0].nama_barang,
+        nama_kategori: kategori.nama_kategori,
+        deskripsi: kategori.deskripsi,
+        title: kategori.nama_kategori,
+        gambar: `/uploads/${kategori.gambar}`,
+        serial_number: kategori.Asets[0].serial_number
+      },
+      currentPath: req.path,
+      req
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Terjadi kesalahan' });
+  }
+ };
+ 
+
 module.exports = {
   tambahKategori,
   tampilkanKategori,
@@ -334,4 +419,6 @@ module.exports = {
   tampilkanEditAset,
   hapusAset,
   tampilkanDetailAset,
+  tampilkanDaftarAsetKaryawan,
+  tampilkanDetailAsetKaryawan,
 };

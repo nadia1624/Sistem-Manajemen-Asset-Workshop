@@ -12,49 +12,63 @@
         </div>  
         <div class="header-content">
             <div class="search-bar" style="margin-right: 30px;">
-                <input placeholder="Search..." type="text"/>
+                <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
                 <i class="fas fa-search"></i>
             </div>
-            <div class="button-selesai">
-                <button>
-                    <i class="fa-solid fa-check"></i> Selesai
-                </button>
-            </div>
+            <% if(status_pemeliharaan === 'belum terlaksana') { %>
+                <div class="button-selesai">
+                    <button>
+                        <i class="fa-solid fa-check"></i> Selesai
+                    </button>
+                </div>
+            <% } else { %>
+                <div class="button-selesai">
+                    <button style="background-color: gray; cursor: not-allowed;" disabled>
+                        <i class="fa-solid fa-check"></i> Selesai
+                    </button>
+                </div>
+            <% } %>
         </div>
     </div>
     <div class="container-fluid px-4">
         <div class="table-wrapper">
             <div class="table-responsive">
                 <div class="table-bungkus">
-                <div class="table-scroll">
-                    <table class="table-compact">
-                        <thead>
-                            <tr>
-                                <th width="15%">No</th>
-                                <th width="20%">Gambar Aset</th>
-                                <th width="15%">Serial Number</th>
-                                <th width="15%">Nama Aset</th>
-                                <th width="15%">Kondisi Aset</th>
-                                <th width="15%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% detailPemeliharaan.forEach((detail, index) => { %>
-                            <tr>
-                                <td width="15%"><%= index+1 %></td>
-                                <td width="20%">
-                                    <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= detail.Aset.Kategori.gambar %>" />
-                                </td>
-                                <td width="15%"><%= detail.Aset.serial_number%></td>
-                                <td width="15%"><%= detail.Aset.nama_barang %></td>
-                                <td width="15%"><%= detail.Aset.kondisi_aset %></td>
-                                <td width="15%">
-                                    <button class="button-edit">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                        </button>
-                                </td>
-                            </tr>
-                            <% }) %>
+                    <div class="table-scroll">
+                        <table class="table-compact">
+                            <thead>
+                                <tr>
+                                    <th width="15%">No</th>
+                                    <th width="20%">Gambar Aset</th>
+                                    <th width="15%">Serial Number</th>
+                                    <th width="15%">Nama Aset</th>
+                                    <th width="15%">Kondisi Aset</th>
+                                    <th width="15%">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% detailPemeliharaan.forEach((detail, index) => { %>
+                                <tr>
+                                    <td width="15%"><%= index+1 %></td>
+                                    <td width="20%">
+                                        <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= detail.Aset.Kategori.gambar %>" />
+                                    </td>
+                                    <td width="15%"><%= detail.Aset.serial_number%></td>
+                                    <td width="15%"><%= detail.Aset.nama_barang %></td>
+                                    <td width="15%"><%= detail.status_aset.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></td>
+                                    <td width="15%">
+                                        <% if (status_pemeliharaan == 'belum terlaksana') { %>
+                                            <button class="button-edit" onclick="openEditModal('<%= index + 1 %>')">
+                                                <i class="fa-regular fa-pen-to-square"></i>
+                                            </button>
+                                        <% } else { %>
+                                            <button style="background-color: gray; cursor: not-allowed; border: gray ;" class="button-edit" disabled>
+                                                <i class="fa-regular fa-pen-to-square"></i>
+                                            </button>
+                                        <% } %>
+                                    </td>
+                                </tr> 
+                                <% }) %>
                             </tbody>
                         </table>
                     </div>
@@ -63,6 +77,42 @@
         </div>
     </div>
 </main>
+
+<% detailPemeliharaan.forEach((detail, index) => { %>
+<div id="editModal<%= index+1 %>" class="popup-modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeEditBtn<%= index+1 %>">&times;</span>
+        <h3>Update Kondisi Aset</h3>
+        <form id="editForm<%= index+1 %>" action="/admin/pemeliharaan-aset/detail/<%= pemeliharaanId %>/<%= detail.Aset.serial_number %>" method="post">
+            <label for="serialNumber" class="left-label">Serial Number</label>
+            <input type="text" id="serialNumber<%= index+1 %>" name="serialNumber" value="<%= detail.Aset.serial_number %>" required readonly>
+
+            <label for="namaAset" class="left-label">Nama Aset</label>
+            <input type="text" id="namaAset<%= index+1 %>" name="namaAset" value="<%= detail.Aset.nama_barang %>" required readonly>
+            
+            <label for="kondisiAset" class="left-label">Pilih Kondisi Aset</label>
+            <select id="kondisiAset<%= index+1 %>" name="kondisi_aset"class="shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;" required>
+                <option value="<%= detail.status_aset %>"  selected>
+                    <%= detail.status_aset.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %>
+                </option>
+                <% ['baik', 'rusak ringan', 'rusak berat'].forEach(option => { %>
+                    <% if (option !== detail.status_aset) { %>
+                        <option value="<%= option %>">
+                            <%= option.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %>
+                        </option>
+                    <% } %>
+                <% }); %>
+            </select>
+
+            <label for="keterangan" class="left-label">Keterangan</label>
+            <input type="text" id="keterangan<%= index+1 %>" name="keterangan" placeholder="Masukkan Keterangan" required>
+            
+            <button type="submit" class="btn finish-btn">Simpan</button>
+        </form>
+    </div>
+</div>
+<% }); %>
+
 <!-- Pop-Up Modal Konfirmasi -->
 <div id="addModal" class="popup-modal" >
     <div class="modal-content">
@@ -71,102 +121,82 @@
         <p>Apakah kamu yakin ingin menyelesaikan pemeliharaan aset?</p>
         <div class="flex justify-center space-x-4">
             <button type="button" class="btn cancel-btn">Tidak</button>
-            <button type="button" class="btn finish-btn">Ya</button>
+            <form action="/admin/pemeliharaan-aset/detail/<%= pemeliharaanId %>" method="post">
+                <button type="submit" class="btn finish-btn">Ya</button>
+            </form>
         </div>
     </div>
 </div>
 
-<div id="editModal" class="popup-modal">
-    <div class="modal-content">
-        <span class="close-btn" id="closeEditBtn">&times;</span>
-        <h3>Update Kondisi Aset</h3>
-        <form id="editForm">
-            <label for="serialNumber" class="left-label">Serial Number</label>
-            <input type="text" id="serialNumber" name="serialNumber" placeholder="Masukkan serial number" readonly required>
-
-            <label for="namaAset" class="left-label">Nama Aset</label>
-            <input type="text" id="namaAset" name="namaAset" placeholder="Masukkan Nama Aset" readonly required>
-            
-            <label for="kondisiAset" class="left-label">Pilih Kondisi Aset</label>
-            <select id="kondisiAset" name="kondisiAset" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
-                <option value="" disabled selected>Pilih Kondisi Aset</option>
-                <option value="Baik">Baik</option>
-                <option value="Rusak Ringan">Rusak Ringan</option>
-                <option value="Rusak Berat">Rusak Berat</option>
-            </select>
-
-            <label for="keterangan" class="left-label">Keterangan</label>
-            <input type="text" id="keterangan" name="keterangan" placeholder="Masukkan Keterangan"  required>
-            <button type="submit" class="btn finish-btn">Simpan</button>
-        </form>
-    </div>
-</div>  
-
-
 <script>
-    // Mendapatkan elemen modal dan tombol
+    // Menangani klik pada tombol "Selesai"
+    const selesaiButton = document.querySelector('.button-selesai');
     const modal = document.getElementById("addModal");
     const cancelBtn = modal.querySelector('.cancel-btn');
     const finishBtn = modal.querySelector('.finish-btn');
     const closeBtn = document.getElementById("close");
-    const editModal = document.getElementById("editModal");
-    const closeEditBtn = document.getElementById("closeEditBtn");
-    const editForm = document.getElementById('editForm');
 
-    // Menangani klik pada tombol "Selesai"
-    const selesaiButton = document.querySelector('.button-selesai');
-    
     selesaiButton.addEventListener('click', function(event) {
-        event.preventDefault();  // Mencegah aksi default
-        modal.style.display = 'flex';  // Menampilkan modal
+        event.preventDefault();
+        modal.style.display = 'flex';
     });
 
     closeBtn.addEventListener('click', function() {
-      modal.style.display = 'none';
+        modal.style.display = 'none';
     });
 
-    // Menangani klik pada tombol "Tidak" untuk menutup modal
     cancelBtn.addEventListener('click', function() {
-        modal.style.display = 'none';  // Menyembunyikan modal
+        modal.style.display = 'none';
     });
 
-    // Menangani klik pada tombol "Ya" untuk melanjutkan aksi
     finishBtn.addEventListener('click', function() {
-        modal.style.display = 'none';  // Menyembunyikan modal
-        alert("Pemeliharaan aset selesai!"); // Gantilah dengan logika lain sesuai kebutuhan
+        modal.style.display = 'none';
+        alert("Pemeliharaan aset selesai!");
     });
 
-    // Menangani klik di luar modal untuk menutupnya
     window.onclick = function(event) {
         if (event.target == modal) {
-            modal.style.display = 'none';  // Menyembunyikan modal saat klik di luar modal
+            modal.style.display = 'none';
         }
     };
 
-    // Menangkap semua tombol dengan kelas 'openEditModalBtn'
-const openEditModalBtns = document.querySelectorAll('.button-edit');
+    // Fungsi untuk membuka modal edit
+    function openEditModal(index) {
+        const editModal = document.getElementById(`editModal${index}`);
+        editModal.style.display = 'flex';
 
-// Tambahkan event listener ke setiap tombol
-openEditModalBtns.forEach((btn) => {
-    btn.addEventListener('click', function () {
-        editModal.style.display = 'flex'; // Tampilkan modal
-    });
-});
-
-// Menangani tombol close modal
-closeEditBtn.addEventListener('click', function () {
-    editModal.style.display = 'none'; // Sembunyikan modal
-});
-
-// Menutup modal jika klik di luar area modal
-window.addEventListener('click', function (event) {
-    if (event.target === editModal) {
-        editModal.style.display = 'none'; // Sembunyikan modal
+        if (editModal) {
+            editModal.style.display = 'flex';
+    } else {
+        console.error(`Modal with ID editModal${index} not found`);
     }
-});
 
+        const closeEditBtn = document.getElementById(`closeEditBtn${index}`);
+        closeEditBtn.addEventListener('click', function() {
+            editModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === editModal) {
+                editModal.style.display = 'none';
+            }
+        });
+    }
+
+    function filterTable() {
+        const input = document.getElementById("search-input").value.toLowerCase();
+        const rows = document.querySelectorAll(".table-compact tbody tr");
+
+        rows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            if (rowText.includes(input)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
 </script>
-
 
 </body>
 </html>

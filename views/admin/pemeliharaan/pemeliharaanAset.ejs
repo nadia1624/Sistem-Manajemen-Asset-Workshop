@@ -21,7 +21,7 @@
         <h3 style="font-weight: bold;">Pemeliharaan Aset</h3>
         <div class="header-content">
             <div class="search-bar" style="margin-right: 30px;">
-                <input placeholder="Search..." type="text"/>
+                <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
                 <i class="fas fa-search"></i>
             </div>
             <div class="button-tambah">
@@ -48,6 +48,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <% if (listPemeliharaan.length > 0) { %>
                                 <% listPemeliharaan.forEach((pemeliharaan, index) => { %>
                                     <tr>
                                         <td width="5%"><%= index+1 %></td>
@@ -73,6 +74,7 @@
                                             </a>
                                         </td>
                                     </tr>
+
                                     <div id="deleteModal<%= index+1 %>" class="popup-modal">
                                         <div class="modal-content">
                                             <span class="close-btn" id="closeDeleteModal<%= index+1 %>">&times;</span>
@@ -87,6 +89,11 @@
                                         </div>
                                     </div>
                                     <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" style="text-align: center;">Tidak ada data pengembalian aset</td>
+                                        </tr>
+                                    <% } %>
                             </tbody>
                         </table>
                     </div>
@@ -225,4 +232,19 @@ document.addEventListener('DOMContentLoaded', function() {
     //         deleteModal.style.display = 'none'; // Menyembunyikan modal saat klik di luar modal
     //     }
     // };
+
+    function filterTable() {
+    const input = document.getElementById("search-input").value.toLowerCase();
+    const rows = document.querySelectorAll(".table-compact tbody tr");
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(input)) {
+            row.style.display = ""; // Tampilkan baris jika cocok
+        } else {
+            row.style.display = "none"; // Sembunyikan baris jika tidak cocok
+        }
+    });
+}
+
 </script>

@@ -1,6 +1,20 @@
 const express = require('express')
-
+const karyawanVendorControllers = require('../controllers/karyawanVendorControllers');
+const verifyToken = require('../middleware/validtokenMiddleware');
+const role = require("../middleware/checkroleMiddleware");
 const pengembalianVendorRouter = express.Router()
+
+pengembalianVendorRouter.get('/admin/asetKaryawan', 
+    verifyToken, 
+    role("admin"), 
+    karyawanVendorControllers.getReturnKaryawan
+);
+
+pengembalianVendorRouter.get('/admin/detailAsetKaryawan/:id', 
+    verifyToken, 
+    role("admin"), 
+    karyawanVendorControllers.getDetailAsetKaryawanVendor
+);
 
 //admin
 pengembalianVendorRouter.get('/admin/asetKaryawan', (req, res) => {

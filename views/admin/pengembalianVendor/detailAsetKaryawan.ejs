@@ -1,49 +1,41 @@
 <%- include("../../layout/sidebar.ejs") %>
 
+
 <main class="content">
     <div class="header-content">
         <td>
-            <a href="asetKaryawan">
+            <a href="/admin/asetKaryawan">
                 <button id="" style="display: flex; align-items: center;">
                     <i class="fa-solid fa-arrow-left" style="font-weight: bold; font-size: 20px; margin-right: 10px;"></i>
-                    <span style="font-size: 24px; font-weight: bold; font-family: Raleway;">Detail Aset</span>
+                    <span style="font-size: 24px; font-weight: bold; font-family: Raleway;">Detail Aset Karyawan</span>
                 </button>
-    </a>
+            </a>
         </td>
-     </div>
+    </div>
 
-
-    <body>
-     <div class="container2">
-      <img alt="Placeholder image for product" height="150" src="https://placehold.co/100x100" width="200"/>
-      <div class="details">
-       <p>
-        [Serial Number]
-       </p>
-       <p>
-        [Nama Barang]
-       </p>
-       <p>
-        [Kategori]
-       </p>
-       <p>
-        [Deskripsi]
-       </p>
-      </div>
-     </div>
-
-     <div class="container2">
-        <div class="details2">
-            <p>
-            [Nama User]
-            </p>
-            <p>
-            [Keluhan]
-            </p>
+    <div class="container2">
+        <img 
+            alt="<%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.nama_kategori || 'Gambar tidak tersedia' %>" 
+            height="150" 
+            src="<%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.gambar || 'https://placehold.co/200x150' %>" 
+            width="200"
+        />
+        <div class="details"x>
+            <p><strong>Serial Number:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.serial_number || 'Tidak tersedia' %></p>
+            <p><strong>Nama Barang:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.nama_barang || 'Tidak tersedia' %></p>
+            <p><strong>Kategori:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.nama_kategori || 'Tidak tersedia' %></p>
+            <p><strong>Deskripsi:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Tidak tersedia' %></p>
         </div>
-     </div>
-    </body>
-   </html>
+    </div>
+
+    <div class="container2">
+        <div class="details2">
+            <p><strong>Nama User:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.User.nama || 'Tidak tersedia' %></p>
+            <p><strong>Keluhan:</strong> <%= detailAset.PengajuanCek.keluhan || 'Tidak tersedia' %></p>
+        </div>
+    </div>
+</main>
+
    
 
 

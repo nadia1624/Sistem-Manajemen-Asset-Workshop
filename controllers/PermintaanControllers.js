@@ -1,6 +1,6 @@
 const { Permintaan, Aset, User, Kategori, Penyerahan } = require('../models');
 const { Sequelize } = require('sequelize');
-
+const path = require('path');
 // Controller untuk membuat permintaan aset oleh karyawan
 const createPermintaanAset = async (req, res) => {
   const { serial_number } = req.body;
@@ -46,46 +46,53 @@ const getPermintaanAsetKaryawan = async (req, res) => {
   try {
     const listPermintaan = await Permintaan.findAll({
       where: { userId },
+      order: [['tanggal_permintaan', 'DESC']], 
       include: [
-          {
-              model: Aset,
-              attributes: ["nama_barang", "serial_number", "kondisi_aset", "status_peminjaman"],
-              required: true, // Tambahkan ini untuk memastikan `Aset` harus ada
-              include: [
-                  {
-                      model: Kategori,
-                      attributes: ["nama_kategori", "deskripsi"]
-                  }
-              ]
-          },
-          {
-              model: User,
-              attributes: ["nama", "email", "unit_kerja", "jabatan", "no_hp"]
-          }
+        {
+          model: Aset,
+          attributes: ["nama_barang", "serial_number", "kondisi_aset", "status_peminjaman"],
+          required: true,
+          include: [
+            {
+              model: Kategori,
+              attributes: ["nama_kategori", "deskripsi"]
+            }
+          ]
+        },
+        {
+          model: User,
+          attributes: ["nama", "email", "unit_kerja", "jabatan", "no_hp"]
+        },
+        {
+          model: Penyerahan,
+          attributes: ["id", "permintaanId"], // Cek apakah tanda tangan sudah ada
+          required: false, // Karena tidak semua permintaan punya tanda tangan
+        }
       ]
-  });
-  
+    });
 
-      if (listPermintaan.length === 0) {
-          return res.render('karyawan/permintaan/permintaanAset', { listPermintaan, currentPath });
-      }
+    if (listPermintaan.length === 0) {
+      return res.render('karyawan/permintaan/permintaanAset', { listPermintaan, currentPath });
+    }
 
-      res.render('karyawan/permintaan/permintaanAset', {
-          listPermintaan: listPermintaan.map((p) => ({
-              ...p.dataValues,
-              tanggal_permintaan: new Date(p.tanggal_permintaan).toLocaleDateString('id-ID', {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-              }),
-          })),
-          currentPath, // Tambahkan currentPath ke objek render
-      });
+    res.render('karyawan/permintaan/permintaanAset', {
+      listPermintaan: listPermintaan.map((p) => ({
+        ...p.dataValues,
+        tandaTanganAda: !!p.Penyerahan, // true jika tanda tangan sudah ada
+        tanggal_permintaan: new Date(p.tanggal_permintaan).toLocaleDateString('id-ID', {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }),
+      })),
+      currentPath,
+    });
   } catch (error) {
-      console.error("Error saat mengambil permintaan aset:", error);
-      return res.status(500).json({ message: "Terjadi kesalahan saat mengambil permintaan aset." });
+    console.error("Error saat mengambil permintaan aset:", error);
+    return res.status(500).json({ message: "Terjadi kesalahan saat mengambil permintaan aset." });
   }
 };
+
 
 const deletePermintaanAset = async (req, res) => {
   const { id } = req.params; // ID permintaan dari parameter URL
@@ -222,52 +229,84 @@ const updateStatusPermintaanAset = async (req, res) => {
   }
 };
 
-const uploadTandaTangan = async (req, res) => {
-  const { permintaanId } = req.body; // ID permintaan yang diupload tanda tangannya
-  const userId = req.userId; // ID user yang melakukan upload
+// const uploadTtd = async (req, res) => {
+//   try {
+//     const { permintaanId } = req.body;
 
-  // Validasi apakah permintaanId ada dan valid
-  if (!permintaanId) {
-    return res.status(400).json({ message: 'ID permintaan tidak ditemukan' });
-  }
+//     if (!permintaanId) {
+//       return res.status(400).json({ message: 'Permintaan ID tidak boleh kosong.' });
+//     }
 
+//     const permintaan = await Permintaan.findByPk(permintaanId);
+//     if (!permintaan) {
+//       return res.status(404).json({ message: 'Data permintaan tidak ditemukan.' });
+//     }
+
+//     if (!req.file || !req.file.path) {
+//       return res.status(400).json({ message: 'File tanda tangan tidak ditemukan.' });
+//     }
+
+//     const penyerahan = await Penyerahan.create({
+//       permintaanId,
+//       tanda_tangan: req.file.path,
+//       status_penyerahan: 'belum diserahkan',
+//     });
+
+//     console.log('Data berhasil disimpan:', penyerahan);
+
+//     // Pastikan respons sukses dikirim
+//     return res.status(201).json({
+//       message: 'Tanda tangan berhasil diupload.',
+//       data: penyerahan,
+//     });
+//   } catch (error) {
+//     console.error('Error saat mengupload tanda tangan:', error);
+//     return res.status(500).json({ message: 'Terjadi kesalahan pada server.', error: error.message });
+//   }
+// };
+
+const uploadTtd = async (req, res) => {
   try {
-    const permintaan = await Permintaan.findOne({ where: { id: permintaanId, userId } });
+    const { permintaanId } = req.body;
 
+    if (!permintaanId) {
+      return res.status(400).json({ message: 'Permintaan ID tidak boleh kosong.' });
+    }
+
+    const permintaan = await Permintaan.findByPk(permintaanId);
     if (!permintaan) {
-      return res.status(404).json({ message: 'Permintaan tidak ditemukan atau akses ditolak' });
+      return res.status(404).json({ message: 'Data permintaan tidak ditemukan.' });
     }
 
-    // Mendapatkan file tanda tangan yang diupload
-    const { file } = req.files; // Pastikan menggunakan middleware seperti `express-fileupload` atau `multer` untuk menangani file upload
-
-    if (!file) {
-      return res.status(400).json({ message: 'Tanda tangan tidak ditemukan' });
+    if (!req.file || !req.file.path) {
+      return res.status(400).json({ message: 'File tanda tangan tidak ditemukan.' });
     }
 
-    // Simpan file tanda tangan
-    const tandaTanganPath = `/uploads/tanda_tangan/${file.name}`;
-    file.mv(`./public${tandaTanganPath}`, async (err) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Terjadi kesalahan saat menyimpan tanda tangan' });
-      }
+    // Periksa apakah sudah ada penyerahan untuk permintaanId ini
+    const existingPenyerahan = await Penyerahan.findOne({ where: { permintaanId } });
+    if (existingPenyerahan) {
+      return res.status(400).json({ message: 'Tanda tangan untuk permintaan ini sudah ada.' });
+    }
 
-      // Simpan data ke tabel Penyerahan
-      await Penyerahan.create({
-        permintaanId,
-        tanda_tangan: tandaTanganPath,
-        status_penyerahan: 'belum diserahkan', // Status awal
-        tanggal_penyerahan: new Date(),
-      });
-
-      res.status(200).json({ message: 'Tanda tangan berhasil diupload dan disimpan' });
+    // Buat data penyerahan baru
+    await Penyerahan.create({
+      permintaanId,
+      tanda_tangan: req.file.path,
+      status_penyerahan: 'belum diserahkan',
     });
 
+    // Kirim pesan sukses
+    return res.status(200).json({ message: 'Tanda tangan berhasil diupload.' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat upload tanda tangan' });
+    console.error('Error saat mengupload tanda tangan:', error);
+    return res.status(500).json({ message: 'Terjadi kesalahan pada server.', error: error.message });
   }
 };
 
-module.exports = { createPermintaanAset, getPermintaanAsetAdmin, getDetailPermintaanAset, updateStatusPermintaanAset, getPermintaanAsetKaryawan, deletePermintaanAset , uploadTandaTangan};
+
+
+
+
+
+
+module.exports = { createPermintaanAset, getPermintaanAsetAdmin, getDetailPermintaanAset, updateStatusPermintaanAset, getPermintaanAsetKaryawan, deletePermintaanAset , uploadTtd};

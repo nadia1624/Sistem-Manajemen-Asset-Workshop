@@ -55,9 +55,9 @@ permintaanRouter.post('/karyawan/permintaanAset', verifyToken, role("karyawan"),
 permintaanRouter.post(
   '/karyawan/permintaanAset/uploadTandaTangan',
   verifyToken,
-  role("karyawan"), // Hanya karyawan yang bisa upload tanda tangan untuk permintaannya
-  upload.single('signature'),
-  PermintaanController.uploadTandaTangan
+  role("karyawan"),
+  upload.single('file'),
+  PermintaanController.uploadTtd
 );
 
 module.exports = permintaanRouter

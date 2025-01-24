@@ -8,7 +8,7 @@ const penyerahanRoute = require('./penyerahanRoute.js')
 const pemeliharaanRouter = require('./pemeliharaanRoute.js')
 const pengembalianVendorRoute = require('./pengembalianVendor.js');
 const peminjamanRouter = require('./peminjamanRoute.js')
-
+const penyerahanRouter = require('./penyerahanRoute.js')
 
 const router = express.Router()
 

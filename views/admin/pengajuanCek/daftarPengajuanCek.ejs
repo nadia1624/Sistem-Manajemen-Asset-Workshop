@@ -1,5 +1,52 @@
 <%- include("../../layout/sidebar.ejs") %>
 
+<style>
+    /* CSS untuk status Sedang Diproses */
+.status-sedang-diproses {
+  background-color: #ff9800; /* Warna oranye */
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+/* CSS untuk status Sudah diperbaiki */
+.status-sudah-diperbaiki {
+  background-color: #4caf50; /* Warna hijau */
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+/* CSS untuk status Dibawa ke Workshop */
+.status-dibawa-ke-workshop {
+  background-color: #3f586d; /* Warna biru */
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+/* CSS untuk status Diajukan ke Vendor */
+.status-diajukan-ke-vendor {
+  background-color: #27b0a5; /* Warna ungu */
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+/* CSS untuk status Tidak Dapat Diperbaiki */
+.status-tidak-dapat-diperbaiki {
+  background-color: #f44336; /* Warna merah */
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+</style>
 <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Pengajuan Cek</h3>
@@ -18,6 +65,7 @@
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
+                                    <th width="15%">Tanggal</th>
                                     <th width="15%">Serial Number</th>
                                     <th width="20%">Nama Aset</th>
                                     <th width="15%">Gambar Aset</th>
@@ -26,32 +74,45 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td width="5%">1</td>
-                                    <td width="15%">Lorem Ipsum</td>
-                                    <td width="20%">Lorem Ipsum</td>
-                                    <td width="15%">
-                                        <img class="img-fluid" alt="Bukti Gambar" src="https://placehold.co/100x100" />
-                                    </td>
-                                    <td  width="20%" class="custom-td">
-                                        <span class="custom-span">Belum diperbaiki</span>
-                                    </td>
-                                    <td  width="25%">
-                                        <button id="editButton" class="button-edit" style="margin-right: 10px;">
-                                            <i class="fa-regular fa-pen-to-square"></i>
-                                        </button>
-                                        <a href="detailPengajuanCek">
-                                        <button id="infoButton" class="button-info" style="margin-right: 10px;">
-                                            <i class="fa-solid fa-circle-info"></i>
-                                        </button>
-                                        </a>
-                                        <button id="finishButton" class="btn">
-                                            <i class="fas fa-check"></i> Selesai
-                                        </button>
-                                    </td>
-                                </tr>
-                                </tr>
-                            </tbody>
+                                <% pengajuanCekList.forEach((pengajuanCek, index) => { %>
+                                    <tr>
+                                        <td width="5%"><%= index + 1 %></td>
+                                        <td width="15%"> <%= new Date(pengajuanCek.tanggal_pengecekan).toLocaleDateString() %> </td>
+                                        <td width="15%"><%= pengajuanCek.Penyerahan.Permintaan.Aset.serial_number %></td>
+                                        <td width="20%"><%= pengajuanCek.Penyerahan.Permintaan.Aset.nama_barang %></td>
+                                        <td width="15%">
+                                            <img class="img-fluid" alt="Bukti Gambar" src="<%= pengajuanCek.Penyerahan.Permintaan.Aset.gambar %>" />
+                                        </td>
+                                        <td width="20%" class="custom-td">
+                                            <span class="custom-span 
+                                                <% if (pengajuanCek.status_cek === 'Sedang Diproses') { %>status-sedang-diproses<% } %>
+                                                <% if (pengajuanCek.status_cek === 'Sudah diperbaiki') { %>status-sudah-diperbaiki<% } %>
+                                                <% if (pengajuanCek.status_cek === 'Dibawa ke Workshop') { %>status-dibawa-ke-workshop<% } %>
+                                                <% if (pengajuanCek.status_cek === 'Diajukan ke Vendor') { %>status-diajukan-ke-vendor<% } %>
+                                                <% if (pengajuanCek.status_cek === 'Tidak Dapat Diperbaiki') { %>status-tidak-dapat-diperbaiki<% } %>">
+                                                <% if (pengajuanCek.status_cek && pengajuanCek.status_cek.trim() !== '') { %>
+                                                    <%= pengajuanCek.status_cek %>
+                                                <% } else { %>
+                                                    Sedang Diproses
+                                                <% } %>
+                                            </span>
+                                        </td>                                                                                
+                                        <td width="25%">
+                                            <button id="editButton" class="button-edit" style="margin-right: 10px;">
+                                                <i class="fa-regular fa-pen-to-square"></i>
+                                            </button>
+                                            <a href="detailPengajuanCek/<%= pengajuanCek.id %>">
+                                                <button id="infoButton" class="button-info" style="margin-right: 10px;">
+                                                    <i class="fa-solid fa-circle-info"></i>
+                                                </button>
+                                            </a>
+                                            <button id="finishButton" class="btn">
+                                                <i class="fas fa-check"></i> Selesai
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>                            
                         </table>
                     </div>
                 </div>
@@ -65,32 +126,30 @@
 <div id="addModal" class="popup-modal" style="display: none;">
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
-        <!-- Form untuk Edit -->
-        <div id="editForm" style="display: none;">
-            <h3 class="text-center">Ubah Status Pengecekan</h3>
-            <form id="editAssetForm" class="space-y-4">
-                <div class="form-group">
-                  <label for="serialNumber" class="block text-sm font-medium text-gray-700 left-label">Serial Number</label>
-                  <input type="text" id="serialNumber" name="serialNumber" placeholder="Masukkan Serial Number" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2"/>
-                </div>
-                
-                <div class="form-group">
-                  <label for="namaAset" class="block text-sm font-medium text-gray-700 left-label">Nama Aset</label>
-                  <input type="text" id="namaAset" name="namaAset" placeholder="Masukkan Nama Aset" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2"/>
-                </div>
-              
-                <div class="form-group">
-                  <label for="status" class="block text-sm font-medium text-gray-700 left-label">Status</label>
-                  <select id="status" name="status" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
-                    <option value="Belum Diperbaiki">Belum diperbaiki</option>
-                    <option value="Diperbaiki di Workshop">Diperbaiki di workshop</option>
-                    <option value="Selesai Diperbaiki">Selesai diperbaiki</option>
-                    <option value="Simpan di Gudang">Simpan di gudang</option>
-                  </select>
-                  <button type="submit" class="btn finish-btn">Simpan</button>
-                </div>
-            </form>
+
+<!-- Form untuk Edit -->
+<div id="editForm" style="position: relative; border-radius: 10px; background: white; width: 370px; padding: 20px;">
+    <h3 style="margin-bottom: 1px;">Ubah Status Pengajuan</h3>
+    <form id="editAssetForm">
+        <div class="form-group">
+            <label for="status" style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px;">Status</label>
+            <select id="status" name="status" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
+                <option value="" disabled selected>Pilih Status</option>
+                <option value="sedang diproses" >Sedang Diproses</option>
+                <option value="Sudah diperbaiki">Sudah diperbaiki</option>
+                <option value="Dibawa ke Workshop">Dibawa ke Workshop</option>
+                <option value="Diajukan ke Vendor">Diajukan ke Vendor</option>
+                <option value="Tidak Dapat Diperbaiki">Tidak Dapat Diperbaiki</option>
+            </select>
         </div>
+        <div style="display: flex; justify-content: center; margin-top: 5px;">
+            <button type="button" class="btn cancel-btn" style="padding: 5px 10px; ">Batal</button>
+            <button type="submit" class="btn finish-btn" style="padding: 5px 10px; ">Selesai</button>
+        </div>
+    </form>
+</div>
+
+        
 
         <!-- Pesan Popup untuk Tombol Selesai -->
         <div id="finishMessage" style="display: none;">
@@ -158,12 +217,10 @@
     // Menangani submit form edit
     document.getElementById("editAssetForm").addEventListener("submit", function(event) {
         event.preventDefault(); // Mencegah form submit secara default
-        alert("Data aset berhasil disimpan!");
+        alert("status berhasil diperbarui");
         modal.style.display = 'none';
     });
+    
 </script>
-
-
 </body>
 </html>
-

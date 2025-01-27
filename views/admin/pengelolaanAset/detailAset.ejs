@@ -17,8 +17,15 @@
         <div class="container-fluid px-4">
             <div class="container2">
                 <div class="image-container">
-                    <!-- Placeholder for asset image -->
-                    <img src="https://placehold.co/300x300" alt="Asset Image">
+                    <% if (kategori && kategori.gambar) { %>
+                        <img src="/uploads/<%= kategori.gambar %>" 
+                             alt="<%= kategori.nama_kategori %>"
+                             class="w-full h-full object-cover object-cover rounded-lg ">
+                    <% } else { %>
+                        <img src="https://placehold.co/300x300" 
+                             alt="Default Asset Image"
+                             class="w-full h-full object-cover rounded-lg shadow-md">
+                    <% } %>
                 </div>
                 <div class="details">
                     <div class="info-item">

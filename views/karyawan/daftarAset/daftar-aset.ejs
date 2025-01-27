@@ -27,111 +27,133 @@
   
 
   <script>
+    // Initialize asset data from server
+    const assets = JSON.parse('<%- JSON.stringify(assets) %>');
 
-const assets = JSON.parse('<%- JSON.stringify(assets) %>');
+    // DOM Elements
+    const elements = {
+      cardContainer: document.getElementById('cardContainer'),
+      modal: document.getElementById('addModal'),
+      modalTitle: document.getElementById('modalTitle'),
+      modalClose: document.getElementById('close'),
+      serialNumberInput: document.getElementById('serialNumberInput'),
+      cancelBtn: document.querySelector('.cancel-btn'),
+      finishBtn: document.querySelector('.finish-btn'),
+      requestForm: document.getElementById('requestForm')
+    };
 
-// Event listener saat DOM dimuat
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById("cardContainer");
-  container.innerHTML = assets.map(createCard).join("");
+    // Card Template Function
+    function createCard(item) {
+      return `
+        <div class="group flex flex-col h-full bg-white border-2 border-gray-200 shadow-sm rounded-xl 
+                    hover:border-black hover:shadow-md transition duration-300" 
+             onclick="handleCardClick(event, '${item.id}')">
+          
+          <!-- Card Image -->
+          <div class="block h-full bg-gray-100 rounded-t-xl overflow-hidden">
+            <img class="w-full h-full object-cover" 
+                 src="${item.image}" 
+                 alt="${item.title}">
+          </div>
+          
+          <!-- Card Content -->
+          <div class="p-6">
+            <h3 class="text-xl font-semibold text-gray-800">${item.title}</h3>
+            <p class="mt-2 text-gray-600">${item.description}</p>
+          </div>
+          
+          <!-- Card Footer -->
+          <div class="px-6 py-4 mt-auto flex justify-between items-center">
+            <p class="text-sm text-gray-500">Stok tersedia: ${item.stock}</p>
+            <button type="button"
+                    class="request-btn inline-flex items-center justify-center w-8 h-8 text-sm 
+                           font-semibold rounded-lg bg-red-600 text-white hover:bg-red-800"
+                    data-serial="${item.serial_number}"
+                    data-title="${item.title}">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" 
+                   viewBox="0 0 24 24" stroke="white">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }
 
-  document.getElementById("close").addEventListener("click", hideModal);
-  document.querySelector(".cancel-btn").addEventListener("click", hideModal);
-  setupRequestButtons();
-});
+    // Modal Functions
+    const modalController = {
+      show(title, serialNumber) {
+        elements.modalTitle.textContent = `Permintaan untuk ${title}`;
+        elements.serialNumberInput.value = serialNumber;
+        elements.modal.style.display = 'flex';
+      },
+      
+      hide() {
+        elements.modal.style.display = 'none';
+      }
+    };
 
-// Fungsi membuat card
-function createCard(item) {
- const cardHtml = `
-   <div class="group flex flex-col h-full bg-white border-2 border-gray-200 shadow-sm rounded-xl hover:border-black hover:shadow-md transition duration-300" 
-        onclick="handleCardClick(event, '${item.id}')">
-     <div class="block h-full bg-gray-100 rounded-t-xl overflow-hidden">
-       <img class="w-full h-full object-cover" src="${item.image}" alt="${item.title}">
-     </div>
-     <div class="p-6 md:p-6">
-       <h3 class="text-xl font-semibold text-gray-800">${item.title}</h3>
-       <p class="mt-2 text-gray-600">${item.description}</p>
-     </div>
-     <div class="pl-6 pr-6 pt-2 pb-6 mt-auto flex justify-between items-center">
-       <p class="text-sm text-gray-500">Stok tersedia: ${item.stock}</p>
-       <button type="button"
-        class="request-btn inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-800"
-        data-serial="${item.serial_number}"
-        data-title="${item.title}">
-        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-      </button>
-     </div>
-   </div>
- `;
- return cardHtml;
-}
+    // Event Handlers
+    function handleCardClick(event, id) {
+      const requestBtn = event.target.closest('.request-btn');
+      if (requestBtn) {
+        event.stopPropagation();
+        modalController.show(requestBtn.dataset.title, requestBtn.dataset.serial);
+      } else {
+        window.location.href = `/karyawan/detail-aset/${id}`;
+      }
+    }
 
-// Tambahkan ke setupRequestButtons
-function setupRequestButtons() {
-  document.querySelectorAll('.request-btn').forEach(button => {
-    button.addEventListener('click', (event) => {
-      event.stopPropagation();
-      const title = button.dataset.title;
-      const serial = button.dataset.serial;
-      showModal(title, serial);
+    async function handleRequestSubmit(event) {
+      event.preventDefault();
+      const serialNumber = elements.serialNumberInput.value;
+
+      try {
+        const response = await fetch('/karyawan/permintaanAset', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ serial_number: serialNumber })
+        });
+
+        if (response.ok) {
+          modalController.hide();
+          window.location.href = '/karyawan/permintaan/permintaanAset';
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Gagal membuat permintaan');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert(error.message || 'Terjadi kesalahan saat membuat permintaan');
+      }
+    }
+
+    // Setup Request Buttons
+    function setupRequestButtons() {
+      document.querySelectorAll('.request-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+          event.stopPropagation();
+          modalController.show(button.dataset.title, button.dataset.serial);
+        });
+      });
+    }
+
+    // Initialize Page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Render initial cards
+      elements.cardContainer.innerHTML = assets.map(createCard).join('');
+      
+      // Setup event listeners
+      elements.modalClose.addEventListener('click', modalController.hide);
+      elements.cancelBtn.addEventListener('click', modalController.hide);
+      elements.requestForm.addEventListener('submit', handleRequestSubmit);
+      
+      // Setup request buttons
+      setupRequestButtons();
     });
-  });
-}
-
-function handleCardClick(event, id) {
- const button = event.target.closest('.request-btn');
- if (button) {
-   showModal(button.dataset.title, button.dataset.serial);
- } else {
-   window.location.href = `/karyawan/detail-aset/${id}`;
- }
-}
-
-// Fungsi modal
-function showModal(title, serial_number) {
-  const modal = document.getElementById("addModal");
-  const modalTitle = document.getElementById("modalTitle");
-  document.getElementById("serialNumberInput").value = serial_number;
-  
-  modalTitle.textContent = `Permintaan untuk ${title}`;
-  modal.style.display = "flex";
-}
-
-function hideModal() {
- document.getElementById("addModal").style.display = "none";
-}
-
-// Submit permintaan
-document.querySelector('.finish-btn').addEventListener('click', async () => {
- const serial_number = document.querySelector('.finish-btn').dataset.serialNumber;
- try {
-   const response = await fetch('/karyawan/permintaanAset', { // Sesuaikan dengan route
-     method: 'POST',
-     headers: {
-       'Content-Type': 'application/json'
-     },
-     body: JSON.stringify({ serial_number })
-   });
-
-   if (response.ok) {
-     hideModal();
-     window.location.href = '/karyawan/permintaan/permintaanAset';
-   } else {
-     const errorData = await response.json();
-     alert(errorData.message || 'Gagal membuat permintaan');
-   }
- } catch (error) {
-   console.error('Error:', error);
-   alert('Terjadi kesalahan');
- }
-});
-
-document.getElementById("requestButton").addEventListener("click", showModal);
-document.getElementById("close").addEventListener("click", hideModal);
-document.querySelector(".cancel-btn").addEventListener("click", hideModal);
-
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>

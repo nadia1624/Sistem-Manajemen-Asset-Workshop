@@ -303,7 +303,7 @@ const tampilkanDetailAset = async (req, res) => {
         const aset = await Aset.findByPk(serialNumber, {
             include: [{
                 model: Kategori,
-                attributes: ['id', 'nama_kategori']
+                attributes: ['id', 'nama_kategori', 'gambar']
             }]
         });
 

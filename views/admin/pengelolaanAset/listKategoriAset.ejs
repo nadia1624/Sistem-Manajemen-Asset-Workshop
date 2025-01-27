@@ -149,157 +149,151 @@
 
 
 <script>
+    // Modal Elements
+    const addModal = document.getElementById("addModal");
+    const editModal = document.getElementById("editModal");
+    const deleteModal = document.getElementById("deleteModal");
+    const editForm = document.getElementById("editForm");
     
-  // Mendapatkan elemen modal dan tombol
-  const addModal = document.getElementById("addModal");
-  const editModal = document.getElementById("editModal");
-  const editForm = document.getElementById("editForm");
-  const closeAddBtn = document.getElementById("closeAddBtn");
-  const closeEditBtn = document.getElementById("closeEditBtn");
-  const addCategoryButton = document.querySelector('.button-tambah');
-  const editButtons = document.querySelectorAll('.button-edit');
-  const deleteButtons = document.querySelectorAll('.button-delete');
-
-  // Menangani klik pada tombol "Tambah Kategori"
-  addCategoryButton.addEventListener('click', function(event) {
-      event.preventDefault();
-      addModal.style.display = 'flex';
-  });
-
-  // Menangani klik pada tombol edit
-  document.querySelectorAll('.button-edit').forEach(button => {
-   button.addEventListener('click', function() {
-       const id = this.getAttribute('data-id');
-       const row = this.closest('tr');
-       const namaKategori = row.cells[1].textContent;
-       const deskripsi = row.cells[2].textContent;
-       const gambarSrc = row.querySelector('img').src;
-       
-       document.getElementById('editKategoriId').value = id;
-       document.getElementById('editNamaKategori').value = namaKategori;
-       document.getElementById('editDeskripsi').value = deskripsi;
-       document.getElementById('currentImage').src = gambarSrc;
-       
-       editForm.setAttribute('action', `/admin/edit-kategori/${id}`);
-       editModal.style.display = 'flex';
-   });
-});
-
-  // Menangani klik pada tombol tutup untuk kedua modal
-  closeAddBtn.addEventListener('click', function() {
-      addModal.style.display = 'none';
-  });
-
-  closeEditBtn.addEventListener('click', function() {
-      editModal.style.display = 'none';
-  });
-
-  // Menangani klik di luar modal untuk menutupnya
-  window.addEventListener('click', function(event) {
-      if (event.target == addModal) {
-          addModal.style.display = 'none';
-      }
-      if (event.target == editModal) {
-          editModal.style.display = 'none';
-      }
-  });
-
-  // === Modal untuk Konfirmasi Hapus Data ===
-  const deleteModal = document.getElementById("deleteModal");
-    const cancelDeleteBtn = deleteModal.querySelector('.cancel-btn');
-    const confirmDeleteBtn = deleteModal.querySelector('.finish-btn');
+    // Button Elements
+    const addCategoryButton = document.querySelector('.button-tambah');
+    const closeAddBtn = document.getElementById("closeAddBtn");
+    const closeEditBtn = document.getElementById("closeEditBtn");
     const closeDeleteBtn = document.getElementById("closeDeleteModal");
+    const editButtons = document.querySelectorAll('.button-edit');
+    const deleteButtons = document.querySelectorAll('.button-delete');
+    
     let kategoriIdToDelete;
-
-    document.querySelectorAll('.button-delete').forEach(button => {
-    button.addEventListener('click', function(e) {
-        e.preventDefault();
-        kategoriIdToDelete = this.closest('tr').querySelector('.button-edit').getAttribute('data-id');
-        deleteModal.style.display = 'flex';
+    
+    // Add Category Modal Functions
+    addCategoryButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        addModal.style.display = 'flex';
     });
-});
-
-document.querySelector('#deleteModal .finish-btn').addEventListener('click', async function() {
-    try {
-        const response = await fetch(`/admin/hapus-kategori/${kategoriIdToDelete}`, {
-            method: 'DELETE'
-        });
-
-        if (response.ok) {
-            window.location.href = '/admin/pengelolaan-aset';
-        } else {
-            throw new Error('Gagal menghapus kategori');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
     
-    deleteModal.style.display = 'none';
-});
-
-document.querySelector('#deleteModal .cancel-btn').addEventListener('click', () => {
-    deleteModal.style.display = 'none';
-});
-
-document.getElementById('closeDeleteModal').addEventListener('click', () => {
-    deleteModal.style.display = 'none';
-});
-
-
-    window.onclick = function(event) {
-        if (event.target == deleteModal) {
-            deleteModal.style.display = 'none'; // Menyembunyikan modal saat klik di luar modal
-        }
-    };
-
-  // Form submit handlers
-    document.getElementById('addForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Mencegah pengiriman form default
-
-    const form = new FormData(this); // Mengambil data dari form termasuk file
-
-    fetch('/admin/tambah-kategori', {
-        method: 'POST',
-        body: form, // Kirim data form
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            alert(data.message); // Menampilkan pesan error atau sukses
-        }
-    })
-    .catch(error => console.error('Error:', error));
+    closeAddBtn.addEventListener('click', () => {
+        addModal.style.display = 'none';
+    });
     
-    addModal.style.display = 'none'; // Menutup modal setelah pengiriman
-  });
-
-  editForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-    const id = document.getElementById('editKategoriId').value;
-
-    try {
-        const response = await fetch(`/admin/edit-kategori/${id}`, {
-            method: 'POST',
-            body: formData
+    // Edit Category Modal Functions
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const row = this.closest('tr');
+            
+            document.getElementById('editKategoriId').value = id;
+            document.getElementById('editNamaKategori').value = row.cells[1].textContent;
+            document.getElementById('editDeskripsi').value = row.cells[2].textContent;
+            document.getElementById('currentImage').src = row.querySelector('img').src;
+            
+            editForm.setAttribute('action', `/admin/edit-kategori/${id}`);
+            editModal.style.display = 'flex';
         });
-
-        if (response.ok) {
-            alert('Kategori berhasil diupdate!');
-            window.location.reload();
-        } else {
+    });
+    
+    closeEditBtn.addEventListener('click', () => {
+        editModal.style.display = 'none';
+    });
+    
+    // Delete Category Modal Functions
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            kategoriIdToDelete = this.closest('tr').querySelector('.button-edit').getAttribute('data-id');
+            deleteModal.style.display = 'flex';
+        });
+    });
+    
+    document.querySelector('#deleteModal .finish-btn').addEventListener('click', async function() {
+        try {
+            const response = await fetch(`/admin/hapus-kategori/${kategoriIdToDelete}`, {
+                method: 'DELETE'
+            });
+    
+            if (response.ok) {
+                window.location.href = '/admin/pengelolaan-aset';
+            } else {
+                throw new Error('Gagal menghapus kategori');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        deleteModal.style.display = 'none';
+    });
+    
+    document.querySelector('#deleteModal .cancel-btn').addEventListener('click', () => {
+        deleteModal.style.display = 'none';
+    });
+    
+    closeDeleteBtn.addEventListener('click', () => {
+        deleteModal.style.display = 'none';
+    });
+    
+    // Global click handler for closing modals
+    window.addEventListener('click', (event) => {
+        if (event.target === addModal) {
+            addModal.style.display = 'none';
+        }
+        if (event.target === editModal) {
+            editModal.style.display = 'none';
+        }
+        if (event.target === deleteModal) {
+            deleteModal.style.display = 'none';
+        }
+    });
+    
+    // Form Submit Handlers
+    document.getElementById('addForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        try {
+            const response = await fetch('/admin/tambah-kategori', {
+                method: 'POST',
+                body: new FormData(this)
+            });
+            
             const data = await response.json();
-            alert(data.message || 'Gagal mengupdate kategori');
+            
+            if (data.message) {
+                alert(data.message);
+            }
+            
+            if (response.ok) {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menambah kategori');
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Terjadi kesalahan saat mengupdate kategori');
-    }
-
-    editModal.style.display = 'none';
-});
-
-</script>
+        
+        addModal.style.display = 'none';
+    });
+    
+    editForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const id = document.getElementById('editKategoriId').value;
+        
+        try {
+            const response = await fetch(`/admin/edit-kategori/${id}`, {
+                method: 'POST',
+                body: new FormData(this)
+            });
+    
+            if (response.ok) {
+                alert('Kategori berhasil diupdate!');
+                window.location.reload();
+            } else {
+                const data = await response.json();
+                alert(data.message || 'Gagal mengupdate kategori');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat mengupdate kategori');
+        }
+    
+        editModal.style.display = 'none';
+    });
+    </script>
 
 </body>
 </html>

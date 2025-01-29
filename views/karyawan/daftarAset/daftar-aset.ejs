@@ -26,6 +26,7 @@
   </div>
   
 
+  
   <script>
 
 const assets = JSON.parse('<%- JSON.stringify(assets) %>');
@@ -105,27 +106,25 @@ function hideModal() {
 
 // Submit permintaan
 document.querySelector('.finish-btn').addEventListener('click', async () => {
- const serial_number = document.querySelector('.finish-btn').dataset.serialNumber;
- try {
-   const response = await fetch('/karyawan/permintaanAset', { // Sesuaikan dengan route
-     method: 'POST',
-     headers: {
-       'Content-Type': 'application/json'
-     },
-     body: JSON.stringify({ serial_number })
-   });
+  const serial_number = document.getElementById('serialNumberInput').value;
+  try {
+    const response = await fetch('/karyawan/permintaan', { // Ubah sesuai route yang benar
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ serial_number })
+    });
 
-   if (response.ok) {
-     hideModal();
-     window.location.href = '/karyawan/permintaan/permintaanAset';
-   } else {
-     const errorData = await response.json();
-     alert(errorData.message || 'Gagal membuat permintaan');
-   }
- } catch (error) {
-   console.error('Error:', error);
-   alert('Terjadi kesalahan');
- }
+    if (response.redirected) {
+      window.location.href = response.url;
+    } else if (response.ok) {
+      hideModal();
+      window.location.href = '/karyawan/permintaan/permintaanAset';
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
 });
 
 document.getElementById("requestButton").addEventListener("click", showModal);

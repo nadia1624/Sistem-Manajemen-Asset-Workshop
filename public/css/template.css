@@ -1717,3 +1717,17 @@ a button:disabled {
 .info-value {
   color: #666;
 }
+
+
+.no-data-message {
+  display: none;
+  text-align: center;
+  padding: 10px;
+  background: #ffecec;
+  border-radius: 8px;
+  color: black;
+  font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}

@@ -1,6 +1,6 @@
 const express = require('express');
 const permintaanRouter = express.Router();
-const PermintaanController = require('../controllers/permintaanControllers');
+const PermintaanController = require('../controllers/PermintaanControllers');
 const verifyToken= require ('../middleware/validtokenMiddleware');
 const role = require("../middleware/checkroleMiddleware");
 const upload = require('../middleware/uploadMiddleware');

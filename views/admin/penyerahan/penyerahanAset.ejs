@@ -3,10 +3,10 @@
 <main class="content">
     <div class="header-content">
       <h3 style="font-weight: bold;">Penyerahan Aset</h3>
-      <div class="search-bar">
-        <input placeholder="Search..." type="text" />
+      <div class="search-bar" style="margin-right: 30px;">
+        <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
         <i class="fas fa-search"></i>
-      </div>
+     </div>
     </div>
     <div class="container-fluid px-4">
       <div class="table-wrapper">
@@ -27,54 +27,57 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <% listPenyerahan.forEach((penyerahan, index) => { %>
-                    <tr>
-                      <td width="5%"><%= index + 1%></td>
-                      <td width="13%"><%= penyerahan.Permintaan.User.nama %></td>
-                      <td width="13%"><%= penyerahan.Permintaan.User.unit_kerja %></td>
-                      <td width="14%"><%= penyerahan.Permintaan.Aset.nama_barang %></td>
-                      <td width="13%">
+                  <% if (listPenyerahan.length > 0) { %>
+                    <% listPenyerahan.forEach((penyerahan, index) => { %>
+                      <tr>
+                        <td width="5%"><%= index + 1 %></td>
+                        <td width="13%"><%= penyerahan.Permintaan.User.nama %></td>
+                        <td width="13%"><%= penyerahan.Permintaan.User.unit_kerja %></td>
+                        <td width="14%"><%= penyerahan.Permintaan.Aset.nama_barang %></td>
+                        <td width="13%">
                           <% if (penyerahan.penerima) { %>
                             <%= penyerahan.penerima %>
                           <% } else { %>
                             -
                           <% } %>
-                      </td>
-                      <td width="15%">
+                        </td>
+                        <td width="15%">
                           <% if (penyerahan.gambar_bukti) { %>
                             <img class="img-fluid" alt="Bukti Penyerahan" src="/public/uploads/<%= penyerahan.gambar_bukti %>" />
                           <% } else { %>
                             <span>-</span>
                           <% } %>
-                      </td>
-                      <td width="17%">
-                        <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
-                          <span class="custom-span" style="background-color: #dd5f61; font: black;">Belum Diserahkan</span>
-                        <% } else if (penyerahan.status_penyerahan === "sudah diserahkan") { %>
-                          <span class="custom-span" style="background-color: #A2E180; font: black;">Telah Diserahkan</span>
-                        <% } %>
-                      </td>
-                      <td width="10%">
-                        <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
-                          <button class="btn btn-setuju" style="background-color: #28a745; color: white;" onclick="showModal('<%= penyerahan.id %>', '<%= penyerahan.Permintaan.Aset.nama_barang %>', '<%= penyerahan.Permintaan.User.nama %>', '<%= penyerahan.Permintaan.User.unit_kerja %>')">
-                            <i class="fas fa-check"></i>
-                          </button>
-                        <% } else { %>
-                          <button class="btn btn-action" style="background-color: #ffffff; padding: 10px; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
-                            <i class="fa-solid fa-download" style="font-size: 15px;"></i>
-                          </button>
-                        <% } %>
-                      </td>
+                        </td>
+                        <td width="17%">
+                          <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
+                            <span class="custom-span" style="background-color: #dd5f61; font: black;">Belum Diserahkan</span>
+                          <% } else if (penyerahan.status_penyerahan === "sudah diserahkan") { %>
+                            <span class="custom-span" style="background-color: #A2E180; font: black;">Telah Diserahkan</span>
+                          <% } %>
+                        </td>
+                        <td width="10%">
+                          <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
+                            <button class="btn btn-setuju" style="background-color: #28a745; color: white;" onclick="showModal('<%= penyerahan.id %>', '<%= penyerahan.Permintaan.Aset.nama_barang %>', '<%= penyerahan.Permintaan.User.nama %>', '<%= penyerahan.Permintaan.User.unit_kerja %>')">
+                              <i class="fas fa-check"></i>
+                            </button>
+                          <% } else { %>
+                            <button class="btn btn-action" style="background-color: #ffffff; padding: 10px; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
+                              <i class="fa-solid fa-download" style="font-size: 15px;"></i>
+                            </button>
+                          <% } %>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="8" class="text-center">Tidak ada data penyerahan.</td>
                     </tr>
-
-                  <% }); %>
-                <% } else { %>
-                  <tr>
-                    <td colspan="8" class="text-center">Tidak ada data penyerahan.</td>
-                  </tr>
-                <% } %>
-              </tbody>
+                  <% } %>
+                </tbody>                
             </table>
+            <div id="no-data-message"id="no-data-message" class="no-data-message">
+                Data tidak ditemukan.
+            </div>          
           </div>
         </div>
       </div>
@@ -192,8 +195,8 @@ function showModal(id, namaAset, namaKaryawan, unitKerja) {
 
     try {
       // Kirim request ke server
-      const response = await fetch(`/penyerahan-aset/${id}`, {
-        method: "POST",
+      const response = await fetch(`/penyerahanAset/${id}`, {
+        method: "PATCH",
         body: formData,
       });
 
@@ -212,5 +215,33 @@ function showModal(id, namaAset, namaKaryawan, unitKerja) {
       modal.style.display = "none"; // Tutup modal
     }
   };
+
+  function filterTable() {
+    const input = document.getElementById("search-input").value.toLowerCase();
+    const rows = document.querySelectorAll(".table-compact tbody tr");
+    let hasMatch = false;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(input)) {
+            row.style.display = "";
+            hasMatch = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
+    const noDataMessage = document.getElementById("no-data-message");
+    if (hasMatch) {
+        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+    } else {
+        noDataMessage.style.display = "block"; 
+        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+    }
+}
+
+
   </script>
   

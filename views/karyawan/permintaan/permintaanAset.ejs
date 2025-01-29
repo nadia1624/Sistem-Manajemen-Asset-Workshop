@@ -71,8 +71,8 @@
                       </button>
                     <% } %>
                   </td>                         
-                        </tr>
-                    <% }); %>
+                </tr>
+                <% }); %>
                   <% } else { %>
                       <tr>
                           <td colspan="8" class="text-center">Tidak ada permintaan aset.</td>
@@ -88,7 +88,6 @@
   </main>
 
 
-<!-- Modal Pop-Up Tanda Tangan -->
 <!-- Modal Pop-Up Tanda Tangan -->
 <div id="uploadModal" class="modal">
   <div class="modal-content">
@@ -126,13 +125,19 @@
 
 <script>
 // Fungsi untuk membuka modal dan menyimpan ID permintaan
+
 function openModal(modalId, permintaanId) {
   const modal = document.getElementById(modalId);
   modal.style.display = 'flex';
 
-  // Menetapkan permintaanId ke input field di dalam modal
+  // Jika modal adalah cancelModal, tetapkan data-permintaan-id
+  if (modalId === 'cancelModal' && permintaanId) {
+    modal.setAttribute('data-permintaan-id', permintaanId);
+  }
+
+  // Menetapkan permintaanId ke input field di modal upload tanda tangan
   if (modalId === 'uploadModal' && permintaanId) {
-    document.getElementById('permintaanId').value = permintaanId; // Simpan ID permintaan
+    document.getElementById('permintaanId').value = permintaanId;
   }
 }
 
@@ -182,16 +187,21 @@ async function submitUpload() {
 
 // Fungsi untuk menghandle penghapusan permintaan
 async function confirmCancel() {
-  const cancelModal = document.getElementById('cancelModal');
-  const permintaanId = cancelModal.getAttribute('data-permintaan-id');
+  const cancelModal = document.getElementById("cancelModal");
+  const permintaanId = cancelModal.getAttribute("data-permintaan-id"); // Ambil ID permintaan
+
+  if (!permintaanId) {
+    alert("ID permintaan tidak valid.");
+    return;
+  }
 
   try {
     const response = await fetch(`/karyawan/permintaanAset/${permintaanId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (response.ok) {
-      alert("Permintaan berhasil dibatalkan.");
+      alert("Permintaan berhasil dibatalkan dan dihapus.");
       window.location.reload(); // Refresh halaman
     } else {
       const result = await response.json();
@@ -201,7 +211,7 @@ async function confirmCancel() {
     console.error("Error saat membatalkan permintaan:", error);
     alert("Terjadi kesalahan saat membatalkan permintaan.");
   } finally {
-    closeModal('cancelModal');
+    closeModal("cancelModal");
   }
 }
 

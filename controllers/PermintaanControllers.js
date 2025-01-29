@@ -16,6 +16,13 @@ const createPermintaanAset = async (req, res) => {
       return res.status(404).json({ message: 'Aset tidak ditemukan' });
     }
 
+    // Update status peminjaman di tabel Aset
+    await Aset.update(
+      { status_peminjaman: 'sedang diajukan' },
+      { where: { serial_number } }
+    );
+
+    // Buat data permintaan di tabel Permintaan
     await Permintaan.create({
       serial_number,
       userId,
@@ -29,6 +36,7 @@ const createPermintaanAset = async (req, res) => {
     return res.status(500).json({ message: 'Terjadi kesalahan saat membuat permintaan' });
   }
 };
+
 
 const getPermintaanAsetKaryawan = async (req, res) => {
   const userId = req.userId; // Pastikan `userId` tersedia setelah verifikasi token
@@ -90,22 +98,31 @@ const deletePermintaanAset = async (req, res) => {
   const userId = req.userId; // ID karyawan yang login
 
   try {
+    // Cari permintaan berdasarkan ID dan userId
     const permintaan = await Permintaan.findOne({ where: { id, userId } });
 
-    // Validasi: hanya dapat menghapus permintaan dengan status "diproses"
+    // Validasi: hanya bisa membatalkan permintaan dengan status "diproses"
     if (!permintaan || permintaan.status_permintaan !== "diproses") {
-      return res.status(403).json({ message: "Tidak dapat menghapus permintaan ini." });
+      return res.status(403).json({ message: "Tidak dapat membatalkan permintaan ini." });
     }
+
+    // Update status aset menjadi "tersedia"
+    await Aset.update(
+      { status_peminjaman: "tersedia" },
+      { where: { serial_number: permintaan.serial_number } }
+    );
 
     // Hapus permintaan dari database
     await Permintaan.destroy({ where: { id, userId } });
 
-    res.status(200).json({ message: "Permintaan berhasil dihapus." });
+    res.status(200).json({ message: "Permintaan berhasil dibatalkan dan dihapus." });
   } catch (error) {
-    console.error("Error saat menghapus permintaan aset:", error);
-    res.status(500).json({ message: "Terjadi kesalahan saat menghapus permintaan." });
+    console.error("Error saat membatalkan permintaan aset:", error);
+    res.status(500).json({ message: "Terjadi kesalahan saat membatalkan permintaan." });
   }
 };
+
+
 
 
 // Controller untuk melihat permintaan aset admin
@@ -196,29 +213,65 @@ const getDetailPermintaanAset = async (req, res) => {
 };
 
 const updateStatusPermintaanAset = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
+  const { id } = req.params; // ID permintaan aset
+  const { status } = req.body; // Status baru dari permintaan
 
+  console.log("[INFO] ID Permintaan:", id);
+  console.log("[INFO] Status Baru:", status);
+
+  // Tahap 1: Validasi input
   if (!["diterima", "ditolak"].includes(status)) {
-    return res.status(400).json({ message: "Status tidak valid." });
+    return res.status(400).json({ message: "Status tidak valid. Hanya 'diterima' atau 'ditolak' yang diperbolehkan." });
   }
 
   try {
-    const permintaan = await Permintaan.findOne({ where: { id } });
+    // Tahap 2: Cari data permintaan berdasarkan ID
+    console.log("[STEP 1] Mencari permintaan dengan ID:", id);
+    const permintaan = await Permintaan.findOne({
+      where: { id },
+      include: [{ model: Aset }] // Sertakan relasi ke tabel Aset
+    });
 
-    if (!permintaan || permintaan.status_permintaan !== "diproses") {
+    if (!permintaan) {
+      console.error(`[ERROR] Permintaan dengan ID ${id} tidak ditemukan.`);
+      return res.status(404).json({ message: "Permintaan tidak ditemukan." });
+    }
+
+    console.log("[INFO] Data Permintaan Ditemukan:", permintaan);
+
+    // Tahap 3: Validasi status permintaan
+    if (permintaan.status_permintaan !== "diproses") {
+      console.error(`[ERROR] Status permintaan ID ${id} bukan 'diproses'. Tidak dapat diubah.`);
       return res.status(403).json({ message: "Permintaan tidak dapat diubah statusnya." });
     }
 
-    // Update status permintaan
+    // Tahap 4: Update status permintaan
+    console.log("[STEP 2] Memperbarui status permintaan...");
     await Permintaan.update({ status_permintaan: status }, { where: { id } });
+    console.log("[INFO] Status permintaan berhasil diperbarui menjadi:", status);
 
+    // Tahap 5: Jika status "ditolak", update status aset menjadi "tersedia"
+    if (status === "ditolak") {
+      if (permintaan.Aset) {
+        console.log("[STEP 3] Memperbarui status aset menjadi 'tersedia'...");
+        await Aset.update(
+          { status_peminjaman: "tersedia" },
+          { where: { serial_number: permintaan.serial_number } } // Gunakan serial_number dari permintaan
+        );
+        console.log("[INFO] Status aset berhasil diperbarui untuk serial_number:", permintaan.serial_number);
+      } else {
+        console.warn(`[WARNING] Data Aset tidak ditemukan untuk Permintaan ID ${id}.`);
+      }
+    }
+
+    // Tahap 6: Respon sukses
     res.status(200).json({ message: "Status permintaan berhasil diperbarui." });
   } catch (error) {
-    console.error("Error saat memperbarui status permintaan:", error);
+    console.error("[ERROR] Terjadi kesalahan saat memperbarui status permintaan:", error);
     res.status(500).json({ message: "Gagal memperbarui status permintaan." });
   }
 };
+
 
 // const uploadTtd = async (req, res) => {
 //   try {

@@ -90,12 +90,8 @@ const updatePenyerahan = async (req, res) => {
         {
           model: Permintaan,
           include: [
-            { model: User,
-              attributes: ["nama", "unit_kerja"]
-             },  // Menyertakan informasi user
-            { model: Aset ,
-              attributes: ["nama_barang"]
-            }   // Menyertakan informasi aset
+            { model: User, attributes: ["nama", "unit_kerja"] }, // Menyertakan informasi user
+            { model: Aset, attributes: ["nama_barang", "serial_number", "status_peminjaman"] } // Menyertakan informasi aset
           ],
         },
       ],
@@ -118,9 +114,22 @@ const updatePenyerahan = async (req, res) => {
     await penyerahan.save();
     console.log(`[INFO] Data penyerahan berhasil diperbarui dan status penyerahan diubah menjadi 'telah diserahkan'.`);
 
+    // **Tahap 4: Update Status Peminjaman Aset**
+    console.log(`[STEP 4] Memperbarui status peminjaman aset`);
+    const permintaan = penyerahan.Permintaan; // Mengakses data permintaan terkait
+    if (permintaan && permintaan.serial_number) {
+      await Aset.update(
+        { status_peminjaman: "dipinjam" },
+        { where: { serial_number: permintaan.serial_number } }
+      );
+      console.log(`[INFO] Status peminjaman aset berhasil diperbarui menjadi 'dipinjam' untuk serial number: ${permintaan.serial_number}`);
+    } else {
+      console.warn(`[WARNING] Data serial number aset tidak ditemukan dalam permintaan.`);
+    }
+
     // Respon sukses
     res.status(200).json({
-      message: 'Aset berhasil diserahkan',
+      message: 'Aset berhasil diserahkan dan status peminjaman diperbarui.',
       penyerahan: penyerahan, // Mengirimkan objek penyerahan yang telah diperbarui
     });
     console.log(`[SUCCESS] Proses serahkan aset selesai untuk ID: ${id}`);
@@ -136,6 +145,7 @@ const updatePenyerahan = async (req, res) => {
     res.status(500).json({ error: 'Terjadi kesalahan dalam memproses penyerahan aset.' });
   }
 };
+
 
 
 

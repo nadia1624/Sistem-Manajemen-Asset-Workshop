@@ -15,56 +15,55 @@
         <div class="container-fluid px-4">
             <div class="table-wrapper">
                 <div class="table-responsive">
-                  <div class="table-bungkus">
-            <div class="table-scroll">
-                <table class="table-compact">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Tanggal</th>
-                            <th>Nama Barang</th>
-                            <th>Gambar</th>
-                            <th>Status Pengecekan</th>
-                            <th>Status Pengembalian</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% const dataDummy = [
-                            { no: 1, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", status : "Disetujui", statuspengembalian:"returned" },
-                            { no: 2, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", status: "Ditolak", statuspengembalian:"NotReturned" },
-                            { no: 3, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", status: "Diproses", statuspengembalian:"returned" },
-                            { no: 4, tanggal: "2025-01-15", nama: "Laptop Dell XPS", gambar: "https://placehold.co/100x100", status : "Disetujui", statuspengembalian:"returned" },
-                            { no: 5, tanggal: "2025-01-14", nama: "Meja Kerja", gambar: "https://placehold.co/100x100", status: "Ditolak", statuspengembalian:"NotReturned" },
-                            { no: 6, tanggal: "2025-01-13", nama: "Printer Epson", gambar: "https://placehold.co/100x100", status: "Diproses", statuspengembalian:"returned" },
-                        ]; %>
-
-                        <% dataDummy.forEach((item) => { %>
-                            <tr>
-                                <td><%= item.no %></td>
-                                <td><%= item.tanggal %></td>
-                                <td><%= item.nama %></td>
-                                <td>
-                                    <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>"/>
-                                </td>
-                                <td>
-                                    <% if (item.status === "Disetujui") { %>
-                                        <div class="status-badge disetujui">Disetujui</div>
-                                    <% } else if (item.status === "Ditolak") { %>
-                                        <div class="status-badge ditolak">Ditolak</div>
-                                    <% } else if (item.status === "Diproses") { %>
-                                        <div class="status-badge diproses">Diproses</div>
+                    <div class="table-bungkus">
+                        <div class="table-scroll">
+                            <table class="table-compact">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Tanggal</th>
+                                        <th>Nama Barang</th>
+                                        <th>Gambar</th>
+                                        <th>Status Pengecekan</th>
+                                        <th>Status Pengembalian</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (laporanCekList && laporanCekList.length > 0) { %>
+                                        <% laporanCekList.forEach((item, index) => { %>
+                                            <tr>
+                                                <td><%= index + 1 %></td>
+                                                <td width="15%"> <%= new Date(item.tanggal_pengecekan).toLocaleDateString() %> </td>
+                                                <td><%= item.Penyerahan.Permintaan.Aset.nama_barang %></td>
+                                                <td>
+                                                    <img class="img-fluid" alt="Gambar Aset" src="<%= item.Penyerahan.Permintaan.Aset.Kategori.gambar %>"/>
+                                                </td>
+                                                <td>
+                                                    <% if (item.status === "selesai") { %>
+                                                        <div class="status-badge selesai">selesai</div>
+                                                    <% } else if (item.status === "Belum diproses") { %>
+                                                        <div class="status-badge belumdiproses">Belum diproses</div>
+                                                    <% } else if (item.status === "Diproses") { %>
+                                                        <div class="status-badge diproses">Diproses</div>
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <span class="status-badge <%= item.status_pengembalian %>"><%= item.status_pengembalian %></span>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" class="text-center">Data tidak ditemukan</td>
+                                        </tr>
                                     <% } %>
-                                </td>
-                                <td>
-                                    <span class="status-badge <%= item.statuspengembalian %>"><%= item.statuspengembalian %></span>
-                                </td>           
-                            </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+                                </tbody>
+                                
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
+    

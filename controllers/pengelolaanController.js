@@ -255,7 +255,7 @@ const editAset = async (req, res) => {
         if (!aset) {
             return res.status(404).json({ message: 'Aset tidak ditemukan' });
         }
-
+        
         await aset.update({
             hostname,
             nama_barang: namaAset,
@@ -303,7 +303,7 @@ const tampilkanDetailAset = async (req, res) => {
         const aset = await Aset.findByPk(serialNumber, {
             include: [{
                 model: Kategori,
-                attributes: ['id', 'nama_kategori']
+                attributes: ['id', 'nama_kategori', 'gambar']
             }]
         });
 

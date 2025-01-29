@@ -1,21 +1,35 @@
 const express = require('express');
 const pengembalianControllers = require('../controllers/pengembalianControllers');
 const verifyToken = require('../middleware/validtokenMiddleware');
+const upload = require('../middleware/uploadMiddleware');
 const role = require("../middleware/checkroleMiddleware");
 
 const pengembalianRouter = express.Router()
 
 //admin
-pengembalianRouter.get('/admin/pengembalianAset', (req, res) => {
-    res.render('admin/pengembalian/pengembalianAset');
-});
-pengembalianRouter.get('/admin/riwayatPengembalian', (req, res) => {
-    res.render('admin/pengembalian/riwayatPengembalian');
-});
+pengembalianRouter.get('/admin/pengembalianAset',
+    verifyToken, 
+    role("admin"), 
+    pengembalianControllers.getPengembalian
+);
+
+pengembalianRouter.get('/admin/riwayatPengembalian', 
+    verifyToken, 
+    role("admin"), 
+    pengembalianControllers.riwayatPengembalian
+);
+
 pengembalianRouter.get('/karyawan/riwayatKaryawan', (req, res) => {
     const currentPath = req.path;
     res.render('karyawan/riwayat/riwayatKaryawan', { currentPath }); 
 });
+
+pengembalianRouter.post('/admin/pengembalianAset/:id',
+    verifyToken,
+    role("admin"),
+    upload.single('buktiGambar'),
+    pengembalianControllers.addAssetReturn
+);
 
 //karyawan
 pengembalianRouter.post('/karyawan/return/:idpenyerahan', 

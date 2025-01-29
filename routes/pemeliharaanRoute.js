@@ -16,4 +16,9 @@ pemeliharaanRouter.get('/admin/pemeliharaan-aset/detail/:id', verifyToken, role(
 
 pemeliharaanRouter.post('/admin/pemeliharaan-aset/delete/:id', verifyToken, role('admin'), pemeliharaanController.deletePemeliharaan)
 
+pemeliharaanRouter.post('/admin/pemeliharaan-aset/detail/:id', verifyToken, role('admin'), pemeliharaanController.updateStatus)
+
+pemeliharaanRouter.post('/admin/pemeliharaan-aset/detail/:id/:serial_number', verifyToken, role('admin'), pemeliharaanController.updateKondisiAset)
+
+
 module.exports = pemeliharaanRouter

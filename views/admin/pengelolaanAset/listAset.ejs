@@ -197,188 +197,163 @@
 </div>
 
 <script>
-    // Mendapatkan elemen modal dan tombol
+    // Modal Elements
     const addModal = document.getElementById("addModal");
     const editModal = document.getElementById("editModal");
     const deleteModal = document.getElementById("deleteModal");
-    const closeAddBtn = document.getElementById("closeAddBtn");
-    const closeEditBtn = document.getElementById("closeEditBtn");
-    const closeDeleteBtn = document.getElementById("closeDeleteModal");
-    const addAsetButton = document.querySelector('.button-tambah');
-    const deleteButtons = document.querySelectorAll('.button-delete');
-    const editButtons = document.querySelectorAll('.button-edit');
+    const addForm = document.getElementById("addForm");
+    const editForm = document.getElementById("editForm");
     
-
-    // Menangani klik pada tombol "Tambah Aset"
-    addAsetButton.addEventListener('click', function(event) {
+    // Button Elements
+    const addAsetButton = document.querySelector('.button-tambah');
+    const closeButtons = {
+        add: document.getElementById("closeAddBtn"),
+        edit: document.getElementById("closeEditBtn"),
+        delete: document.getElementById("closeDeleteModal")
+    };
+    
+    // Modal Toggle Functions
+    function toggleModal(modal, display = 'flex') {
+        modal.style.display = display;
+    }
+    
+    function setupModalClosing(modal, closeBtn) {
+        closeBtn.addEventListener('click', () => toggleModal(modal, 'none'));
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                toggleModal(modal, 'none');
+            }
+        });
+    }
+    
+    // Setup Modal Event Listeners
+    addAsetButton.addEventListener('click', (event) => {
         event.preventDefault();
-        addModal.style.display = 'flex';
+        toggleModal(addModal);
     });
-
-    // Menangani klik pada tombol tutup untuk modal
-    closeAddBtn.addEventListener('click', function() {
-        addModal.style.display = 'none';
+    
+    Object.entries(closeButtons).forEach(([key, btn]) => {
+        const modal = document.getElementById(`${key}Modal`);
+        setupModalClosing(modal, btn);
     });
-
-    closeEditBtn.addEventListener('click', function() {
-        editModal.style.display = 'none';
-    });
-
-
-    // Menangani klik di luar modal untuk menutupnya
-    window.addEventListener('click', function(event) {
-        if (event.target == addModal) {
-            addModal.style.display = 'none';
-        }
-        if (event.target == editModal) {
-            editModal.style.display = 'none';
-        }
-        if (event.target == deleteModal) {
-            deleteModal.style.display = 'none';
-        }
-    });
-
-    // Menangani klik pada tombol edit
+    
+    // Edit Asset Handler
     document.querySelectorAll('.button-edit').forEach(button => {
-    button.addEventListener('click', async function() {
-        const serialNumber = this.getAttribute('data-id');
-        const row = this.closest('tr');
-        
-        // Get data from table row
-        document.getElementById('editSerialNumber').value = serialNumber;
-        document.getElementById('editNamaAset').value = row.querySelector('td:nth-child(3)').textContent;
-        document.getElementById('editKondisiAset').value = row.querySelector('td:nth-child(4)').textContent;
-
-        // Fetch additional data
+        button.addEventListener('click', async function() {
+            const serialNumber = this.getAttribute('data-id');
+            try {
+                const response = await fetch(`/admin/edit-aset/${serialNumber}`);
+                const aset = await response.json();
+                
+                // Populate form fields
+                Object.entries({
+                    'editSerialNumber': serialNumber,
+                    'editHostname': aset.hostname,
+                    'editIpAddress': aset.ip_address,
+                    'editNamaAset': this.closest('tr').querySelector('td:nth-child(3)').textContent,
+                    'editCaraDapat': aset.cara_dapat,
+                    'editKondisiAset': aset.kondisi_aset
+                }).forEach(([id, value]) => {
+                    document.getElementById(id).value = value;
+                });
+                
+                editForm.setAttribute('action', `/admin/edit-aset/${serialNumber}`);
+                toggleModal(editModal);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal mengambil data aset');
+            }
+        });
+    });
+    
+    // Delete Asset Handler
+    document.querySelectorAll('.button-delete').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const serialNumber = this.getAttribute('data-id');
+            document.getElementById('deleteSerialNumber').textContent = serialNumber;
+            toggleModal(deleteModal);
+        });
+    });
+    
+    // Form Submit Handlers
+    async function handleFormSubmit(endpoint, formData, successCallback) {
         try {
-            const response = await fetch(`/admin/edit-aset/${serialNumber}`);
-            const aset = await response.json();
-            
-            document.getElementById('editHostname').value = aset.hostname;
-            document.getElementById('editIpAddress').value = aset.ip_address;
-            document.getElementById('editCaraDapat').value = aset.cara_dapat;
-            document.getElementById('editKondisiAset').value = aset.kondisi_aset;
-            
-            editForm.setAttribute('action', `/admin/edit-aset/${serialNumber}`);
-            editModal.style.display = 'flex';
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+    
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else if (response.ok) {
+                successCallback();
+            } else {
+                const error = await response.json();
+                throw new Error(error.message);
+            }
         } catch (error) {
             console.error('Error:', error);
-            alert('Gagal mengambil data aset');
+            alert(error.message || 'Terjadi kesalahan');
         }
-    });
-});
-
-
-    // Form submit handlers
-document.getElementById('addForm').addEventListener('submit', async function(event) {
-    event.preventDefault();
-    
-    const formData = new FormData(this);
-    const data = {};
-    formData.forEach((value, key) => data[key] = value);
-
-    try {
-        const response = await fetch('/admin/tambah-aset', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (response.redirected) {
-            window.location.href = response.url;
-        } else if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message);
-        }
-        
-    } catch (error) {
-        console.error('Error:', error);
     }
     
-    addModal.style.display = 'none';
-});
-
-document.getElementById('editForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-    const serialNumber = document.getElementById('editSerialNumber').value;
-    const data = Object.fromEntries(formData.entries());
-
-    try {
-        const response = await fetch(`/admin/edit-aset/${serialNumber}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (response.redirected) {
-            window.location.href = response.url;
-        } else if (response.ok) {
-            window.location.reload();
-        } else {
-            const error = await response.json();
-            alert(error.message || 'Gagal mengupdate aset');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Terjadi kesalahan saat mengupdate aset');
-    }
-});
-
-document.getElementById('closeEditBtn').addEventListener('click', function() {
-    document.getElementById('editModal').style.display = 'none';
-});
-
-window.addEventListener('click', function(e) {
-    if (e.target == document.getElementById('editModal')) {
-        document.getElementById('editModal').style.display = 'none';
-    }
-});
-
-// Delete button handlers
-deleteButtons.forEach(button => {
-    button.addEventListener('click', function(event) {
+    addForm.addEventListener('submit', async function(event) {
         event.preventDefault();
-        const serialNumber = this.getAttribute('data-id');
-        document.getElementById('deleteSerialNumber').textContent = serialNumber;
-        deleteModal.style.display = 'flex';
+        await handleFormSubmit(
+            '/admin/tambah-aset',
+            new FormData(this),
+            () => window.location.reload()
+        );
+        toggleModal(addModal, 'none');
     });
-});
-
-// Delete confirmation handler
-const confirmDeleteBtn = deleteModal.querySelector('.finish-btn');
-confirmDeleteBtn.addEventListener('click', async function() {
-    const serialNumber = document.getElementById('deleteSerialNumber').textContent;
     
-    try {
-        const response = await fetch(`/admin/hapus-aset/${serialNumber}`, {
-            method: 'DELETE'
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            window.location.reload();
-        } else {
-            throw new Error(result.message);
+    editForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const serialNumber = document.getElementById('editSerialNumber').value;
+        await handleFormSubmit(
+            `/admin/edit-aset/${serialNumber}`,
+            new FormData(this),
+            () => window.location.reload()
+        );
+        toggleModal(editModal, 'none');
+    });
+    
+    // Delete Confirmation Handler
+    deleteModal.querySelector('.finish-btn').addEventListener('click', async function() {
+        const serialNumber = document.getElementById('deleteSerialNumber').textContent;
+        try {
+            const response = await fetch(`/admin/hapus-aset/${serialNumber}`, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.location.reload();
+            } else {
+                throw new Error(result.message || 'Gagal menghapus aset');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert(error.message || 'Terjadi kesalahan saat menghapus aset');
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Gagal menghapus aset');
-    }
+        
+        toggleModal(deleteModal, 'none');
+    });
     
-    deleteModal.style.display = 'none';
-});
-
-// Cancel delete
-deleteModal.querySelector('.cancel-btn').addEventListener('click', function() {
-    deleteModal.style.display = 'none';
-});
-
+    // Cancel delete
+    deleteModal.querySelector('.cancel-btn').addEventListener('click', () => {
+        toggleModal(deleteModal, 'none');
+    });
+    
+    // Global error handler
+    window.addEventListener('unhandledrejection', function(event) {
+        console.error('Unhandled promise rejection:', event.reason);
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+    });
+    
 </script>
 
 </body>

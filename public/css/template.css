@@ -1718,7 +1718,6 @@ a button:disabled {
   color: #666;
 }
 
-
 .no-data-message {
   display: none;
   text-align: center;
@@ -1731,3 +1730,12 @@ a button:disabled {
   transition: opacity 0.3s ease-in-out;
   opacity: 0;
 }
+
+.image-container {
+  flex: 0 0 500px;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+

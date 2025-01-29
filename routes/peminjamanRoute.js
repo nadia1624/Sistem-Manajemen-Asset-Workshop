@@ -12,10 +12,17 @@ peminjamanRouter.get('/karyawan/peminjamanAset',
     peminjamanControllers.getPeminjaman
 );
 
-peminjamanRouter.get('/karyawan/laporanCek', (req, res) => {
-    const currentPath = req.path; 
-    res.render('karyawan/peminjaman/laporanCek', { currentPath }); 
-});
+peminjamanRouter.get('/karyawan/laporanCek', 
+    verifyToken, 
+    role("karyawan"), 
+    peminjamanControllers.getAllDataLaporancek
+);
+
+
+// peminjamanRouter.get('/karyawan/laporanCek', (req, res) => {
+//     const currentPath = req.path; 
+//     res.render('karyawan/peminjaman/laporanCek', { currentPath }); 
+// });
 
 peminjamanRouter.post('/karyawan/peminjamanAset/cek/:penyerahanId', verifyToken, role('karyawan'), peminjamanControllers.createPengajuanCek )
 

@@ -14,25 +14,13 @@ penyerahanRouter.get(
   PenyerahanController.getPenyerahan
 );
 
-penyerahanRouter.post(
-    "/penyerahan-aset/:id",
+penyerahanRouter.patch(
+    "/penyerahanAset/:id",
     upload.single("gambar_bukti"),
     verifyToken,
     role("admin"),
     PenyerahanController.updatePenyerahan
   );
 
-// Route untuk serahkan aset
-// fetch('/admin/serahkanAset', {
-//     method: 'POST',
-//     body: formData,
-//   }).then((response) => {
-//     if (response.ok) {
-//       alert('Penyerahan berhasil!');
-//       window.location.reload();
-//     } else {
-//       alert('Terjadi kesalahan, silakan coba lagi.');
-//     }
-//   });
 
 module.exports = penyerahanRouter;

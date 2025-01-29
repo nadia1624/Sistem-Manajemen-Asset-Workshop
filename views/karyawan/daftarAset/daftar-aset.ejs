@@ -26,6 +26,7 @@
   </div>
   
 
+  
   <script>
     // Initialize asset data from server
     const assets = JSON.parse('<%- JSON.stringify(assets) %>');
@@ -154,6 +155,61 @@
       // Setup request buttons
       setupRequestButtons();
     });
+
+  });
+}
+
+function handleCardClick(event, id) {
+ const button = event.target.closest('.request-btn');
+ if (button) {
+   showModal(button.dataset.title, button.dataset.serial);
+ } else {
+   window.location.href = `/karyawan/detail-aset/${id}`;
+ }
+}
+
+// Fungsi modal
+function showModal(title, serial_number) {
+  const modal = document.getElementById("addModal");
+  const modalTitle = document.getElementById("modalTitle");
+  document.getElementById("serialNumberInput").value = serial_number;
+  
+  modalTitle.textContent = `Permintaan untuk ${title}`;
+  modal.style.display = "flex";
+}
+
+function hideModal() {
+ document.getElementById("addModal").style.display = "none";
+}
+
+// Submit permintaan
+document.querySelector('.finish-btn').addEventListener('click', async () => {
+  const serial_number = document.getElementById('serialNumberInput').value;
+  try {
+    const response = await fetch('/karyawan/permintaan', { // Ubah sesuai route yang benar
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ serial_number })
+    });
+
+    if (response.redirected) {
+      window.location.href = response.url;
+    } else if (response.ok) {
+      hideModal();
+      window.location.href = '/karyawan/permintaan/permintaanAset';
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+});
+
+document.getElementById("requestButton").addEventListener("click", showModal);
+document.getElementById("close").addEventListener("click", hideModal);
+document.querySelector(".cancel-btn").addEventListener("click", hideModal);
+
+
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>

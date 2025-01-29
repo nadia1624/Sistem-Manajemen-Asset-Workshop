@@ -1,121 +1,98 @@
-<body>
-    <% const currentPath = req.path; %>
-    <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
+<body> 
+  <% const currentPath = req.path; %>
+  <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
 
-    <main class="px-4 md:px-8 lg:px-16 pt-6 pb-4">
-        <!-- Container untuk konten utama -->
-        <div class="w-full max-w-6xl mx-auto">
-            <!-- Main Content Container dengan posisi relative -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-6 relative">
-                <!-- Back Button -->
-                <div class="absolute left-6 top-6">
-                    <a href="/karyawan/daftar-aset">
-                        <button class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
-                            <i class="fa-solid fa-arrow-left text-sm"></i>
-                        </button>
-                    </a>
-                </div>
-                
-                <!-- Content Grid with left padding to accommodate back button -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10 md:mt-0">
-                    <!-- Image Section -->
-                    <div class="w-full aspect-square bg-gray-200 rounded-lg overflow-hidden">
-                      <img class="w-full h-full object-cover" src="<%= kategori.gambar %>" alt="<%= kategori.title %>">
-                    </div>
-                    
-                    <!-- Details Section -->
-                    <div class="flex flex-col h-full">
-                        <div class="space-y-6">
-                            <div>
-                              <h2 class="text-2xl font-bold mb-2"><%= kategori.nama_barang %></h2>
-                              <p class="text-gray-600 font-medium"><%= kategori.nama_kategori %></p>
-                            </div>
-                            <div>
-                              <h3 class="text-lg font-semibold mb-2">Detail</h3>
-                              <p class="text-gray-700"><%= kategori.deskripsi %></p>
-                            </div>
-                        </div>
-                        
-                        <!-- Action Button -->
-                        <div class="mt-auto pt-8">
-                            <button 
-                            type="button"
-                                id="requestButton" onclick="showModal('addModal')"
-                                class="w-full bg-[#C2EF97] text-black text-base font-bold py-3 rounded-full hover:brightness-95 transition-all duration-200" >
-                                Ajukan Pinjaman</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modal -->
-  <!-- Modal -->
-  <div id="addModal" class="modal">
-    <div class="modal-content">
-      <span id="close" class="close-btn">&times;</span>
-      <h3 id="modalTitle"></h3>
-      <p id="modalContent">Apakah Anda yakin ingin membuat permintaan untuk aset ini?</p>
-      <div class="modal-actions">
-        <button type="button" class="btn cancel-btn">
-          Tidak
-        </button>
-        <button type="submit" class="btn finish-btn">
-          Ya
-        </button>
+  <main class="px-4 md:px-8 lg:px-16 pt-6 pb-4">
+      <div class="w-full max-w-6xl mx-auto">
+          <div class="bg-white rounded-2xl border border-gray-200 p-6 relative">
+              <!-- Back Button -->
+              <div class="absolute left-6 top-6">
+                  <a href="/karyawan/daftar-aset">
+                      <button class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+                          <i class="fa-solid fa-arrow-left text-sm"></i>
+                      </button>
+                  </a>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10 md:mt-0">
+                  <div class="w-full aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    <img class="w-full h-full object-cover" src="<%= kategori.gambar %>" alt="<%= kategori.nama_barang %>">
+                  </div>
+                  
+                  <div class="flex flex-col h-full">
+                      <div class="space-y-6">
+                          <div>
+                            <h2 class="text-2xl font-bold mb-2"><%= kategori.nama_barang %></h2>
+                            <p class="text-gray-600 font-medium"><%= kategori.nama_kategori %></p>
+                          </div>
+                          <div>
+                            <h3 class="text-lg font-semibold mb-2">Detail</h3>
+                            <p class="text-gray-700"><%= kategori.deskripsi %></p>
+                          </div>
+                      </div>
+                      
+                      <div class="mt-auto pt-8">
+                          <button 
+                              type="button"
+                              class="w-full bg-[#C2EF97] text-black text-base font-bold py-3 rounded-full hover:brightness-95 transition-all duration-200 request-btn"
+                              data-title="<%= kategori.nama_barang %>"
+                              data-serial="<%= kategori.serial_number %>"
+                          >
+                              Ajukan Pinjaman
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </div>
       </div>
-    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="addModal" class="modal" style="display: none;">
+      <div class="modal-content">
+          <span id="close" class="close-btn">&times;</span>
+          <form action="/karyawan/permintaanAset" method="POST">
+              <h3 id="modalTitle"></h3>
+              <p id="modalContent">Apakah Anda yakin ingin membuat permintaan untuk aset ini?</p>
+              <input type="hidden" name="serial_number" id="serialNumberInput">
+              <div class="modal-actions">
+                  <button type="button" class="btn cancel-btn">Tidak</button>
+                  <button type="submit" class="btn finish-btn">Ya</button>
+              </div>
+          </form>
+      </div>
   </div>
 
   <script>
-    // Fungsi untuk menampilkan modal
-    function showModal(title) {
-  const modal = document.getElementById("addModal");
-  const modalTitle = document.getElementById("modalTitle");
+      document.addEventListener("DOMContentLoaded", () => {
+          const modal = document.getElementById("addModal");
+          const modalTitle = document.getElementById("modalTitle");
+          const serialInput = document.getElementById("serialNumberInput");
 
-  modalTitle.textContent = `Permintaan untuk ${title}`;
-  modal.style.display = "flex"; // Menyesuaikan dengan class modal baru
-}
-  
-function hideModal() {
-  const modal = document.getElementById("addModal");
-  modal.style.display = "none"; // Menyesuaikan dengan class modal baru
-}
+          // Fungsi menampilkan modal
+          function showModal(title, serial) {
+              modalTitle.textContent = `Permintaan untuk ${title}`;
+              serialInput.value = serial;
+              modal.style.display = "flex";
+          }
 
-    // Event listener untuk tombol "Ajukan Pinjaman"
-    document.getElementById("requestButton").addEventListener("click", () => {
-      showModal("[Nama Barang]"); // Ganti dengan data dinamis jika diperlukan
-    });
-  
-    // Event listener untuk tombol "Tutup" di modal
-    document.getElementById("close").addEventListener("click", hideModal);
-  
-    // Event listener untuk tombol "Tidak" di modal
-    document.querySelector(".cancel-btn").addEventListener("click", hideModal);
-  
-    // Event listener untuk tombol "Ya" di modal
-    document.querySelector('.finish-btn').addEventListener('click', async () => {
- try {
-   const response = await fetch('/karyawan/permintaan', {
-     method: 'POST',
-     headers: { 'Content-Type': 'application/json' },
-     body: JSON.stringify({ serial_number: '<%= kategori.serial_number %>' })
-   });
+          // Fungsi menyembunyikan modal
+          function hideModal() {
+              modal.style.display = "none";
+          }
 
-   if (response.ok) {
-     hideModal();
-     window.location.href = '/karyawan/permintaan/permintaanAset';
-   } else {
-     alert('Gagal membuat permintaan');
-   }
- } catch (error) {
-   console.error(error);
-   alert('Terjadi kesalahan');
- }
-});
+          // Event listener untuk tombol "Ajukan Pinjaman"
+          document.querySelector(".request-btn").addEventListener("click", (e) => {
+              const button = e.target.closest(".request-btn");
+              const title = button.dataset.title;
+              const serial = button.dataset.serial;
+              showModal(title, serial);
+          });
+
+          // Event listener untuk tombol di modal
+          document.getElementById("close").addEventListener("click", hideModal);
+          document.querySelector(".cancel-btn").addEventListener("click", hideModal);
+      });
   </script>
-  
-  
 </body>
 </html>

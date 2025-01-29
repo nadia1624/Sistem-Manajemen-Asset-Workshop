@@ -3,10 +3,10 @@
 <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Permintaan Aset</h3>
-        <div class="search-bar">
-            <input placeholder="Search..." type="text"/>
+        <div class="search-bar" style="margin-right: 30px;">
+            <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
             <i class="fas fa-search"></i>
-        </div>
+         </div>
     </div>
     <div class="container-fluid px-4">
         <div class="table-wrapper">
@@ -27,6 +27,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            <% if (listPermintaan && listPermintaan.length > 0) { %>
                                 <% listPermintaan.forEach((permintaan, index) => { %>
                                     <tr>
                                         <td width="5%"><%= index + 1 %></td>
@@ -73,11 +74,18 @@
                                                 </a>
                                             <% } %>
                                         </td>
-                                        
                                     </tr>
                                 <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="8" class="text-center">Tidak ada permintaan aset.</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
+                        <div id="no-data-message"id="no-data-message" class="no-data-message">
+                            Data tidak ditemukan.
+                        </div>    
                     </div>
                 </div>
             </div>
@@ -107,51 +115,53 @@
     const closeBtn = document.getElementById("close");
 
     function showModal(type, permintaanId) {
-        if (type === "setuju") {
-            modalTitle.textContent = "Setujui Permintaan";
-            modalContent.textContent = "Apakah Anda yakin ingin menyetujui permintaan ini?";
-            finishBtn.onclick = async function () {
-                try {
-                    const response = await fetch(`/admin/permintaanAset/${permintaanId}/status`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ status: "diterima" }),
-                    });
-                    if (response.ok) {
-                        alert("Permintaan berhasil disetujui!");
-                        location.reload();
-                    } else {
-                        alert("Gagal menyetujui permintaan.");
-                    }
-                } catch (error) {
-                    console.error(error);
-                    alert("Terjadi kesalahan.");
+    if (type === "setuju") {
+        modalTitle.textContent = "Setujui Permintaan";
+        modalContent.textContent = "Apakah Anda yakin ingin menyetujui permintaan ini?";
+        finishBtn.onclick = async function () {
+            try {
+                const response = await fetch(`/admin/permintaanAset/${permintaanId}/status`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: "diterima" }),
+                });
+                if (response.ok) {
+                    alert("Permintaan berhasil disetujui!");
+                    location.reload();
+                } else {
+                    alert("Gagal menyetujui permintaan.");
                 }
-            };
-        } else if (type === "tolak") {
-            modalTitle.textContent = "Tolak Permintaan";
-            modalContent.textContent = "Apakah Anda yakin ingin menolak permintaan ini?";
-            finishBtn.onclick = async function () {
-                try {
-                    const response = await fetch(`/admin/permintaanAset/${permintaanId}/status`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ status: "ditolak" }),
-                    });
-                    if (response.ok) {
-                        alert("Permintaan berhasil ditolak!");
-                        location.reload();
-                    } else {
-                        alert("Gagal menolak permintaan.");
-                    }
-                } catch (error) {
-                    console.error(error);
-                    alert("Terjadi kesalahan.");
+            } catch (error) {
+                console.error(error);
+                alert("Terjadi kesalahan.");
+            }
+        };
+    } else if (type === "tolak") {
+        modalTitle.textContent = "Tolak Permintaan";
+        modalContent.textContent = "Apakah Anda yakin ingin menolak permintaan ini?";
+        finishBtn.onclick = async function () {
+            try {
+                const response = await fetch(`/admin/permintaanAset/${permintaanId}/status`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: "ditolak" }),
+                });
+                if (response.ok) {
+                    alert("Permintaan berhasil ditolak!");
+                    location.reload();
+                } else {
+                    const error = await response.json();
+                    alert(`Gagal menolak permintaan: ${error.message}`);
                 }
-            };
-        }
-        modal.style.display = "flex";
+            } catch (error) {
+                console.error(error);
+                alert("Terjadi kesalahan.");
+            }
+        };
     }
+    modal.style.display = "flex";
+}
+
     
     closeBtn.addEventListener("click", function () {
         modal.style.display = "none";
@@ -166,4 +176,31 @@
             modal.style.display = "none";
         }
     };
+
+    function filterTable() {
+    const input = document.getElementById("search-input").value.toLowerCase();
+    const rows = document.querySelectorAll(".table-compact tbody tr");
+    let hasMatch = false;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(input)) {
+            row.style.display = "";
+            hasMatch = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
+    const noDataMessage = document.getElementById("no-data-message");
+    if (hasMatch) {
+        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+    } else {
+        noDataMessage.style.display = "block"; 
+        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+    }
+}
+
 </script>

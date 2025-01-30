@@ -5,17 +5,11 @@
     <div class="header-content">
         <h3 style="font-weight: bold;">Pengembalian Aset Vendor</h3>
         <div class="search-bar">
-            <input placeholder="Search..." type="text"/>
+            <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
             <i class="fas fa-search"></i>
         </div>
     </div>
     <div class="container-fluid px-4">
-        <!-- <div class="tabButton">
-            <a href="asetKaryawan" class="button" onclick="setActive(event, this)">Aset Karyawan</a>
-            <a href="asetGudang" class="button" onclick="setActive(event, this)">Aset Gudang</a>
-            <a href="riwayatVendor" class="button" onclick="setActive(event, this)">Riwayat Pengembalian</a>
-        </div> -->
-
         <div class="tabButton">
             <a href="asetKaryawan" class="button inactive">Aset Karyawan</a>
             <a href="asetGudang" class="button inactive">Aset Gudang</a>
@@ -33,8 +27,8 @@
                                     <th width="15%">Serial Number</th>
                                     <th width="15%">Nama Aset</th>
                                     <th width="15%">Deskripsi</th>
-                                    <th width="15%">Gambar</th>
-                                    <th width="12%">Aksi</th>
+                                    <th width="12%">Gambar</th>
+                                    <th width="10%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,14 +39,14 @@
                                             <td width="15%"><%= item.Aset ? item.Aset.serial_number : '-' %></td>
                                             <td width="15%"><%= item.Aset ? item.Aset.nama_barang : '-' %></td>
                                             <td width="15%"><%= item.Aset && item.Aset.Kategori ? item.Aset.Kategori.deskripsi : '-' %></td>
-                                            <td width="15%">
+                                            <td width="12%">
                                                 <% if (item.Aset && item.Aset.Kategori && item.Aset.Kategori.gambar) { %>
-                                                    <img class="img-fluid" alt="Bukti Gambar" src="<%= item.Aset.Kategori.gambar %>" width="100" height="100" />
+                                                    <img class="img-fluid" alt="Bukti Gambar" src="/public/uploads/<%= item.Aset.Kategori.gambar %>" width="100" height="100" />
                                                 <% } else { %>
                                                     <img class="img-fluid" alt="No Image" src="https://placehold.co/100x100" />
                                                 <% } %>
                                             </td>
-                                    <td width="12%">
+                                    <td width="10%">
                                         <a href="detailAsetRiwayat/<%= item.id %>">
                                         <button id="infoButton" class="button-info" style="margin-right: 10px;">
                                             <i class="fa-solid fa-circle-info"></i>  
@@ -73,6 +67,33 @@
             </div>
         </div>
     </div>
+<script>
+    function filterTable() {
+    const input = document.getElementById("search-input").value.toLowerCase();
+    const rows = document.querySelectorAll(".table-compact tbody tr");
+    let hasMatch = false;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(input)) {
+            row.style.display = "";
+            hasMatch = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
+    const noDataMessage = document.getElementById("no-data-message");
+    if (hasMatch) {
+        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+    } else {
+        noDataMessage.style.display = "block"; 
+        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+    }
+}
+</script>
 </main>
 
 

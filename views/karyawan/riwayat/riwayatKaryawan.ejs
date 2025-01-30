@@ -24,33 +24,36 @@
                                 <th width="10%">Kategori</th>
                                 <th width="17%">Deskripsi</th>
                                 <th width="10%">Gambar</th>
-                                <th width="15%">Keterangan</th>
+                                <th width="15%">Tanggal Peminjaman</th>
+                                <th width="15%">Tanggal Pengembalian</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% 
-                            const dataDummy = [
-                                { no: 1, nama: "Laptop Dell XPS", kategori: "Elektronik", deskripsi: "Laptop high-end untuk pekerjaan berat", gambar: "https://placehold.co/100x100", keterangan: "sudah dikembalikan" },
-                                { no: 2, nama: "Meja Kerja", kategori: "Furniture", deskripsi: "Meja kerja ergonomis untuk kantor", gambar: "https://placehold.co/100x100", keterangan: "sudah dikembalikan" },
-                                { no: 3, nama: "Printer Epson", kategori: "Elektronik", deskripsi: "Printer laser cepat dan hemat tinta", gambar: "https://placehold.co/100x100", keterangan: "sudah dikembalikan" },
-                                { no: 4, nama: "Laptop Dell XPS", kategori: "Elektronik", deskripsi: "Laptop high-end untuk pekerjaan berat", gambar: "https://placehold.co/100x100", keterangan: "sudah dikembalikan" },
-                                { no: 5, nama: "Meja Kerja", kategori: "Furniture", deskripsi: "Meja kerja ergonomis untuk kantor", gambar: "https://placehold.co/100x100", keterangan: "sudah dikembalikan" },
-                                { no: 6, nama: "Printer Epson", kategori: "Elektronik", deskripsi: "Printer laser cepat dan hemat tinta", gambar: "https://placehold.co/100x100", keterangan: "sudah dikembalikan" },
-                            ]; 
-                            %>
-    
-                            <% dataDummy.forEach((item, index) => { %>
-                                <tr>
-                                    <td><%= index + 1 %></td> <!-- No -->
-                                    <td><%= item.nama %></td> <!-- Nama Barang -->
-                                    <td><%= item.kategori %></td> <!-- Kategori -->
-                                    <td><%= item.deskripsi %></td> <!-- Deskripsi -->
-                                    <td>
-                                        <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>" />
-                                    </td> <!-- Gambar -->
-                                    <td><%= item.keterangan %></td> <!-- Keterangan -->
-                                </tr>
-                            <% }); %>
+const dataDummy = [
+    { no: 1, nama: "Laptop Dell XPS", kategori: "Elektronik", deskripsi: "Laptop high-end untuk pekerjaan berat", gambar: "https://placehold.co/100x100", tanggal_peminjaman: "2025-01-10", tanggal_pengembalian: "2025-01-20" },
+    { no: 2, nama: "Proyektor Epson", kategori: "Elektronik", deskripsi: "Proyektor untuk presentasi dengan resolusi tinggi", gambar: "https://placehold.co/100x100", tanggal_peminjaman: "2025-01-12", tanggal_pengembalian: "2025-01-22" },
+    { no: 3, nama: "Kursi Ergonomis", kategori: "Furniture", deskripsi: "Kursi dengan sandaran nyaman untuk kerja panjang", gambar: "https://placehold.co/100x100", tanggal_peminjaman: "2025-01-08", tanggal_pengembalian: "2025-01-18" },
+    { no: 4, nama: "Tablet Samsung Galaxy", kategori: "Elektronik", deskripsi: "Tablet untuk keperluan desain dan catatan", gambar: "https://placehold.co/100x100", tanggal_peminjaman: "2025-01-15", tanggal_pengembalian: "2025-01-25" },
+    { no: 5, nama: "Meja Lipat", kategori: "Furniture", deskripsi: "Meja portabel untuk berbagai keperluan", gambar: "https://placehold.co/100x100", tanggal_peminjaman: "2025-01-05", tanggal_pengembalian: "2025-01-15" },
+    { no: 6, nama: "Kamera DSLR Canon", kategori: "Elektronik", deskripsi: "Kamera profesional untuk dokumentasi kegiatan", gambar: "https://placehold.co/100x100", tanggal_peminjaman: "2025-01-18", tanggal_pengembalian: "2025-01-28" },
+]; 
+%>
+
+<% dataDummy.forEach((item, index) => { %>
+<tr>
+    <td><%= index + 1 %></td> <!-- No -->
+    <td><%= item.nama %></td> <!-- Nama Barang -->
+    <td><%= item.kategori %></td> <!-- Kategori -->
+    <td><%= item.deskripsi %></td> <!-- Deskripsi -->
+    <td>
+        <img class="img-fluid" alt="Gambar Aset" src="<%= item.gambar %>" />
+    </td> <!-- Gambar -->
+    <td><%= item.tanggal_peminjaman %></td> <!-- Tanggal Peminjaman -->
+    <td><%= item.tanggal_pengembalian %></td> <!-- Tanggal Pengembalian -->
+</tr>
+<% }); %>
+
                         </tbody>
                     </table>
                 </div>

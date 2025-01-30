@@ -1,9 +1,4 @@
 const express = require('express');
-const router = express.Router();
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const path = require('path');
-const fs = require('fs');
 const { Op } = require("sequelize");
 const { Pengembalian, Penyerahan, Permintaan, Aset, User } = require('../models');
 
@@ -109,7 +104,7 @@ const riwayatPengembalian = async (req, res) => {
 };
 
 const addAssetReturn = async (req, res) => {
-    const { id } = req.params; // Ambil ID pengembalian dari URL parameter
+    const { id } = req.params; 
     const { kondisi_terakhir, keterangan_kondisi } = req.body;
 
     if (!id) {
@@ -123,14 +118,28 @@ const addAssetReturn = async (req, res) => {
     const gambar_bukti = req.file.filename;
 
     try {
-        // Periksa apakah data pengembalian ada berdasarkan ID
-        const pengembalian = await Pengembalian.findByPk(id);
+        
+        const pengembalian = await Pengembalian.findByPk(id, {
+            include: {
+                model: Penyerahan,
+                include: {
+                    model: Permintaan,
+                    attributes: ["serial_number"],
+                },
+            },
+        });
 
         if (!pengembalian) {
             return res.status(404).json({ message: "Data pengembalian tidak ditemukan" });
         }
 
-        // Perbarui data pengembalian yang ada, bukan membuat entri baru
+        
+        const serialNumber = pengembalian.Penyerahan?.Permintaan?.serial_number;
+
+        if (!serialNumber) {
+            return res.status(404).json({ message: "Serial number aset tidak ditemukan" });
+        }
+
         await pengembalian.update({
             kondisi_terakhir,
             keterangan_kondisi,
@@ -138,14 +147,29 @@ const addAssetReturn = async (req, res) => {
             tanggal_dikembalikan: new Date(),
         });
 
-        res.json({ message: "Pengembalian aset berhasil ditambahkan", data: pengembalian });
+        const aset = await Aset.findOne({ where: { serial_number: serialNumber } });
+
+        if (!aset) {
+            return res.status(404).json({ message: "Data aset tidak ditemukan" });
+        }
+
+        await aset.update({
+            kondisi_aset: kondisi_terakhir,
+            status_peminjaman: "tersedia",
+        });
+
+        res.json({ 
+            message: "Pengembalian aset berhasil dilakukan",
+            data: { pengembalian, aset }
+        });
     } catch (error) {
         res.status(500).json({
-            message: "Terjadi kesalahan saat menambahkan data pengembalian",
+            message: "Terjadi kesalahan saat memproses pengembalian aset",
             error: error.message
         });
     }
 };
+
 
 
 

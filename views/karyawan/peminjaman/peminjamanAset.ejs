@@ -80,7 +80,7 @@
                                                 <td><%= penyerahan.Permintaan.Aset.nama_barang %></td>
                                                 <td>
                                                     <img class="img-fluid" alt="Gambar Aset: <%= penyerahan.Permintaan.Aset.nama_barang %>"
-                                                        src="<%= penyerahan.Permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
+                                                        src="/public/uploads/<%= penyerahan.Permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
                                                 </td>
                                                 <td><%= penyerahan.Permintaan.Aset.Kategori ? penyerahan.Permintaan.Aset.Kategori.nama_kategori : 'N/A' %></td>
                                                 <td><%= penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Deskripsi tidak tersedia' %></td>

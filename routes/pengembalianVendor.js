@@ -42,4 +42,16 @@ pengembalianVendorRouter.get('/admin/detailAsetRiwayat/:id',
     vendorGudangControllers.getDetailRiwayatVendor
 );
 
+pengembalianVendorRouter.put('/admin/updatestatus/:id', 
+    verifyToken, 
+    role("admin"), 
+    vendorGudangControllers.updateStatusVendorGudang
+);
+
+pengembalianVendorRouter.put('/admin/updatepengembalian/:id', 
+    verifyToken, 
+    role("admin"), 
+    vendorGudangControllers.updateStatusPengembalian
+);
+
 module.exports = pengembalianVendorRouter

@@ -21,6 +21,28 @@
         width: 400px;
         text-align: center;
     }
+    .popup-modal .submit-status-btn,
+.popup-modal .confirm-return-btn {
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 110px;
+  height: 35px; 
+  border: none; 
+  border-radius: 8px; 
+  cursor: pointer;
+  font-size: 14px;
+  color: black;
+}
+
+.popup-modal .submit-status-btn {
+  background-color: #C2EF97;
+}
+
+.popup-modal .confirm-return-btn {
+  background-color: #C2EF97; 
+}
+
 
     #editForm, #finishMessage {
         display: none;
@@ -36,6 +58,13 @@
     text-align: left;
     margin-bottom: 5px;
     }
+    .custom-span {
+    display: inline-block;
+    width: 85%;
+    text-align: center;
+    padding: 7px 0; 
+    border-radius: 25px; 
+}
     .status-sedang-diproses {
         background-color: #FDEC80;
     }
@@ -45,7 +74,7 @@
     }
     
     .status-belum-diproses {
-        background-color: #DD5F61; /* Merah */
+        background-color: #DD5F61;
         color: #fff;
     }
 </style>
@@ -54,17 +83,11 @@
     <div class="header-content">
         <h3 style="font-weight: bold;">Pengembalian Aset Vendor</h3>
         <div class="search-bar">
-            <input placeholder="Search..." type="text"/>
+            <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
             <i class="fas fa-search"></i>
         </div>
     </div>
     <div class="container-fluid px-4">
-        <!-- <div class="tabButton">
-            <a href="asetKaryawan" class="button" onclick="setActive(event, this)">Aset Karyawan</a>
-            <a href="asetGudang" class="button" onclick="setActive(event, this)">Aset Gudang</a>
-            <a href="riwayatVendor" class="button" onclick="setActive(event, this)">Riwayat Pengembalian</a>
-        </div> -->
-
         <div class="tabButton">
             <a href="asetKaryawan" class="button inactive">Aset Karyawan</a>
             <a href="asetGudang" class="button active">Aset Gudang</a>
@@ -97,28 +120,38 @@
                                             <td width="15%"><%= item.Aset.serial_number %></td>
                                             <td width="15%"><%= item.Aset.nama_barang %></td>
                                             <td width="15%" style="text-align: center;">
-                                                <img class="img-fluid" alt="Bukti Gambar" src="<%= item.Aset.Kategori.gambar %>" width="100" height="100"/>
+                                                <img class="img-fluid" alt="Bukti Gambar" 
+                                                     src="/public/uploads/<%= item.Aset.Kategori.gambar %>" 
+                                                     width="100" height="100"/>
                                             </td>
-                                            <td width="15%" class="custom-td">
-                                                <span class="custom-span
-                                                <% if (item.status_admin === 'belum diproses') { %>status-belum-diproses<% } %>
-                                                <% if (item.status_admin === 'sedang diproses') { %>status-sedang-diproses<% } %>
-                                                <% if (item.status_admin === 'selesai') { %>status-selesai<% } %>">
-                                                <%= item.status_admin %>
-                                            </span>
+                                            <td width="15%">
+                                                <span class="custom-span 
+                                                    <% if (item.status_admin === 'belum diproses') { %>status-belum-diproses<% } %>
+                                                    <% if (item.status_admin === 'sedang diproses') { %>status-sedang-diproses<% } %>
+                                                    <% if (item.status_admin === 'selesai') { %>status-selesai<% } %>">
+                                                    <%= item.status_admin %>
+                                                </span>
                                             </td>
                                             <td width="20%">
-                                                <button id="editButton" class="button-edit" style="margin-right: 10px;">
+                                                <button class="action-btn button-edit" data-id="<%= item.id %>" style="margin-right: 5px;">
                                                     <i class="fa-regular fa-pen-to-square"></i>
                                                 </button>
                                                 <a href="detailAsetGudang/<%= item.id %>">
-                                                    <button id="infoButton" class="button-info" style="margin-right: 10px;">
-                                                        <i class="fa-solid fa-circle-info"></i>  
-                                                    </button> 
-                                                </a>          
-                                                <button id="finishButton" class="btn">
-                                                    <i class="fas fa-check"></i> Return
+                                                    <button class="action-btn button-info">
+                                                        <i class="fa-solid fa-circle-info"></i>
+                                                    </button>
+                                                </a>
+                                                
+                                                <button 
+                                                    class="action-btn button-return" 
+                                                    data-id="<%= item.id %>" 
+                                                    style="margin-left: 7px;"
+                                                    <% if (item.status_admin !== 'selesai' || item.status_pengembalian === 'sudah dikembalikan') { %>disabled<% } %> 
+                                                    >
+                                                <i class="fas fa-check" style="color: black; font-weight: bold;"></i> 
+                                                <span style="color: black; font-weight: bold;">Return</span>
                                                 </button>
+
                                             </td>
                                         </tr>
                                     <% }); %>
@@ -137,96 +170,207 @@
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
 
-        <!-- Form untuk Edit -->
-        <div id="editForm" style="position: relative; border-radius: 10px; background: white;">
-            <h3 style="margin-bottom: 1px;">Edit Status</h3>
+        <!-- Edit Form -->
+        <div id="editForm">
+            <h3 style="margin-bottom: 20px;">Edit Status</h3>
             <form id="editAssetForm">
                 <div class="form-group">
-                    <label for="status" style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px;">Status</label>
-                    <select id="status" name="status" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
+                    <label style="display: block; text-align: left; font-weight: bold; margin-bottom: 8px;">
+                        Status
+                    </label>
+                    <select id="status" name="status" class="form-control">
                         <option value="" disabled selected>Pilih Status</option>
-                        <option value="Belum Diperbaiki">Belum diproses</option>
-                        <option value="Diperbaiki di Workshop">Sedang diproses</option>
-                        <option value="Selesai Diperbaiki">Selesai</option>
+                        <option value="belum diproses">Belum diproses</option>
+                        <option value="sedang diproses">Sedang diproses</option>
+                        <option value="selesai">Selesai</option>
                     </select>
                 </div>
-                <button type="submit" class="btn cancel-btn">Batal</button>
-                <button type="submit" class="btn finish-btn">Selesai</button>
+                <div class="btn-group" style="display: flex; justify-content: flex-end;">
+                    <button type="button" class="btn cancel-btn" style="margin-right: -8px;">Batal</button>
+                    <button type="submit" class="btn submit-status-btn">Simpan</button>
+                </div>                
             </form>
         </div>
-        
 
-
-        <!-- Pesan Popup untuk Tombol Selesai -->
+        <!-- Return Confirmation -->
         <div id="finishMessage">
-            <h3>Kembalikan Aset</h3>
-            <p>Apakah kamu yakin pengecekan 
-                aset sudah selesai dan akan
-                dikembalikan?</p>
+            <h3 style="margin-bottom: 16px;">Kembalikan Aset</h3>
+            <p style="margin-bottom: 1px;">
+                Apakah kamu yakin pengecekan aset sudah selesai dan akan dikembalikan?
+            </p>
             <div class="btn-group">
                 <button type="button" class="btn cancel-btn">Tidak</button>
-                <button type="button" class="btn finish-btn">Ya</button>
+                <button type="button" class="btn confirm-return-btn">Ya</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const modal = document.getElementById("addModal");
-        const closeBtn = document.getElementById("closeBtn");
-        const editForm = document.getElementById("editForm");
-        const finishMessage = document.getElementById("finishMessage");
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("addModal");
+    const closeBtn = document.getElementById("closeBtn");
+    const editForm = document.getElementById("editForm");
+    const finishMessage = document.getElementById("finishMessage");
+    const statusSelect = document.getElementById("status");
+    const editAssetForm = document.getElementById("editAssetForm");
+    let selectedItemId = null;
 
-        const editButton = document.getElementById("editButton");
-        const infoButton = document.getElementById("infoButton");
-        const finishButton = document.getElementById("finishButton");
+    document.querySelectorAll(".button-edit").forEach((button, index) => {
+    button.addEventListener("click", function() {
+        const row = this.closest("tr");
+        selectedItemId = index + 1; 
+        
+        editForm.style.display = "block";
+        finishMessage.style.display = "none";
+        modal.style.display = "flex";
 
-        // Menangani klik pada tombol "Edit"
-        editButton.addEventListener('click', function() {
-            editForm.style.display = 'block';
-            finishMessage.style.display = 'none';
-            modal.style.display = 'flex';
-        });
-
-        // Menangani klik pada tombol "Selesai"
-        finishButton.addEventListener('click', function() {
-            finishMessage.style.display = 'block';
-            editForm.style.display = 'none';
-            modal.style.display = 'flex';
-        });
-
-        // Menangani klik pada tombol "Info"
-        infoButton.addEventListener('click', function() {
-            window.location.href = "halaman-info.html"; // Ganti dengan URL tujuan
-        });
-
-        // Menangani klik pada tombol tutup
-        closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-        });
-
-        // Menangani klik di luar modal untuk menutupnya
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        };
-
-        // Menangani klik tombol batal
-        document.querySelectorAll('.cancel-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
-        });
-
-        // Menangani submit form edit
-        document.getElementById("editAssetForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            alert("Data aset berhasil disimpan!");
-            modal.style.display = 'none';
-        });
+        const currentStatus = row.querySelector(".custom-span").textContent.trim();
+        statusSelect.value = currentStatus;
     });
+});
+
+document.querySelectorAll(".button-return").forEach((button, index) => {
+    button.addEventListener("click", function() {
+        selectedItemId = index + 1; 
+        finishMessage.style.display = "block";  
+        editForm.style.display = "none";  
+        modal.style.display = "flex";  
+    });
+});
+
+document.querySelectorAll('.button-return').forEach(button => {
+    const row = button.closest('tr');
+    const statusAdmin = row.querySelector('.custom-span').textContent.trim();
+    
+    if (statusAdmin !== 'selesai') {
+        button.setAttribute('disabled', 'true');
+        button.style.backgroundColor = '#d3d3d3';  
+        button.style.cursor = 'not-allowed';  
+    } else {
+        button.removeAttribute('disabled');
+        button.style.backgroundColor = '';  
+        button.style.cursor = '';  
+    }
+});
+
+
+    closeBtn.addEventListener('click', () => modal.style.display = 'none');
+    window.onclick = (event) => {
+        if (event.target === modal) modal.style.display = 'none';
+    };
+
+    document.querySelectorAll('.cancel-btn').forEach(button => {
+        button.addEventListener('click', () => modal.style.display = 'none');
+    });
+
+    document.querySelectorAll('.confirm-return-btn').forEach(button => {
+    button.addEventListener('click', async () => {
+        if (!selectedItemId) {
+            alert("Error: ID tidak ditemukan");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/admin/updatepengembalian/${selectedItemId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: selectedItemId }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Aset berhasil dikembalikan!");
+                modal.style.display = 'none';
+
+                // Simpan status return ke localStorage untuk mencegah pengembalian lebih lanjut
+                localStorage.setItem(`asset-returned-${selectedItemId}`, 'true');
+
+                // Disable or hide the button "Return" permanently
+                const returnButton = document.querySelector(`.button-return[data-id='${selectedItemId}']`);
+                returnButton.setAttribute('disabled', 'true');
+                returnButton.style.backgroundColor = '#d3d3d3';  
+                returnButton.style.cursor = 'not-allowed';  
+                returnButton.style.display = 'none'; // Permanently hide the button
+
+            } else {
+                alert("Gagal mengembalikan aset: " + (data.message || "Unknown error"));
+            }
+        } catch (error) {
+            console.error("Error during return action:", error);
+            alert("Terjadi kesalahan dalam mengembalikan aset");
+        }
+    });
+});
+
+
+    editAssetForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        
+        if (!selectedItemId) {
+            alert("Error: ID tidak ditemukan");
+            return;
+        }
+
+        const newStatus = statusSelect.value;
+        if (!newStatus) {
+            alert("Silakan pilih status");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/admin/updatestatus/${selectedItemId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ status_admin: newStatus }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Status berhasil diperbarui!");
+                modal.style.display = 'none';
+                location.reload(); 
+            } else {
+                alert("Gagal memperbarui status: " + (data.message || "Unknown error"));
+            }
+        } catch (error) {
+            console.error("Error updating status:", error);
+            alert("Terjadi kesalahan dalam memperbarui status: " + error.message);
+        }
+    });
+});
+
+function filterTable() {
+    const input = document.getElementById("search-input").value.toLowerCase();
+    const rows = document.querySelectorAll(".table-compact tbody tr");
+    let hasMatch = false;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(input)) {
+            row.style.display = "";
+            hasMatch = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
+    const noDataMessage = document.getElementById("no-data-message");
+    if (hasMatch) {
+        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+    } else {
+        noDataMessage.style.display = "block"; 
+        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+    }
+}
 </script>
 
 </body>

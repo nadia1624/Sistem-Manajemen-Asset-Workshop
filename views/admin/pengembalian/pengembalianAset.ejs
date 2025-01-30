@@ -1,10 +1,21 @@
 <%- include("../../layout/sidebar.ejs") %>
 
+<style>
+#itemCondition {
+    width: 100%;
+    border: 1px solid #ccc; 
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    background-color: #ffff; 
+    box-sizing: border-box;
+}
+</style>
 <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Pengembalian Aset</h3>
         <div class="search-bar">
-            <input placeholder="Search..." type="text"/>
+            <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
             <i class="fas fa-search"></i>
         </div>
     </div>
@@ -133,7 +144,35 @@
         }
     });
 
+    
+
     function closeModal() {
         modal.style.display = 'none';
     }
+
+    function filterTable() {
+    const input = document.getElementById("search-input").value.toLowerCase();
+    const rows = document.querySelectorAll(".table-compact tbody tr");
+    let hasMatch = false;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(input)) {
+            row.style.display = "";
+            hasMatch = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
+    const noDataMessage = document.getElementById("no-data-message");
+    if (hasMatch) {
+        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+    } else {
+        noDataMessage.style.display = "block"; 
+        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+    }
+}
 </script>

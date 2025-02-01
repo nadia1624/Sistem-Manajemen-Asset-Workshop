@@ -310,6 +310,7 @@ const updateStatusPermintaanAset = async (req, res) => {
 // };
 
 const uploadTtd = async (req, res) => {
+  const ttdPath = req.file ? `${req.file.filename}` : null;
   try {
     const { permintaanId } = req.body;
 
@@ -335,7 +336,7 @@ const uploadTtd = async (req, res) => {
     // Buat data penyerahan baru
     await Penyerahan.create({
       permintaanId,
-      tanda_tangan: req.file.path,
+      tanda_tangan: ttdPath,
       status_penyerahan: 'belum diserahkan',
     });
 

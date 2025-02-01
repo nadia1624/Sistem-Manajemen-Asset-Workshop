@@ -22,5 +22,4 @@ penyerahanRouter.patch(
     PenyerahanController.updatePenyerahan
   );
 
-
 module.exports = penyerahanRouter;

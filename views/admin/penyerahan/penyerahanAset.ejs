@@ -57,15 +57,21 @@
                         </td>
                         <td width="10%">
                           <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
-                            <button class="btn btn-setuju" style="background-color: #28a745; color: white;" onclick="showModal('<%= penyerahan.id %>', '<%= penyerahan.Permintaan.Aset.nama_barang %>', '<%= penyerahan.Permintaan.User.nama %>', '<%= penyerahan.Permintaan.User.unit_kerja %>')">
+                            <button class="btn btn-setuju" 
+                                    style="background-color: #28a745; color: white;" 
+                                    onclick="showModal('<%= penyerahan.id %>', '<%= penyerahan.Permintaan.Aset.nama_barang %>', '<%= penyerahan.Permintaan.User.nama %>', '<%= penyerahan.Permintaan.User.unit_kerja %>')">
                               <i class="fas fa-check"></i>
                             </button>
-                          <% } else { %>
-                            <button class="btn btn-action" style="background-color: #ffffff; padding: 10px; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
+                          <% } else if (penyerahan.status_penyerahan === "sudah diserahkan" && penyerahan.surat) { %>
+                            <a href="/data/surat/<%= penyerahan.surat %>" target="_blank" 
+                               class="btn btn-action" 
+                               style="background-color: #ffffff; padding: 10px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer; align-items: center; justify-content: center;" >
                               <i class="fa-solid fa-download" style="font-size: 15px;"></i>
-                            </button>
+                            </a>
                           <% } %>
                         </td>
+                        
+                        
                       </tr>
                     <% }); %>
                   <% } else { %>
@@ -87,64 +93,64 @@
 
 
 <!-- Modal -->
-<div id="addModal" class="popup-modal">
-<div class="modal-content">
-    <span id="close" class="close-btn">&times;</span>
-    <h3 id="modalTitle">Konfirmasi Penyerahan Aset</h3>
-    <p id="modalContent"></p>
-    <form id="penyerahanForm" enctype="multipart/form-data">
-    <label for="namaKaryawan" class="left-label">Nama Peminjam</label>
-    <input 
-        type="text" 
-        id="namaKaryawan" 
-        name="namaKaryawan" 
-        value="" 
-        readonly 
-        required 
-    />
-    
-    <label for="unitKerja" class="left-label">Unit Kerja</label>
-    <input 
-        type="text" 
-        id="unitKerja" 
-        name="unitKerja" 
-        value="" 
-        readonly 
-        required 
-    />
-    
-    <label for="namaAset" class="left-label">Nama Aset</label>
-    <input 
-        type="text" 
-        id="namaAset" 
-        name="namaAset" 
-        value="" 
-        readonly 
-        required 
-    />
-    
-    <label for="namaPenerima" class="left-label">Nama Penerima:</label>
-    <input type="text" name="penerima" placeholder="Nama penerima" required />
-    
-    <label for="gambarBukti" class="left-label">Bukti Penyerahan:</label>
-    <input 
-        type="file" 
-        id="gambarBukti" 
-        name="gambar_bukti" 
-        class="form-control" 
-        accept="image/*" 
-        required 
-    />
-    
-    <div class="flex justify-center space-x-4">
-        <button type="button" class="btn cancel-btn">Tidak</button>
-        <button type="submit" class="btn finish-btn">Ya</button>
+<div id="addModal" class="popup-modal"><
+    <div class="modal-content">
+        <span id="close" class="close-btn">&times;</span>
+        <h3 id="modalTitle">Konfirmasi Penyerahan Aset</h3>
+        <p id="modalContent"></p>
+        <form id="penyerahanForm" enctype="multipart/form-data">
+        <label for="namaKaryawan" class="left-label">Nama Peminjam</label>
+        <input 
+            type="text" 
+            id="namaKaryawan" 
+            name="namaKaryawan" 
+            value="" 
+            readonly 
+            required 
+        />
+        
+        <label for="unitKerja" class="left-label">Unit Kerja</label>
+        <input 
+            type="text" 
+            id="unitKerja" 
+            name="unitKerja" 
+            value="" 
+            readonly 
+            required 
+        />
+        
+        <label for="namaAset" class="left-label">Nama Aset</label>
+        <input 
+            type="text" 
+            id="namaAset" 
+            name="namaAset" 
+            value="" 
+            readonly 
+            required 
+        />
+        
+        <label for="namaPenerima" class="left-label">Nama Penerima:</label>
+        <input type="text" name="penerima" placeholder="Nama penerima" required />
+        
+        <label for="gambarBukti" class="left-label">Bukti Penyerahan:</label>
+        <input 
+            type="file" 
+            id="gambarBukti" 
+            name="gambar_bukti" 
+            class="form-control" 
+            accept="image/*" 
+            required 
+        />
+        
+        <div class="flex justify-center space-x-4">
+            <button type="button" class="btn cancel-btn">Tidak</button>
+            <button type="submit" class="btn finish-btn">Ya</button>
+        </div>
+      </form>
     </div>
-    </form>
-    
-</div>
 </div>
   
+
   <script>
   const modal = document.getElementById("addModal");
   const closeBtn = document.getElementById("close");
@@ -203,11 +209,12 @@ function showModal(id, namaAset, namaKaryawan, unitKerja) {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Aset berhasil diserahkan!");
-        location.reload(); // Reload halaman untuk memperbarui tampilan
+        alert(result.message); // Menampilkan pesan sukses dari server
+        location.reload();
       } else {
         alert(`Error: ${result.error}`);
       }
+
     } catch (error) {
       console.error("Terjadi kesalahan:", error);
       alert("Terjadi kesalahan saat menyerahkan aset. Silakan coba lagi.");
@@ -216,6 +223,8 @@ function showModal(id, namaAset, namaKaryawan, unitKerja) {
     }
   };
 
+ 
+  
   function filterTable() {
     const input = document.getElementById("search-input").value.toLowerCase();
     const rows = document.querySelectorAll(".table-compact tbody tr");

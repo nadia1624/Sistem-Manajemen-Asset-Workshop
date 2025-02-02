@@ -46,7 +46,7 @@ const getReturnGudang = async (req, res) => {
                     attributes: ["gambar"]
                 }]
             }],
-            order: [["createdAt", "DESC"]]
+            
         });
 
         res.render('admin/pengembalianVendor/asetGudang', { returnGudang });

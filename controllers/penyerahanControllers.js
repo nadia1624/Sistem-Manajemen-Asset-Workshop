@@ -83,7 +83,7 @@ const updatePenyerahan = async (req, res) => {
             { model: User, attributes: ["nama", "unit_kerja", "jabatan"] },
             { 
               model: Aset, 
-              attributes: ["nama_barang", "serial_number", "status_peminjaman"],
+              attributes: ["nama_barang", "serial_number", "status_peminjaman", "hostname"],
               include: [{ model: Kategori, attributes: ["gambar", "nama_kategori"] }] // Pastikan ini diambil
             },
           ],

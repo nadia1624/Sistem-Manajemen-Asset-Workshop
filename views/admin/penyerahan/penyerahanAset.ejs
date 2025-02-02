@@ -57,11 +57,11 @@
                         </td>
                         <td width="10%">
                           <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
-                              <button class="btn btn-setuju" 
-                                      style="background-color: #28a745; color: white; padding: 6px 10px; font-size: 25px; border: 2px solid #000; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: auto;" 
-                                      onclick="showModal('<%= penyerahan.id %>', '<%= penyerahan.Permintaan.Aset.nama_barang %>', '<%= penyerahan.Permintaan.User.nama %>', '<%= penyerahan.Permintaan.User.unit_kerja %>')">
-                                  <i class="fas fa-check" style="font-size: 15px;"></i>
-                              </button>
+                            <button class="btn btn-setuju" 
+                            style="background-color: #28a745; color: white;" 
+                            onclick="showModal('<%= penyerahan.id %>', '<%= penyerahan.Permintaan.Aset.nama_barang %>', '<%= penyerahan.Permintaan.User.nama %>', '<%= penyerahan.Permintaan.User.unit_kerja %>')">
+                      <i class="fas fa-check"></i>
+                    </button>
                           <% } else if (penyerahan.status_penyerahan === "sudah diserahkan" && penyerahan.surat) { %>
                               <a href="/data/surat/<%= penyerahan.surat %>" target="_blank" 
                                  class="btn btn-action" 

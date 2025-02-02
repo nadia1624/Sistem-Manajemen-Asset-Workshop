@@ -1,6 +1,14 @@
 const express = require('express');
 const { Op } = require("sequelize");
-const { Pengembalian, Penyerahan, Permintaan, Aset, User } = require('../models');
+const { Pengembalian, Penyerahan, Permintaan, Aset, User, Kategori, sequelize} = require('../models');
+const libre = require('libreoffice-convert');
+const fs = require("fs");
+const path = require('path');
+const PizZip = require('pizzip');
+const Docxtemplater = require('docxtemplater');
+const { getImageXml } = require("docxtemplater-image-module/js/templates");
+const { where } = require('sequelize');
+const ImageModule = require('docxtemplater-image-module-free'); 
 
 const returnAset = async (req, res) => {
     try {
@@ -104,7 +112,7 @@ const riwayatPengembalian = async (req, res) => {
 };
 
 const addAssetReturn = async (req, res) => {
-    const { id } = req.params; 
+    const { id } = req.params;
     const { kondisi_terakhir, keterangan_kondisi } = req.body;
 
     if (!id) {
@@ -118,51 +126,184 @@ const addAssetReturn = async (req, res) => {
     const gambar_bukti = req.file.filename;
 
     try {
-        
+        // Fetch the return data with relationships
         const pengembalian = await Pengembalian.findByPk(id, {
-            include: {
+            include: [{
                 model: Penyerahan,
-                include: {
+                include: [{
                     model: Permintaan,
-                    attributes: ["serial_number"],
-                },
-            },
+                    include: [{
+                        model: User,
+                        attributes: ['nama', 'jabatan', 'unit_kerja']
+                    }, {
+                        model: Aset,
+                        include: [{
+                            model: Kategori,
+                            attributes: ['nama_kategori', 'gambar']
+                        }],
+                        attributes: ['serial_number', 'hostname', 'nama_barang', 'ip_address']
+                    }]
+                }]
+            }]
         });
 
         if (!pengembalian) {
             return res.status(404).json({ message: "Data pengembalian tidak ditemukan" });
         }
 
-        
-        const serialNumber = pengembalian.Penyerahan?.Permintaan?.serial_number;
-
+        // Get serial number from the relationship
+        const serialNumber = pengembalian.Penyerahan?.Permintaan?.Aset?.serial_number;
         if (!serialNumber) {
             return res.status(404).json({ message: "Serial number aset tidak ditemukan" });
         }
 
+        // Update return data
         await pengembalian.update({
             kondisi_terakhir,
             keterangan_kondisi,
             gambar_bukti,
-            tanggal_dikembalikan: new Date(),
+            tanggal_dikembalikan: new Date()
         });
 
-        const aset = await Aset.findOne({ where: { serial_number: serialNumber } });
-
+        // Update asset status
+        const aset = await Aset.findByPk(serialNumber);
         if (!aset) {
             return res.status(404).json({ message: "Data aset tidak ditemukan" });
         }
 
         await aset.update({
             kondisi_aset: kondisi_terakhir,
-            status_peminjaman: "tersedia",
+            status_peminjaman: "tersedia"
         });
 
-        res.json({ 
-            message: "Pengembalian aset berhasil dilakukan",
-            data: { pengembalian, aset }
+        // Generate the document
+        const templatePath = path.resolve(__dirname, "../public/templates/template_pengembalian.docx");
+        if (!fs.existsSync(templatePath)) {
+            return res.status(500).json({ message: "Template surat tidak ditemukan" });
+        }
+
+        const imageOpts = {
+            centered: false,
+            getImage: (tagValue) => {
+                if (!tagValue) return null;
+                try {
+                    return fs.readFileSync(tagValue);
+                } catch (error) {
+                    console.error('Error reading image:', error);
+                    return null;
+                }
+            },
+            getSize: () => [120, 120],
+        };
+
+        const content = fs.readFileSync(templatePath);
+        const zip = new PizZip(content);
+        const doc = new Docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+            modules: [new ImageModule(imageOpts)],
         });
+
+        // Ensure valid paths for images
+        const gambarAsetFilename = pengembalian.Penyerahan.Permintaan.Aset.Kategori.gambar;
+        const gambarAsetFilePath = gambarAsetFilename
+            ? path.resolve(__dirname, `../public/uploads/${gambarAsetFilename}`)
+            : '';
+
+        const gambarBuktiFilename = pengembalian.gambar_bukti;
+        const gambarBuktiFilePath = gambarBuktiFilename
+            ? path.resolve(__dirname, `../public/uploads/${gambarBuktiFilename}`)
+            : '';
+
+        const gambarTtdFilename = pengembalian.Penyerahan.tanda_tangan;
+        const gambarTtdFilePath = gambarTtdFilename
+            ? path.resolve(__dirname, `../public/uploads/${gambarTtdFilename}`)
+            : '';
+
+        const formatDate = (date) => {
+        const months = [
+             "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+             "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+
+        return `${day} ${month} ${year}`;
+        };
+
+        // Data for template rendering
+        const templateData = {
+            tanggal_dikembalikan: formatDate(new Date()),
+            id: pengembalian.id,
+            serial_number: serialNumber,
+            kondisi_terakhir,
+            keterangan_kondisi,
+            nama: pengembalian.Penyerahan.Permintaan.User.nama,
+            jabatan: pengembalian.Penyerahan.Permintaan.User.jabatan,
+            unit_kerja: pengembalian.Penyerahan.Permintaan.User.unit_kerja,
+            nama_kategori: pengembalian.Penyerahan.Permintaan.Aset.Kategori.nama_kategori,
+            nama_barang: pengembalian.Penyerahan.Permintaan.Aset.nama_barang,
+            hostname: pengembalian.Penyerahan.Permintaan.Aset.hostname,
+            ip_address: pengembalian.Penyerahan.Permintaan.Aset.ip_address,
+            gambar: gambarAsetFilePath || '',  // Ensure this is a valid path or empty string
+            gambar_bukti: gambarBuktiFilePath || '',  // Ensure this is a valid path or empty string
+            tanda_tangan: gambarTtdFilePath || '',   // Ensure this is a valid path or empty string
+        };
+
+        // Log the template data to see if any arrays or properties are undefined
+        console.log("Template Data:", templateData);
+
+        // Make sure all arrays or objects are valid
+        Object.keys(templateData).forEach(key => {
+            if (Array.isArray(templateData[key]) && !templateData[key].length) {
+                templateData[key] = [];  // If it's an empty array, ensure it's correctly set
+            }
+            if (templateData[key] === undefined || templateData[key] === null) {
+                templateData[key] = '';  // If undefined or null, replace with empty string
+            }
+        });
+
+        // Render the template with the processed data
+        await doc.renderAsync(templateData);
+
+        // Save generated document
+        const suratDir = path.resolve(__dirname, "../public/data/surat");
+        if (!fs.existsSync(suratDir)) {
+            fs.mkdirSync(suratDir, { recursive: true });
+        }
+
+        const timestamp = Date.now();
+        const docxFilePath = path.join(suratDir, `pengembalian-${timestamp}.docx`);
+        const pdfFilePath = docxFilePath.replace(".docx", ".pdf");
+
+        fs.writeFileSync(docxFilePath, doc.getZip().generate({ type: "nodebuffer" }));
+
+        // Convert to PDF
+        await new Promise((resolve, reject) => {
+            libre.convert(fs.readFileSync(docxFilePath), ".pdf", undefined, (err, result) => {
+                if (err) {
+                    return reject(new Error("Gagal mengonversi DOCX ke PDF"));
+                }
+                fs.writeFileSync(pdfFilePath, result);
+                resolve();
+            });
+        });
+
+        // Update database with the PDF file path
+        await pengembalian.update({ surat: path.basename(pdfFilePath) });
+
+        res.json({
+            message: "Pengembalian aset berhasil dilakukan dan surat telah digenerate",
+            pdfFilePath: path.basename(pdfFilePath)
+        });
+
     } catch (error) {
+        console.error("Terjadi kesalahan:", error);
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);  // Clean up uploaded file on error
+        }
         res.status(500).json({
             message: "Terjadi kesalahan saat memproses pengembalian aset",
             error: error.message
@@ -172,10 +313,79 @@ const addAssetReturn = async (req, res) => {
 
 
 
+const getRiwayatKaryawan = async (req, res) => {
+    try {
+        const userId = req.userId;  // Ensure that userId is available in the request
+        const currentPath = req.path;
+
+        const assets = await Pengembalian.findAll({
+            include: [
+                {
+                    model: Penyerahan,
+                    include: [
+                        {
+                            model: Permintaan,
+                            where: { userId },
+                            include: [
+                                {
+                                    model: Aset,
+                                    include: [
+                                        {
+                                            model: Kategori,
+                                            attributes: ['nama_kategori', 'deskripsi', 'gambar']
+                                        }
+                                    ],
+                                    attributes: ['nama_barang']
+                                }
+                            ],
+                            attributes: ['tanggal_permintaan']
+                        }
+                    ]
+                }
+            ],
+            attributes: ['tanggal_dikembalikan', 'gambar_bukti'],
+            order: [['created_at', 'DESC']]
+        });
+
+        // Format the dates to show only day, month, and year
+        const result = assets.map(asset => {
+            const tanggalPeminjaman = new Date(asset.Penyerahan.Permintaan.tanggal_permintaan);
+            const tanggalPengembalian = new Date(asset.tanggal_dikembalikan);
+
+            // Format date to "dd-mm-yyyy"
+            const formattedTanggalPeminjaman = tanggalPeminjaman.toLocaleDateString('id-ID', {
+                day: '2-digit', month: '2-digit', year: 'numeric'
+            });
+            const formattedTanggalPengembalian = tanggalPengembalian.toLocaleDateString('id-ID', {
+                day: '2-digit', month: '2-digit', year: 'numeric'
+            });
+
+            const gambarBukti = asset.gambar_bukti;
+
+            return {
+                nama_barang: asset.Penyerahan.Permintaan.Aset.nama_barang,
+                kategori: asset.Penyerahan.Permintaan.Aset.Kategori.nama_kategori,
+                deskripsi: asset.Penyerahan.Permintaan.Aset.Kategori.deskripsi,
+                //gambar: asset.Penyerahan.Permintaan.Aset.Kategori.gambar,
+                tanggal_peminjaman: formattedTanggalPeminjaman,
+                tanggal_pengembalian: formattedTanggalPengembalian,
+                gambar_bukti: gambarBukti
+            };
+        });
+
+        return res.render('karyawan/riwayat/riwayatKaryawan', { result, currentPath });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: 'Terjadi kesalahan pada server.' });
+    }
+};
+
+
 
 module.exports = {
     returnAset,
     getPengembalian,
     riwayatPengembalian,
-    addAssetReturn
+    addAssetReturn,
+    getRiwayatKaryawan
 };

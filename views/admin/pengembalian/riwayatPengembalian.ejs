@@ -46,10 +46,19 @@
                                             <img class="img-fluid" alt="Bukti Gambar" src="/public/uploads/<%= pengembalian.gambar_bukti %>" />
                                         </td>
                                         <td width="15">
-                                            <button class="btn btn-action" style="background-color: #ffffff; padding: 10px; padding-right: 7px; font-size: 25px; border: 2px solid #ccc; border-radius: 8px; color: #000; cursor: pointer;">
-                                                <i class="fa-solid fa-download" style="font-size: 15px;"></i>
-                                            </button>
-                                        </td>
+                                            <% if (pengembalian.surat) { %>
+                                                <a href="/data/surat/<%= pengembalian.surat %>" target="_blank"
+                                                   class="btn btn-action" 
+                                                   style="background-color: #ffffff; padding: 6px 10px; font-size: 25px; border: 2px solid #000; padding-right: 6px; border-radius: 8px; color: #000; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: auto;">
+                                                    <i class="fa-solid fa-download" style="font-size: 15px;"></i>
+                                                </a>
+                                            <% } else { %>
+                                                <!-- Button when the surat is not available -->
+                                                <button class="btn btn-action" style="background-color: #ffffff; padding: 6px 10px; font-size: 25px; border: 2px solid #000; border-radius: 8px; color: #000; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: auto;">
+                                                    <i class="fa-solid fa-download" style="font-size: 15px;"></i>
+                                                </button>
+                                            <% } %>
+                                        </td>                                        
                                     </tr>
                                 <% }); %>
                             </tbody>

@@ -30,6 +30,10 @@ const Pengembalian = db.define(
         penyerahanId : {
             type : Sequelize.INTEGER, 
             allowNull : false
+        },
+        surat : {
+            type : Sequelize.STRING, 
+            allowNull : true
         }
     }, 
     {

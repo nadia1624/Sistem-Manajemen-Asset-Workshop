@@ -6,50 +6,56 @@ const DetailPemeliharaan = require('../models/detailPemeliharaan')
 
 const getReturnGudang = async (req, res) => {
     try {
+        // Ambil aset dengan kondisi rusak berat, sewa, dan tersedia
         const asetRusakBerat = await Aset.findAll({
-            where: { kondisi_aset: "rusak berat", cara_dapat: "sewa" },
+            where: { kondisi_aset: "rusak berat", cara_dapat: "sewa", status_peminjaman: "tersedia" },
             attributes: ["serial_number", "nama_barang"]
         });
 
-        // Masukkan aset yang belum ada di PengembalianVendor
-        for (const aset of asetRusakBerat) {
-            const existingEntry = await PengembalianVendor.findOne({ where: { serial_number: aset.serial_number } });
+        // Ambil serial number yang sudah ada di PengembalianVendor
+        const existingEntries = await PengembalianVendor.findAll({
+            where: { serial_number: asetRusakBerat.map(aset => aset.serial_number) },
+            attributes: ["serial_number"]
+        });
+        
+        const existingSerials = new Set(existingEntries.map(entry => entry.serial_number));
 
-            if (!existingEntry) {
-                await PengembalianVendor.create({
-                    serial_number: aset.serial_number,
-                    status_admin: "belum diproses",
-                    status_pengembalian: "belum dikembalikan",
-                    cekId: null
-                });
-                console.log(`Aset ${aset.serial_number} otomatis masuk ke PengembalianVendor`);
-            }
+        // Filter aset yang belum ada di PengembalianVendor
+        const newEntries = asetRusakBerat.filter(aset => !existingSerials.has(aset.serial_number))
+            .map(aset => ({
+                serial_number: aset.serial_number,
+                status_admin: "belum diproses",
+                status_pengembalian: "belum dikembalikan",
+                cekId: null
+            }));
+
+        // Masukkan data baru jika ada
+        if (newEntries.length > 0) {
+            await PengembalianVendor.bulkCreate(newEntries);
+            console.log(`${newEntries.length} aset otomatis masuk ke PengembalianVendor`);
         }
 
+        // Ambil data untuk ditampilkan
         const returnGudang = await PengembalianVendor.findAll({
-            include: [
-                {
-                    model: Aset,
-                    where: { kondisi_aset: "rusak berat", cara_dapat: "sewa" }, 
-                    attributes: ["serial_number", "nama_barang"],
-                    include: [
-                        {
-                            model: Kategori,
-                            attributes: ["gambar"], 
-                        },
-                    ]
-                }
-            ],
-            order: [["createdAt", "ASC"]]
+            include: [{
+                model: Aset,
+                where: { kondisi_aset: "rusak berat", cara_dapat: "sewa", status_peminjaman: "tersedia" },
+                attributes: ["serial_number", "nama_barang"],
+                include: [{
+                    model: Kategori,
+                    attributes: ["gambar"]
+                }]
+            }],
+            order: [["createdAt", "DESC"]]
         });
 
         res.render('admin/pengembalianVendor/asetGudang', { returnGudang });
-
     } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).send("Error fetching data");
     }
 };
+
 
 
 const getRiwayatPengembalianVendor = async (req, res) => {
@@ -67,7 +73,8 @@ const getRiwayatPengembalianVendor = async (req, res) => {
                     },
                 ]
               }
-          ]
+          ],
+          order: [['created_at', 'DESC']]
       });
 
       res.render('admin/pengembalianVendor/riwayatVendor', { pengembalian });

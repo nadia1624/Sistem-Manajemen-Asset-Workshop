@@ -1,15 +1,14 @@
 <body>
-  <!-- Gunakan currentPath yang sudah dikirim dari route -->
-  <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
-  
-  <style>
-      th:nth-child(2), td:nth-child(2) { width: 15%; }
-      th:nth-child(3), td:nth-child(3) { width: 15%; }
-      th:nth-child(4), td:nth-child(4) { width: 10%; }
-      th:nth-child(5), td:nth-child(5) { width: 20%; }
-      th:nth-child(6), td:nth-child(6) { width: 15%; }
-      th:nth-child(7), td:nth-child(7) { width: 10%; }
-      th:nth-child(8), td:nth-child(8) { width: 10%; }
+    <%- include('../../layout/header.ejs', { currentPath: currentPath }) %>
+    
+    <style>
+        th:nth-child(2), td:nth-child(2) { width: 15%; }
+        th:nth-child(3), td:nth-child(3) { width: 15%; }
+        th:nth-child(4), td:nth-child(4) { width: 10%; }
+        th:nth-child(5), td:nth-child(5) { width: 20%; }
+        th:nth-child(6), td:nth-child(6) { width: 15%; }
+        th:nth-child(7), td:nth-child(7) { width: 10%; }
+        th:nth-child(8), td:nth-child(8) { width: 10%; }
 
       .btn {
           background-color: #c2ef97;
@@ -51,126 +50,117 @@
           justify-content: center;
           gap: 10px;
       }
-  </style>
-
-  <main class="content">
-      <div class="container-fluid px-4">
-          <div class="table-wrapper">
-              <div class="table-responsive">
-                  <div class="table-bungkus">
-                      <div class="table-scroll">
-                          <table class="table-compact">
-                              <thead>
-                                  <tr>
-                                      <th>No</th>
-                                      <th>Nama Barang</th>
-                                      <th>Gambar</th>
-                                      <th>Kategori</th>
-                                      <th>Deskripsi</th>
-                                      <th>Ajukan Cek</th>
-                                      <th>Return Aset</th>
-                                      <th>Aksi</th>
-                                  </tr>
-                              </thead>
-                              <tbody>
-                                    <% if (listPeminjaman && listPeminjaman.length > 0) { %>
-                                        <% listPeminjaman.forEach((penyerahan, index) => { %>
-                                            <tr>
-                                                <td><%= index + 1 %></td>
-                                                <td><%= penyerahan.Permintaan.Aset.nama_barang %></td>
-                                                <td>
-                                                    <img class="img-fluid" alt="Gambar Aset: <%= penyerahan.Permintaan.Aset.nama_barang %>"
-                                                        src="/public/uploads/<%= penyerahan.Permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
-                                                </td>
-                                                <td><%= penyerahan.Permintaan.Aset.Kategori ? penyerahan.Permintaan.Aset.Kategori.nama_kategori : 'N/A' %></td>
-                                                <td><%= penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Deskripsi tidak tersedia' %></td>
-                                                <td>
-                                                    <button class="btn btn-success" onclick="openModal('<%= penyerahan.id %>')">
+    </style>
+  
+    <main class="content">
+        <div class="container-fluid px-4">
+            <div class="table-wrapper">
+                <div class="table-responsive">
+                    <div class="table-bungkus">
+                        <div class="table-scroll">
+                            <table class="table-compact">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Barang</th>
+                                        <th>Gambar</th>
+                                        <th>Kategori</th>
+                                        <th>Deskripsi</th>
+                                        <th>Ajukan Cek</th>
+                                        <th>Return Aset</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                      <% if (listPeminjaman && listPeminjaman.length > 0) { %>
+                                          <% listPeminjaman.forEach((penyerahan, index) => { %>
+                                              <tr>
+                                                  <td><%= index + 1 %></td>
+                                                  <td><%= penyerahan.Permintaan.Aset.nama_barang %></td>
+                                                  <td>
+                                                      <img class="img-fluid" alt="Gambar Aset: <%= penyerahan.Permintaan.Aset.nama_barang %>"
+                                                          src="/public/uploads/<%= penyerahan.Permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
+                                                  </td>
+                                                  <td><%= penyerahan.Permintaan.Aset.Kategori ? penyerahan.Permintaan.Aset.Kategori.nama_kategori : 'N/A' %></td>
+                                                  <td><%= penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Deskripsi tidak tersedia' %></td>
+                                                  <td>
+                                                    <button class="btn btn-success" onclick="openModal('<%= penyerahan.id %>')" style="background-color:#c2ef97; font-size:12px; border:2px solid #c2ef97; border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
                                                         <i class="fa-solid fa-check"></i> Check
                                                     </button>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-secondary" style="background-color: #ccc;" 
-                                                            onclick="openReturnModal('<%= penyerahan.id %>')">
+                                                  </td>
+                                                  <td>
+                                                    <button class="btn btn-secondary" onclick="openReturnModal('<%= penyerahan.id %>')" style="background-color:#CACACA; font-size:12px; border:2px solid #CACACA; border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
                                                         <i class="fa-solid fa-arrow-rotate-left"></i> Return
                                                     </button>
-                                                </td>
-                                                <td>
-                                                    <button class="btn-action">
-                                                        <i class="fa-solid fa-download" style="font-size: 16px;"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-
-                                            <!-- Modal Pengecekan -->
-                                            <div id="checkModal_<%= penyerahan.id %>" class="modal">
-                                                <div class="modal-content">
-                                                    <span class="close-btn" onclick="closeModal('<%= penyerahan.id %>')">&times;</span>
-                                                    <h3>Ajukan Pengecekan Aset</h3>
-                                                    <form action="/karyawan/peminjamanAset/cek/<%= penyerahan.id %>" method="post">
-                                                        <label for="keluhan_<%= penyerahan.id %>">Keluhan:</label>
-                                                        <textarea id="keluhan_<%= penyerahan.id %>" name="keluhan" placeholder="Keluhan yang diajukan"></textarea>
-                                                        <button type="submit" class="btn" style="margin-top: 20px; float: right;">Simpan</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-
-                                            <!-- Modal Return -->
-                                            <div id="returnModal" class="modal">
-                                                <div class="modal-content">
-                                                    <span class="close-btn" onclick="closeReturnModal()">&times;</span>
-                                                    <h3>Pengembalian Aset</h3>
-                                                    <p>Apakah kamu yakin akan mengembalikan aset <span id="returnAssetName"></span>?</p>
-                                                    <div class="modal-actions" style="display: flex; justify-content: center; margin-top: 20px;">
-                                                        <button type="button" class="cancel-btn" onclick="closeReturnModal()">Tidak</button>
-                                                        <form action='/karyawan/return/<%= penyerahan.id %>' method="post">
-                                                            <button type="submit" class="finish-btn">Ya</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        <% }); %>
-                                    <% } else { %>
-                                    <tr>
-                                        <td colspan="8" class="text-center">Tidak ada peminjaman aset.</td>
-                                    </tr>
-                                    <% } %>
-                              </tbody>
-                          </table>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </main>
-
-  <script>
-      // Open Modal
-      function openModal(id) {
-          document.getElementById(`checkModal_${id}`).style.display = "flex";
-      }
-      
-      // Close Modal
-      function closeModal(id) {
-          document.getElementById(`checkModal_${id}`).style.display = "none";
-      }
-      
-      // Open Return Modal
-      function openReturnModal(id) {
-          document.getElementById("returnModal").style.display = "flex";
-          document.getElementById("returnAssetName").innerText = id; // Update asset name
-      }
-      
-      // Close Return Modal
-      function closeReturnModal() {
-          document.getElementById("returnModal").style.display = "none";
-      }
-      
-      // Confirm Return
-      function confirmReturn() {
-          alert("Pengembalian aset berhasil dikonfirmasi");
-          closeReturnModal();
-      }
-  </script>
-</body>
+                                                  </td>
+                                                  <td>
+                                                    <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
+                                                      <button class="btn-action" style="background-color:#FFFFFF; border:2px solid #000000; border-radius:6px; padding:6px 10px; align-items:center; justify-content:center; width:35px;">
+                                                        <i class="fa-solid fa-download" style="color:#000000;"></i>
+                                                      </button>
+                                                    <% } else if (penyerahan.status_penyerahan === "sudah diserahkan" && penyerahan.surat) { %>
+                                                      <a href="/data/surat/<%= penyerahan.surat %>" target="_blank" class="btn-action" style="background-color:#FFFFFF; border:2px solid #000000; border-radius:6px; padding:6px 10px; align-items:center; justify-content:center; width:35px;">
+                                                        <i class="fa-solid fa-download" style="color:#000000;"></i>
+                                                      </a>
+                                                    <% } %>
+                                                  </td>
+                                              </tr>
+  
+                                              <!-- Modal Pengecekan -->
+                                              <div id="checkModal_<%= penyerahan.id %>" class="modal">
+                                                  <div class="modal-content">
+                                                      <span class="close-btn" onclick="closeModal('<%= penyerahan.id %>')">&times;</span>
+                                                      <h3>Ajukan Pengecekan Aset</h3>
+                                                      <form action="/karyawan/peminjamanAset/cek/<%= penyerahan.id %>" method="post">
+                                                          <label for="keluhan_<%= penyerahan.id %>">Keluhan:</label>
+                                                          <textarea id="keluhan_<%= penyerahan.id %>" name="keluhan" placeholder="Keluhan yang diajukan"></textarea>
+                                                          <button type="submit" class="btn">Simpan</button>
+                                                      </form>
+                                                  </div>
+                                              </div>
+  
+                                              <!-- Modal Return -->
+                                              <div id="returnModal_<%= penyerahan.id %>" class="modal">
+                                                  <div class="modal-content">
+                                                      <span class="close-btn" onclick="closeReturnModal('<%= penyerahan.id %>')">&times;</span>
+                                                      <h3>Pengembalian Aset</h3>
+                                                      <p>Apakah kamu yakin akan mengembalikan aset <strong><%= penyerahan.Permintaan.Aset.nama_barang %></strong>?</p>
+                                                      <div class="modal-actions">
+                                                          <button type="button" class="cancel-btn" onclick="closeReturnModal('<%= penyerahan.id %>')">Tidak</button>
+                                                          <form action='/karyawan/return/<%= penyerahan.id %>' method="post">
+                                                              <button type="submit" class="finish-btn">Ya</button>
+                                                          </form>
+                                                      </div>
+                                                  </div>
+                                              </div>
+  
+                                          <% }); %>
+                                      <% } else { %>
+                                      <tr>
+                                          <td colspan="8" class="text-center">Tidak ada peminjaman aset.</td>
+                                      </tr>
+                                      <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+  
+    <script>
+        function openModal(id) {
+            document.getElementById(`checkModal_${id}`).style.display = "flex";
+        }
+        function closeModal(id) {
+            document.getElementById(`checkModal_${id}`).style.display = "none";
+        }
+        function openReturnModal(id) {
+            document.getElementById(`returnModal_${id}`).style.display = "flex";
+        }
+        function closeReturnModal(id) {
+            document.getElementById(`returnModal_${id}`).style.display = "none";
+        }
+    </script>
+  </body>

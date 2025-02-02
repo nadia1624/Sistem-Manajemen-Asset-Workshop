@@ -19,10 +19,11 @@ pengembalianRouter.get('/admin/riwayatPengembalian',
     pengembalianControllers.riwayatPengembalian
 );
 
-pengembalianRouter.get('/karyawan/riwayatKaryawan', (req, res) => {
-    const currentPath = req.path;
-    res.render('karyawan/riwayat/riwayatKaryawan', { currentPath }); 
-});
+pengembalianRouter.get('/karyawan/riwayatKaryawan',
+    verifyToken, 
+    role("karyawan"), 
+    pengembalianControllers.getRiwayatKaryawan
+);
 
 pengembalianRouter.post('/admin/pengembalianAset/:id',
     verifyToken,

@@ -45,7 +45,8 @@ const createPengajuanCek = async (req, res) => {
             keluhan,
             status_cek: 'sedang diproses',
             tanggal_pengecekan : new Date(),
-            penyerahanId
+            penyerahanId,
+            status_pengembalian : 'belum    '
         })
 
         return res.redirect('/karyawan/peminjamanAset')
@@ -59,21 +60,28 @@ const createPengajuanCek = async (req, res) => {
 //menampilkan laporan cek
 const getAllDataLaporancek = async (req, res) => {
     try {
+        
+        const userId = req.userId;
         // Fetch all data with nested relationships
         const laporanCekList = await PengajuanCek.findAll({
             include: [
                 {
                     model: Penyerahan,
+                    required: true,
                     include: [
                         {
                             model: Permintaan,
+                            required: true,
+                            where : {userId},
                             include: [
                                 {
                                     model: Aset,
+                                    required: true,
                                     attributes: ['serial_number', 'nama_barang'], // Adjust attribute name if needed
                                     include: [
                                         {
                                             model: Kategori,
+                                            required: true,
                                             attributes: ['gambar'], // Include category image
                                         },
                                     ],

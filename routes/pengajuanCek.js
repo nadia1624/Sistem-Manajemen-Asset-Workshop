@@ -18,6 +18,25 @@ pengajuanCekRouter.get(
     pengajuanCekControllers.getDetailPengajuanCek
   );
 
+
+  // Route untuk memperbarui status pengajuan cek
+pengajuanCekRouter.put(
+  '/admin/updateStatusPengajuanCek/:id',
+  verifyToken,
+  role("admin"),
+  pengajuanCekControllers.updateStatusPengajuanCek
+);
+
+pengajuanCekRouter.post('/admin/updateStatusPengembalian/:id', verifyToken, role('admin'), pengajuanCekControllers.updateStatusPengembalian)
+
+
+
+
+
+
+
+
+
 // pengajuanCekRouter.get('/admin/daftarPengajuanCek', (req, res) => {
 //     const currentPath = req.path; 
 //     res.render('admin/pengajuanCek/daftarPengajuanCek', { currentPath }); 

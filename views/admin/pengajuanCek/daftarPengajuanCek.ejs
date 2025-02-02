@@ -81,7 +81,7 @@
                                         <td width="15%"><%= pengajuanCek.Penyerahan.Permintaan.Aset.serial_number %></td>
                                         <td width="20%"><%= pengajuanCek.Penyerahan.Permintaan.Aset.nama_barang %></td>
                                         <td width="15%">
-                                            <img class="img-fluid" alt="Bukti Gambar" src="<%= pengajuanCek.Penyerahan.Permintaan.Aset.gambar %>" />
+                                            <img class="img-fluid" alt="Bukti Gambar" src="/public/uploads/<%= pengajuanCek.Penyerahan.Permintaan.Aset.Kategori.gambar %>" />
                                         </td>
                                         <td width="20%" class="custom-td">
                                             <span class="custom-span 
@@ -98,18 +98,25 @@
                                             </span>
                                         </td>                                                                                
                                         <td width="25%">
-                                            <button id="editButton" class="button-edit" style="margin-right: 10px;">
+                                            <button class="button-edit" data-id="<%= pengajuanCek.id %>" style="margin-right: 10px;">
                                                 <i class="fa-regular fa-pen-to-square"></i>
                                             </button>
                                             <a href="detailPengajuanCek/<%= pengajuanCek.id %>">
-                                                <button id="infoButton" class="button-info" style="margin-right: 10px;">
+                                                <button class="button-info" style="margin-right: 10px;">
                                                     <i class="fa-solid fa-circle-info"></i>
                                                 </button>
                                             </a>
-                                            <button id="finishButton" class="btn">
-                                                <i class="fas fa-check"></i> Selesai
-                                            </button>
+                                            <% if(pengajuanCek.status_pengembalian !== 'sudah') { %>
+                                                <button class="btn finishButton" data-id="<%= pengajuanCek.id %>">
+                                                    <i class="fas fa-check"></i> Selesai
+                                                </button>
+                                            <% } else { %>
+                                                <button class="btn finishButton" data-id="<%= pengajuanCek.id %>" style="background-color: rgb(168, 168, 168); cursor: not-allowed ;" disabled>
+                                                    <i class="fas fa-check"></i> Selesai
+                                                </button>
+                                            <% } %>
                                         </td>
+                                        
                                     </tr>
                                 <% }); %>
                             </tbody>                            
@@ -136,10 +143,10 @@
             <select id="status" name="status" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
                 <option value="" disabled selected>Pilih Status</option>
                 <option value="sedang diproses" >Sedang Diproses</option>
-                <option value="Sudah diperbaiki">Sudah diperbaiki</option>
-                <option value="Dibawa ke Workshop">Dibawa ke Workshop</option>
-                <option value="Diajukan ke Vendor">Diajukan ke Vendor</option>
-                <option value="Tidak Dapat Diperbaiki">Tidak Dapat Diperbaiki</option>
+                <option value="sudah diperbaiki">Sudah diperbaiki</option>
+                <option value="dibawa ke workshoop">Dibawa ke Workshop</option>
+                <option value="diajukan ke vendor">Diajukan ke Vendor</option>
+                <option value="tidak dapat diperbaiki">Tidak Dapat Diperbaiki</option>
             </select>
         </div>
         <div style="display: flex; justify-content: center; margin-top: 5px;">
@@ -149,78 +156,156 @@
     </form>
 </div>
 
-        
-
         <!-- Pesan Popup untuk Tombol Selesai -->
         <div id="finishMessage" style="display: none;">
             <h3>Pengecekan Selesai</h3>
             <p class="text-gray-600 mb-6 text-center">Apakah Anda yakin pengecekan kondisi aset sudah selesai?</p>
             <div class="flex justify-center space-x-4">
                 <button type="button" class="btn cancel-btn">Tidak</button>
-                <button type="button" class="btn finish-btn">Ya</button>
+                <form id="updateStatus">
+                    <button type="submit" class="btn finish-btn">Ya</button>
+                </form>
+
             </div>
         </div>
     </div>
 </div>
 
+
 <script>
-    // Mendapatkan elemen modal dan tombol
-    const modal = document.getElementById("addModal");
-    const closeBtn = document.getElementById("closeBtn");
-    const editForm = document.getElementById("editForm");
-    const finishMessage = document.getElementById("finishMessage");
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("addModal");
+        const closeBtn = document.getElementById("closeBtn");
+        const editForm = document.getElementById("editForm");
+        const finishMessage = document.getElementById("finishMessage");
+        const editAssetForm = document.getElementById("editAssetForm");
+        const updateStatus = document.getElementById("updateStatus")
 
-    const editButton = document.getElementById("editButton");
-    const infoButton = document.getElementById("infoButton");
-    const finishButton = document.getElementById("finishButton");
+        const editButtons = document.querySelectorAll(".button-edit");
+        const finishButtons = document.querySelectorAll(".finishButton");
+        const cancelButtons = document.querySelectorAll(".cancel-btn");
 
-    // Menangani klik pada tombol "Edit"
-    editButton.addEventListener('click', function() {
-        // Menampilkan form edit
-        editForm.style.display = 'block';
-        finishMessage.style.display = 'none';
-        modal.style.display = 'flex';
-    });
+        const statusSelect = document.getElementById("status");
 
-    // Menangani klik pada tombol "Selesai"
-    finishButton.addEventListener('click', function() {
-        // Menampilkan pesan selesai
-        finishMessage.style.display = 'block';
-        editForm.style.display = 'none';
-        modal.style.display = 'flex';
-    });
+        let selectedPengajuanId = null;
 
-    // Menangani klik pada tombol "Info"
-    infoButton.addEventListener('click', function() {
-        window.location.href = "halaman-info.html"; // Ganti dengan URL tujuan
-    });
+        // Open Edit Form Modal
+        editButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                selectedPengajuanId = this.getAttribute("data-id");
+                modal.style.display = "flex";
+                editForm.style.display = "block";
+                finishMessage.style.display = "none";
 
-    // Menangani klik pada tombol tutup
-    closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
-
-    // Menangani klik di luar modal untuk menutupnya
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    };
-
-    // Menangani klik tombol batal
-    document.querySelectorAll('.cancel-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            modal.style.display = 'none';
+                // Ambil status saat ini dari tabel dan set di dropdown
+                const currentStatus = this.closest("tr").querySelector(".custom-span").innerText.trim();
+                statusSelect.value = currentStatus;
+            });
         });
+
+        // Open Finish Message Modal
+        finishButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                selectedPengajuanId = this.getAttribute("data-id");
+                modal.style.display = "flex";
+                finishMessage.style.display = "block";
+                editForm.style.display = "none";
+            });
+        });
+
+        
+
+
+
+        // Close Modal
+        cancelButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                modal.style.display = "none";
+            });
+        });
+
+        closeBtn.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        // Submit Form to Update Status
+        editAssetForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            if (!selectedPengajuanId) {
+                alert("Terjadi kesalahan, coba lagi.");
+                return;
+            }
+
+            const selectedStatus = statusSelect.value;
+            if (!selectedStatus) {
+                alert("Silakan pilih status terlebih dahulu.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/updateStatusPengajuanCek/${selectedPengajuanId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}` // Pastikan token dikirim
+                    },
+                    body: JSON.stringify({ status: selectedStatus })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    window.location.reload();  // Refresh halaman setelah update
+                } else {
+                    alert("Gagal memperbarui status: " + result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Terjadi kesalahan saat memperbarui status.");
+            }
+        });
+
+        updateStatus.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    if (!selectedPengajuanId) {
+        alert("Terjadi kesalahan, coba lagi.");
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin/updateStatusPengembalian/${selectedPengajuanId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        alert(result.message);
+        window.location.href = '/admin/daftarPengajuanCek';  // Gunakan href untuk navigasi
+        
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan saat memperbarui status.");
+    }
+});
+    
     });
 
-    // Menangani submit form edit
-    document.getElementById("editAssetForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Mencegah form submit secara default
-        alert("status berhasil diperbarui");
-        modal.style.display = 'none';
-    });
-    
+
 </script>
+
 </body>
 </html>

@@ -29,22 +29,24 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% if (laporanCekList && laporanCekList.length > 0) { %>
+                                    <% if ( laporanCekList && laporanCekList.length > 0) { %>
                                         <% laporanCekList.forEach((item, index) => { %>
                                             <tr>
                                                 <td><%= index + 1 %></td>
                                                 <td width="15%"> <%= new Date(item.tanggal_pengecekan).toLocaleDateString() %> </td>
                                                 <td><%= item.Penyerahan.Permintaan.Aset.nama_barang %></td>
                                                 <td>
-                                                    <img class="img-fluid" alt="Gambar Aset" src="<%= item.Penyerahan.Permintaan.Aset.Kategori.gambar %>"/>
+                                                    <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= item.Penyerahan.Permintaan.Aset.Kategori.gambar %>"/>
                                                 </td>
                                                 <td>
-                                                    <% if (item.status === "selesai") { %>
-                                                        <div class="status-badge selesai">selesai</div>
-                                                    <% } else if (item.status === "Belum diproses") { %>
-                                                        <div class="status-badge belumdiproses">Belum diproses</div>
-                                                    <% } else if (item.status === "Diproses") { %>
-                                                        <div class="status-badge diproses">Diproses</div>
+                                                    <% if (item.status_cek === "sedang diproses") { %>
+                                                        <div class="status-badge default">sedang diproses</div>
+                                                    <% } else if (item.status_cek === "dibawa ke workshoop" || item.status_cek === "diajukan ke vendor"  ) { %>
+                                                        <div class="status-badge diproses">Sedang Diperbaiki</div>
+                                                    <% } else if (item.status_cek === "sudah diperbaiki" ) { %>
+                                                        <div class="status-badge selesai">Selesai</div>
+                                                    <% } else if (item.status_cek === "tidak dapat diperbaiki") { %>
+                                                        <div class="status-badge gagal">tidak dapat diperbaiki, silakan dikembalikan</div>
                                                     <% } %>
                                                 </td>
                                                 <td>

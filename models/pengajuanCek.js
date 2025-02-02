@@ -26,6 +26,12 @@ const PengajuanCek = db.define(
         penyerahanId : {
             type : Sequelize.INTEGER, 
             allowNull : false
+        },
+        status_pengembalian : {
+            type : Sequelize.ENUM,
+            values : ['belum', 'sudah'],
+            allowNull : false,
+
         }
     }, 
     {

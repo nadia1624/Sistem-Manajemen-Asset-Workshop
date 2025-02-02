@@ -1,4 +1,5 @@
-const {  User, PengajuanCek, Penyerahan, Permintaan, Aset} = require('../models');
+const { where } = require('sequelize');
+const {  User, PengajuanCek, Penyerahan, Permintaan, Aset, PengembalianVendor} = require('../models');
 const Kategori = require('../models/kategori');
 
 //menampilkan data pengajuan cek dihalaman admin
@@ -39,34 +40,6 @@ const getPengajuanCek = async (req, res) => {
     }
 };
 
-const updateStatusPengajuanCek = async (req, res) => {
-    try {
-        const { id_cek } = req.params; // Ambil id_cek dari parameter URL
-        const { status_cek } = req.body; // Ambil status_cek dari body request
-        const currentPath = req.path; 
-
-        // Validasi input status_cek
-        const validStatuses = ['Sedang diproses', 'sudah diperbaiki', 'dibawa ke workshoop', 'diajukan ke vendor', 'tidak dapat diperbaiki'];
-        if (!validStatuses.includes(status_cek)) {
-            return res.status(400).json({ message: 'Status cek tidak valid' });
-        }
-
-        // Cari data pengajuan cek berdasarkan id_cek
-        const pengajuanCek = await PengajuanCek.findByPk(id_cek);
-        if (!pengajuanCek) {
-            return res.status(404).json({ message: 'Pengajuan cek tidak ditemukan' });
-        }
-
-        // Update status_cek
-        pengajuanCek.status_cek = status_cek;
-        await pengajuanCek.save();
-
-        return res.render('admin/pengajuanCek/daftarPengajuanCek', { pengajuanCekList, currentPath}); // Render halaman admin untuk pengajuan cek
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Terjadi kesalahan saat memperbarui status pengajuan cek' });
-    }
-};
 
 //menampilkan detail dihalaman pengajuan cek admin
 const getDetailPengajuanCek = async (req, res) => {
@@ -118,10 +91,103 @@ const getDetailPengajuanCek = async (req, res) => {
     }
 };
 
+// Mengupdate status pengajuan cek
+const updateStatusPengajuanCek = async (req, res) => {
+    try {
+        const { id } = req.params;  // Ambil ID dari URL
+        const { status } = req.body;  // Ambil status dari request body
+
+        console.log("ID Pengajuan:", id);
+        console.log("Status yang dikirim:", status);
+
+        // Cek apakah status valid
+        const validStatuses = ['sedang diproses', 'sudah diperbaiki', 'dibawa ke workshoop', 'diajukan ke vendor', 'tidak dapat diperbaiki'];
+
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Status tidak valid" });
+        }
+
+        // Cari pengajuan berdasarkan ID
+        // Cari pengajuan berdasarkan ID dengan relasi yang benar
+        const pengajuan = await PengajuanCek.findOne({
+            where: { id },
+            include: [
+                {
+                    model: Penyerahan,
+                    include: [
+                        {
+                            model: Permintaan,
+                            include: [
+                                {
+                                    model: Aset,
+                                    include: [{ model: Kategori }]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
+
+
+        if (!pengajuan) {
+            return res.status(404).json({ message: "Data pengajuan tidak ditemukan" });
+        }
+
+        const cara_dapat = pengajuan.Penyerahan.Permintaan.Aset.cara_dapat;
+        if (cara_dapat !== 'sewa') {
+            return res.status(400).json({ message: "Hanya aset dengan cara dapat 'sewa' yang dapat diperbarui" });
+        } 
+
+        // Update status_cek
+        await PengajuanCek.update({ status_cek: status }, { where: { id } });
+
+        // Jika status adalah 'diajukan ke vendor', tambahkan data ke tabel PengembalianVendor
+        if (status === 'diajukan ke vendor') {
+            // Buat entri baru di PengembalianVendor
+            await PengembalianVendor.create({
+                status_admin: 'belum diproses',  // Status awal
+                status_pengembalian: 'belum dikembalikan',  // Status awal
+                cekId: pengajuan.id
+            });
+
+            console.log("Data berhasil ditambahkan ke PengembalianVendor");
+        }
+
+        res.json({ message: "Status pengajuan berhasil diperbarui", status });
+    } catch (error) {
+        console.error("Error updating status:", error);
+        res.status(500).json({ message: "Terjadi kesalahan dalam memperbarui status." });
+    }
+};
+
+const updateStatusPengembalian = async (req, res) => {
+    try {
+        const {id} = req.params;
+        await PengajuanCek.update(
+            { status_pengembalian : 'sudah' },
+            { where : {id} }
+        );
+        // Kirim response JSON
+        res.json({ 
+            success: true, 
+            message: "Status pengembalian berhasil diperbarui" 
+        });
+        
+    } catch (error) {
+        console.error("Error updating status:", error);
+        res.status(500).json({ 
+            success: false,
+            message: "Terjadi kesalahan dalam memperbarui status pengembalian." 
+        });
+    }
+}
+
 
 
 module.exports = {
     getPengajuanCek,
-    updateStatusPengajuanCek,
     getDetailPengajuanCek,
+    updateStatusPengajuanCek,
+    updateStatusPengembalian
 };

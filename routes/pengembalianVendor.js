@@ -18,6 +18,18 @@ pengembalianVendorRouter.get('/admin/detailAsetKaryawan/:id',
     karyawanVendorControllers.getDetailAsetKaryawanVendor
 );
 
+pengembalianVendorRouter.put('/admin/updatestatus/:id', 
+    verifyToken, 
+    role("admin"), 
+    karyawanVendorControllers.updateStatusVendorKaryawan
+);
+
+pengembalianVendorRouter.post('/admin/updatepengembalianKaryawan/:id', 
+    verifyToken, 
+    role("admin"), 
+    karyawanVendorControllers.updateStatusPengembalianKaryawan
+);
+
 pengembalianVendorRouter.get('/admin/asetGudang', 
     verifyToken, 
     role("admin"), 
@@ -53,5 +65,6 @@ pengembalianVendorRouter.put('/admin/updatepengembalian/:id',
     role("admin"), 
     vendorGudangControllers.updateStatusPengembalian
 );
+
 
 module.exports = pengembalianVendorRouter

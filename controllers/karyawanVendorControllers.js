@@ -1,6 +1,6 @@
 const express = require('express');
 const { where } = require('sequelize');
-const {Penyerahan, Permintaan, PengajuanCek, Kategori, Aset, PengembalianVendor, User } = require('../models');
+const {Penyerahan, Permintaan, PengajuanCek, Kategori, Aset, PengembalianVendor, User, Sequelize } = require('../models');
 
 
 // const getReturnKaryawan = async (req, res) => {
@@ -71,10 +71,12 @@ const {Penyerahan, Permintaan, PengajuanCek, Kategori, Aset, PengembalianVendor,
 const getReturnKaryawan = async (req, res) => {
   try {
     const vendorSubmissions = await PengembalianVendor.findAll({
+      where : { status_pengembalian : 'belum dikembalikan',
+         cek_id: { [Sequelize.Op.ne]: null } 
+      },
       include : [
         {
           model : PengajuanCek,
-          where: { status_cek: 'diajukan ke vendor' },
           include : [
             {
               model : Penyerahan,
@@ -84,11 +86,12 @@ const getReturnKaryawan = async (req, res) => {
                   include : [
                     {
                       model : Aset,
-                      atrributes : ['serial_number', 'nama_barang'],
+                      where: { cara_dapat: 'sewa'},
+                      attributes : ['serial_number', 'nama_barang'],
                       include : [
                         {
                           model : Kategori,
-                          atrributes : ['gambar']
+                          attributes : ['gambar']
                         }
                       ]
                     }
@@ -102,7 +105,7 @@ const getReturnKaryawan = async (req, res) => {
       
     })
 
-    res.render('admin/pengembalianVendor/asetKaryawan', { vendorSubmissions });
+    res.render('admin/pengembalianVendor/asetKaryawan', { vendorSubmissions: vendorSubmissions  });
 
     
   } catch (error) {
@@ -165,7 +168,64 @@ const getDetailAsetKaryawanVendor = async (req, res) => {
   }
 };
 
+const updateStatusVendorKaryawan = async (req, res) => {
+  try {
+      const { id } = req.params;
+      const { status_admin } = req.body;
+
+      const pengembalian = await PengembalianVendor.findOne({ where: { id } });
+      if (!pengembalian) {
+          return res.status(404).json({ message: "Data pengembalian tidak ditemukan" });
+      }
+
+      await PengembalianVendor.update({ status_admin }, { where: { id } });
+
+      res.json({ message: "Status pengembalian berhasil diperbarui", status_admin });
+  } catch (error) {
+      console.error("Error updating status:", error);
+      res.status(500).json({ message: "Terjadi kesalahan dalam memperbarui status." });
+  }
+};
+
+const updateStatusPengembalianKaryawan = async (req, res) => {
+  try {
+      const { id } = req.params;
+      console.log("Processing request for ID:", id);
+      
+      const pengembalian = await PengembalianVendor.findByPk(id);
+      
+      if (!pengembalian) {
+          return res.status(404).json({ message: "Data tidak ditemukan" });
+      }
+      
+
+      if (pengembalian.status_pengembalian === 'sudah dikembalikan') {
+          return res.status(400).json({ message: "Aset sudah dikembalikan" });
+      }
+      
+      if (pengembalian.status_admin !== 'selesai') {
+          return res.status(400).json({ message: "Status admin belum selesai, tidak dapat melakukan pengembalian" });
+      }
+      console.log("Status updated successfully");
+
+      pengembalian.status_pengembalian = 'sudah dikembalikan';
+      await pengembalian.save();
+
+      console.log("Status updated successfully");
+
+      res.json({             
+        success: true, 
+        message: "Status pengembalian berhasil diperbarui"  });
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Terjadi kesalahan dalam proses pengembalian" });
+  }
+};
+
 module.exports = { 
   getReturnKaryawan,
   getDetailAsetKaryawanVendor,
+  updateStatusVendorKaryawan,
+  updateStatusPengembalianKaryawan 
  };

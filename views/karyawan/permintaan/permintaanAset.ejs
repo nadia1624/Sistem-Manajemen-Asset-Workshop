@@ -40,8 +40,9 @@
                     <td><%= permintaan.Aset.nama_barang %></td>
                     <td><%= permintaan.Aset.Kategori.deskripsi %></td>
                     <td>
-                        <img class="img-fluid" alt="Gambar Aset" src="<%= permintaan.Aset.Kategori.gambar %>"/>
-                    </td>
+                      <img class="img-fluid" alt="Gambar Aset: <%= permintaan.Aset.nama_barang %>"
+                          src="/public/uploads/<%= permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
+                  </td>
                     <td><%= permintaan.Aset.Kategori.nama_kategori %></td>
                     <td width="15%">
                       <% if (permintaan.status_permintaan === "diterima") { %>

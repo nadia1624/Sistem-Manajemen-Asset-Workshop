@@ -54,7 +54,7 @@ const getPermintaanAsetKaryawan = async (req, res) => {
           include: [
             {
               model: Kategori,
-              attributes: ["nama_kategori", "deskripsi"]
+              attributes: ["nama_kategori", "deskripsi", "gambar"]
             }
           ]
         },

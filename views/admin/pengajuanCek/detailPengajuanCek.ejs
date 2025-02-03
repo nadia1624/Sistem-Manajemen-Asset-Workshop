@@ -1,5 +1,19 @@
 <%- include("../../layout/sidebar.ejs") %>
 
+<style>
+    .container2 .details p,
+.container2 .details2 p {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.container2 .details p strong,
+.container2 .details2 p strong {
+    min-width: 150px; /* Pastikan label sejajar */
+}
+
+</style>
+
 <main class="content">
     <div class="header-content">
         <td>
@@ -20,17 +34,17 @@
             width="200"
         />
         <div class="details">
-            <p><strong>Serial Number:</strong> <%= detailPengajuanCek.Penyerahan.Permintaan.Aset.serial_number || 'Tidak tersedia' %></p>
-            <p><strong>Nama Barang:</strong> <%= detailPengajuanCek.Penyerahan.Permintaan.Aset.nama_barang || 'Tidak tersedia' %></p>
-            <p><strong>Kategori:</strong> <%= detailPengajuanCek.Penyerahan.Permintaan.Aset.Kategori.nama_kategori || 'Tidak tersedia' %></p>
-            <p><strong>Deskripsi:</strong> <%= detailPengajuanCek.Penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Tidak tersedia' %></p>
+            <p><strong>Serial Number</strong> : <%= detailPengajuanCek.Penyerahan.Permintaan.Aset.serial_number || 'Tidak tersedia' %></p>
+            <p><strong>Nama Barang</strong> : <%= detailPengajuanCek.Penyerahan.Permintaan.Aset.nama_barang || 'Tidak tersedia' %></p>
+            <p><strong>Kategori</strong> : <%= detailPengajuanCek.Penyerahan.Permintaan.Aset.Kategori.nama_kategori || 'Tidak tersedia' %></p>
+            <p><strong>Deskripsi</strong> : <%= detailPengajuanCek.Penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Tidak tersedia' %></p>
         </div>
     </div>
 
     <div class="container2">
         <div class="details2">
-            <p><strong>Nama User:</strong> <%= detailPengajuanCek.Penyerahan.Permintaan.User.nama|| 'Tidak tersedia' %></p>
-            <p><strong>Keluhan:</strong> <%= detailPengajuanCek.keluhan || 'Tidak tersedia' %></p>
+            <p><strong>Nama User</strong> : <%= detailPengajuanCek.Penyerahan.Permintaan.User.nama|| 'Tidak tersedia' %></p>
+            <p><strong>Keluhan</strong> : <%= detailPengajuanCek.keluhan || 'Tidak tersedia' %></p>
         </div>
     </div>
 </main>

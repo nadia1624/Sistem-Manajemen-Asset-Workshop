@@ -43,6 +43,7 @@
                                     <th width="15%">Serial Number</th>
                                     <th width="15%">Nama Aset</th>
                                     <th width="15%">Kondisi Aset</th>
+                                    <th width="15%">Keterangan</th>
                                     <th width="15%">Aksi</th>
                                 </tr>
                             </thead>
@@ -56,6 +57,7 @@
                                     <td width="15%"><%= detail.Aset.serial_number%></td>
                                     <td width="15%"><%= detail.Aset.nama_barang %></td>
                                     <td width="15%"><%= detail.status_aset.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></td>
+                                    <td width="15%"><%= detail.keterangan %></td>
                                     <td width="15%">
                                         <% if (status_pemeliharaan == 'belum terlaksana') { %>
                                             <button class="button-edit" onclick="openEditModal('<%= index + 1 %>')">

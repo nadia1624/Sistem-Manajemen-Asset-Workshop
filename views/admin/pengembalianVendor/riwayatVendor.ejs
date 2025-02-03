@@ -36,30 +36,67 @@
                                     <% pengembalian.forEach((item, index) => { %>
                                         <tr>
                                             <td width="5%"><%= index + 1 %></td>
-                                            <td width="15%"><%= item.Aset ? item.Aset.serial_number : '-' %></td>
-                                            <td width="15%"><%= item.Aset ? item.Aset.nama_barang : '-' %></td>
-                                            <td width="15%"><%= item.Aset && item.Aset.Kategori ? item.Aset.Kategori.deskripsi : '-' %></td>
-                                            <td width="12%">
-                                                <% if (item.Aset && item.Aset.Kategori && item.Aset.Kategori.gambar) { %>
-                                                    <img class="img-fluid" alt="Bukti Gambar" src="/public/uploads/<%= item.Aset.Kategori.gambar %>" width="100" height="100" />
-                                                <% } else { %>
-                                                    <img class="img-fluid" alt="No Image" src="https://placehold.co/100x100" />
-                                                <% } %>
+                                            
+                                            <%# First condition: Direct from Aset %>
+                                            <% if (item.Aset) { %>
+                                                <td width="15%"><%= item.Aset.serial_number %></td>
+                                                <td width="15%"><%= item.Aset.nama_barang %></td>
+                                                <td width="15%"><%= item.Aset.Kategori ? item.Aset.Kategori.deskripsi : '-' %></td>
+                                                <td width="12%">
+                                                    <% if (item.Aset.Kategori && item.Aset.Kategori.gambar) { %>
+                                                        <img class="img-fluid" alt="Bukti Gambar" 
+                                                             src="/public/uploads/<%= item.Aset.Kategori.gambar %>" 
+                                                             width="100" height="100" />
+                                                    <% } else { %>
+                                                        <img class="img-fluid" alt="No Image" 
+                                                             src="https://placehold.co/100x100" />
+                                                    <% } %>
+                                                </td>
+                                            
+                                            <%# Second condition: Through PengajuanCek path %>
+                                            <% } else if (item.PengajuanCek && item.PengajuanCek.Penyerahan && 
+                                                         item.PengajuanCek.Penyerahan.Permintaan && 
+                                                         item.PengajuanCek.Penyerahan.Permintaan.Aset) { %>
+                                                <% const asetData = item.PengajuanCek.Penyerahan.Permintaan.Aset %>
+                                                <td width="15%"><%= asetData.serial_number %></td>
+                                                <td width="15%"><%= asetData.nama_barang %></td>
+                                                <td width="15%"><%= asetData.Kategori ? asetData.Kategori.deskripsi : '-' %></td>
+                                                <td width="12%">
+                                                    <% if (asetData.Kategori && asetData.Kategori.gambar) { %>
+                                                        <img class="img-fluid" alt="Bukti Gambar" 
+                                                             src="/public/uploads/<%= asetData.Kategori.gambar %>" 
+                                                             width="100" height="100" />
+                                                    <% } else { %>
+                                                        <img class="img-fluid" alt="No Image" 
+                                                             src="https://placehold.co/100x100" />
+                                                    <% } %>
+                                                </td>
+                                            
+                                            <%# If neither condition is met %>
+                                            <% } else { %>
+                                                <td width="15%">-</td>
+                                                <td width="15%">-</td>
+                                                <td width="15%">-</td>
+                                                <td width="12%">
+                                                    <img class="img-fluid" alt="No Image" 
+                                                         src="https://placehold.co/100x100" />
+                                                </td>
+                                            <% } %>
+                                
+                                            <td width="10%">
+                                                <a href="detailAsetRiwayat/<%= item.id %>">
+                                                    <button id="infoButton" class="button-info" style="margin-right: 10px;">
+                                                        <i class="fa-solid fa-circle-info"></i>  
+                                                    </button> 
+                                                </a>
                                             </td>
-                                    <td width="10%">
-                                        <a href="detailAsetRiwayat/<%= item.id %>">
-                                        <button id="infoButton" class="button-info" style="margin-right: 10px;">
-                                            <i class="fa-solid fa-circle-info"></i>  
-                                        </button> 
-                                        </a>
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="6" class="text-center">Tidak ada data pengembalian</td>
-                            </tr>
-                        <% } %>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center">Tidak ada data pengembalian</td>
+                                    </tr>
+                                <% } %>
                     </tbody>
                 </table>
                     </div>

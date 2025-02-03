@@ -13,23 +13,52 @@
     </div>
 
     <body>
-        <div class="container2">
-            <div class="custom-td" style="position: absolute; top: 10px; right: 20px; font-size: 14px; color: #333;">
-                <span class="custom-span"><%= kondisi_aset %></span>
+        <%# First condition: Direct Aset data %>
+        <% if (serial_number !== '-') { %>
+            <div class="container2">
+                <div class="custom-td" style="position: absolute; top: 10px; right: 20px; font-size: 14px; color: #333;">
+                    <span class="custom-span"><%= kondisi_aset %></span>
+                </div>
+
+                <img alt="Gambar Kategori" height="150" src="/public/uploads/<%= gambar %>" width="200" style="margin-right: 20px;"/>
+
+                <div class="details">
+                    <p><strong>Kategori</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= nama_kategori %></p>
+                    <p><strong>Nama Barang</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= nama_barang %></p>
+                    <p><strong>Serial Number</strong><span>&nbsp;&nbsp;&nbsp;</span>: <%= serial_number %></p>
+                    <p><strong>Hostname</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= hostname %></p>
+                    <p><strong>Jenis Barang</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= cara_dapat %></p>
+                    <p><strong>Deskripsi</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= deskripsi %></p>
+                </div>
             </div>
 
-            <img alt="Gambar Kategori" height="150" src="/public/uploads/<%= gambar %>" width="200" style="margin-right: 20px;"/>
 
-            <div class="details">
-                <p><strong>Kategori</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= nama_kategori %></p>
-                <p><strong>Nama Barang</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= nama_barang %></p>
-                <p><strong>Serial Number</strong><span>&nbsp;&nbsp;&nbsp;</span>: <%= serial_number %></p>
-                <p><strong>Hostname</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= hostname %></p>
-                <p><strong>Jenis Barang</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= cara_dapat %></p>
-                <p><strong>Deskripsi</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= deskripsi %></p>
+        <%# Second condition: Data from PengajuanCek path %>
+        <% } else if (aset_pengajuan_serial_number !== '-') { %>
+            <div class="container2">
+                <div class="custom-td" style="position: absolute; top: 10px; right: 20px; font-size: 14px; color: #333;">
+                    <span class="custom-span"><%= aset_pengajuan_kondisi_aset %></span>
+                </div>
+
+                <img alt="Gambar Kategori" height="150" src="/public/uploads/<%= aset_pengajuan_gambar %>" width="200" style="margin-right: 20px;"/>
+
+                <div class="details">
+                    <p><strong>Kategori</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= aset_pengajuan_nama_kategori %></p>
+                    <p><strong>Nama Barang</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= aset_pengajuan_nama_barang %></p>
+                    <p><strong>Serial Number</strong><span>&nbsp;&nbsp;&nbsp;</span>: <%= aset_pengajuan_serial_number %></p>
+                    <p><strong>Hostname</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= aset_pengajuan_hostname %></p>
+                    <p><strong>Jenis Barang</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= aset_pengajuan_cara_dapat %></p>
+                    <p><strong>Deskripsi</strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: <%= aset_pengajuan_deskripsi %></p>
+                </div>
             </div>
+
             
-            
-        </div>
+        
+        <%# If neither condition is met %>
+        <% } else { %>
+            <div class="container2">
+                <p>Data tidak ditemukan</p>
+            </div>
+        <% } %>
     </body>
 </main>

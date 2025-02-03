@@ -9,6 +9,8 @@ const Docxtemplater = require('docxtemplater');
 const { getImageXml } = require("docxtemplater-image-module/js/templates");
 const { where } = require('sequelize');
 const ImageModule = require('docxtemplater-image-module-free'); 
+const sizeOf = require("image-size");
+
 
 const returnAset = async (req, res) => {
     try {
@@ -192,17 +194,15 @@ const addAssetReturn = async (req, res) => {
 
         const imageOpts = {
             centered: false,
-            getImage: (tagValue) => {
-                if (!tagValue) return null;
-                try {
-                    return fs.readFileSync(tagValue);
-                } catch (error) {
-                    console.error('Error reading image:', error);
-                    return null;
-                }
+            getImage: (tagValue) => fs.readFileSync(tagValue),
+            getSize: (tagValue) => {
+              const dimensions = sizeOf(tagValue); // Dapatkan ukuran asli gambar
+              const width = 150; // Tetapkan lebar 150px
+              const aspectRatio = dimensions.height / dimensions.width; // Hitung rasio aspek
+              const height = Math.round(width * aspectRatio); // Sesuaikan tinggi secara otomatis
+              return [width, height];
             },
-            getSize: () => [120, 120],
-        };
+          };
 
         const content = fs.readFileSync(templatePath);
         const zip = new PizZip(content);
@@ -258,6 +258,7 @@ const addAssetReturn = async (req, res) => {
             gambar: gambarAsetFilePath || '',  // Ensure this is a valid path or empty string
             gambar_bukti: gambarBuktiFilePath || '',  // Ensure this is a valid path or empty string
             tanda_tangan: gambarTtdFilePath || '',   // Ensure this is a valid path or empty string
+            year: new Date().getFullYear()
         };
 
         // Log the template data to see if any arrays or properties are undefined

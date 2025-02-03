@@ -26,7 +26,11 @@ const getPeminjaman = async (req, res) => {
                     ]                    
                 }
             ],
-            where: { status_penyerahan: 'sudah diserahkan' } // Pastikan hanya yang sudah diserahkan
+            where: { status_penyerahan: 'sudah diserahkan' } , // Pastikan hanya yang sudah diserahkan
+            order: [
+                ["id", "DESC"], // Urutkan berdasarkan ID secara menurun (DESC)
+                ["tanggal_penyerahan", "DESC"], // Urutkan berdasarkan tanggal penyerahan secara menurun (DESC)
+              ]
         });
 
         return res.render('karyawan/peminjaman/peminjamanAset', { listPeminjaman, currentPath });

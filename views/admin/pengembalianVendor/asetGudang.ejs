@@ -109,11 +109,8 @@
                                     <th width="20%">Aksi</th>
                                 </tr>
                             </thead>
-                        </table>
-                        
-                        <div class="table-scroll">
-                            <table class="table-compact">
                                 <tbody>
+                                <% if (returnGudang && returnGudang.length > 0) { %>
                                     <% returnGudang.forEach((item, index) => { %>
                                         <tr>
                                             <td width="5%"><%= index + 1 %></td>
@@ -155,11 +152,14 @@
                                             </td>
                                         </tr>
                                     <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" style="text-align: center;">Tidak ada data pengembalian aset</td>
+                                        </tr>
+                                    <% } %>
                                 </tbody>
                             </table>
                         </div>
-                        
-                    </div>
                 </div>
              </div>
         </div>
@@ -216,10 +216,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const editAssetForm = document.getElementById("editAssetForm");
     let selectedItemId = null;
 
-    document.querySelectorAll(".button-edit").forEach((button, index) => {
+    document.querySelectorAll(".button-edit").forEach((button) => {
     button.addEventListener("click", function() {
+        selectedItemId = this.getAttribute('data-id'); // Ambil ID dari atribut
         const row = this.closest("tr");
-        selectedItemId = index + 1; 
         
         editForm.style.display = "block";
         finishMessage.style.display = "none";
@@ -230,12 +230,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-document.querySelectorAll(".button-return").forEach((button, index) => {
+document.querySelectorAll(".button-return").forEach((button) => {
     button.addEventListener("click", function() {
-        selectedItemId = index + 1; 
-        finishMessage.style.display = "block";  
-        editForm.style.display = "none";  
-        modal.style.display = "flex";  
+        // Ambil ID dari atribut data-id
+        selectedItemId = this.getAttribute('data-id');
+        
+        // Tambahkan log untuk debugging
+        console.log('Selected ID for return:', selectedItemId);
+        
+        // Tampilkan modal konfirmasi
+        finishMessage.style.display = "block";
+        editForm.style.display = "none";
+        modal.style.display = "flex";
     });
 });
 
@@ -286,15 +292,27 @@ document.querySelectorAll('.button-return').forEach(button => {
                 alert("Aset berhasil dikembalikan!");
                 modal.style.display = 'none';
 
-                // Simpan status return ke localStorage untuk mencegah pengembalian lebih lanjut
+                // Simpan status return ke localStorage
                 localStorage.setItem(`asset-returned-${selectedItemId}`, 'true');
 
-                // Disable or hide the button "Return" permanently
+                // Temukan baris yang sesuai dan hapus dengan animasi fade out
                 const returnButton = document.querySelector(`.button-return[data-id='${selectedItemId}']`);
-                returnButton.setAttribute('disabled', 'true');
-                returnButton.style.backgroundColor = '#d3d3d3';  
-                returnButton.style.cursor = 'not-allowed';  
-                returnButton.style.display = 'none'; // Permanently hide the button
+                const tableRow = returnButton.closest('tr');
+                
+                // Tambahkan CSS transition untuk efek fade out
+                tableRow.style.transition = 'opacity 0.5s ease';
+                tableRow.style.opacity = '0';
+                
+                // Hapus baris setelah animasi selesai
+                setTimeout(() => {
+                    tableRow.remove();
+                    
+                    // Update nomor urut pada tabel
+                    const allRows = document.querySelectorAll('.table-compact tbody tr');
+                    allRows.forEach((row, index) => {
+                        row.querySelector('td:first-child').textContent = index + 1;
+                    });
+                }, 500);
 
             } else {
                 alert("Gagal mengembalikan aset: " + (data.message || "Unknown error"));

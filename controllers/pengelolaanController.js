@@ -327,11 +327,7 @@ const tampilkanDaftarAsetKaryawan = async (req, res) => {
     const kategoris = await Kategori.findAll({
       include: [{
         model: Aset,
-        where: {
-          kondisi_aset: 'baik',
-          status_peminjaman: 'tersedia'
-        },
-        required: true,
+        required: false,  // Changed to false to get all categories
         attributes: ['serial_number']
       }],
       attributes: ['id', 'nama_kategori', 'deskripsi', 'gambar'],
@@ -351,9 +347,9 @@ const tampilkanDaftarAsetKaryawan = async (req, res) => {
         id: kategori.id,
         title: kategori.nama_kategori,
         description: kategori.deskripsi,
-        image: `/uploads/${kategori.gambar}`, // Sesuaikan dengan path penyimpanan gambar
+        image: `/uploads/${kategori.gambar}`,
         stock: stockCount,
-        serial_number: kategori.Asets[0].serial_number
+        serial_number: kategori.Asets[0]?.serial_number || ''
       };
     }));
 

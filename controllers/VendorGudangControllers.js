@@ -2,55 +2,82 @@ const express = require('express');
 const { PengembalianVendor, Aset, Kategori, PengajuanCek, Penyerahan, Permintaan } = require('../models');
 
 const getReturnGudang = async (req, res) => {
-    try {
-        // Ambil aset dengan kondisi rusak berat, sewa, dan tersedia
-        const asetRusakBerat = await Aset.findAll({
-            where: { kondisi_aset: "rusak berat", cara_dapat: "sewa", status_peminjaman: "tersedia" },
-            attributes: ["serial_number", "nama_barang"]
-        });
+  try {
+      // Ambil aset dengan kondisi rusak berat, sewa, dan tersedia
+      const asetRusakBerat = await Aset.findAll({
+          where: { 
+              kondisi_aset: "rusak berat", 
+              cara_dapat: "sewa", 
+              status_peminjaman: "tersedia" 
+          },
+          attributes: ["serial_number", "nama_barang"]
+      });
 
-        // Ambil serial number yang sudah ada di PengembalianVendor
-        const existingEntries = await PengembalianVendor.findAll({
-            where: { serial_number: asetRusakBerat.map(aset => aset.serial_number) },
-            attributes: ["serial_number"]
-        });
-        
-        const existingSerials = new Set(existingEntries.map(entry => entry.serial_number));
+      // Generate ID untuk entries baru
+      const getNewPengembalianId = async () => {
+          const lastEntry = await PengembalianVendor.findOne({
+              order: [['id', 'DESC']]
+          });
 
-        // Filter aset yang belum ada di PengembalianVendor
-        const newEntries = asetRusakBerat.filter(aset => !existingSerials.has(aset.serial_number))
-            .map(aset => ({
-                serial_number: aset.serial_number,
-                status_admin: "belum diproses",
-                status_pengembalian: "belum dikembalikan",
-                cekId: null
-            }));
+          if (!lastEntry) {
+              return 'PV001';
+          }
 
-        // Masukkan data baru jika ada
-        if (newEntries.length > 0) {
-            await PengembalianVendor.bulkCreate(newEntries);
-            console.log(`${newEntries.length} aset otomatis masuk ke PengembalianVendor`);
-        }
+          // Ambil id dan pastikan dalam bentuk string
+          const lastId = lastEntry.get('id').toString();
+          const lastNumber = parseInt(lastId.substring(2));
+          return `PV${String(lastNumber + 1).padStart(3, '0')}`;
+      };
 
-        // Ambil data untuk ditampilkan
-        const returnGudang = await PengembalianVendor.findAll({
-            include: [{
-                model: Aset,
-                where: { kondisi_aset: "rusak berat", cara_dapat: "sewa", status_peminjaman: "tersedia" },
-                attributes: ["serial_number", "nama_barang"],
-                include: [{
-                    model: Kategori,
-                    attributes: ["gambar"]
-                }]
-            }],
-            
-        });
+      // Cek dan buat entry baru untuk setiap aset rusak berat
+      for (const aset of asetRusakBerat) {
+          // Cek apakah ada entry yang belum dikembalikan untuk serial number ini
+          const existingEntry = await PengembalianVendor.findOne({
+              where: {
+                  serial_number: aset.serial_number,
+                  status_pengembalian: "belum dikembalikan"
+              }
+          });
 
-        res.render('admin/pengembalianVendor/asetGudang', { returnGudang });
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).send("Error fetching data");
-    }
+          // Jika tidak ada entry yang belum dikembalikan, buat entry baru
+          if (!existingEntry) {
+              const newId = await getNewPengembalianId();
+              await PengembalianVendor.create({
+                  id: newId,
+                  serial_number: aset.serial_number,
+                  status_admin: "belum diproses",
+                  status_pengembalian: "belum dikembalikan"
+              });
+              console.log(`Created new entry ${newId} for serial number ${aset.serial_number}`);
+          }
+      }
+
+      // Ambil data untuk ditampilkan (hanya yang belum dikembalikan)
+      const returnGudang = await PengembalianVendor.findAll({
+          where: {
+              status_pengembalian: "belum dikembalikan"
+          },
+          include: [{
+              model: Aset,
+              where: { 
+                  kondisi_aset: "rusak berat", 
+                  cara_dapat: "sewa", 
+                  status_peminjaman: "tersedia" 
+              },
+              attributes: ["serial_number", "nama_barang"],
+              include: [{
+                  model: Kategori,
+                  attributes: ["gambar"]
+              }]
+          }],
+          order: [['created_at', 'DESC']]
+      });
+
+      res.render('admin/pengembalianVendor/asetGudang', { returnGudang });
+  } catch (error) {
+      console.error("Error fetching data:", error);
+      res.status(500).send("Error fetching data");
+  }
 };
 
 const getRiwayatPengembalianVendor = async (req, res) => {
@@ -230,22 +257,37 @@ const getDetailRiwayatVendor = async (req, res) => {
 };
 
 const updateStatusVendorGudang = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status_admin } = req.body;
+  try {
+      const { id } = req.params;
+      const { status_admin } = req.body;
 
-        const pengembalian = await PengembalianVendor.findOne({ where: { id } });
-        if (!pengembalian) {
-            return res.status(404).json({ message: "Data pengembalian tidak ditemukan" });
-        }
+      // Cek dulu data yang akan diupdate
+      const pengembalian = await PengembalianVendor.findOne({ 
+          where: { 
+              id: id,
+              status_pengembalian: "belum dikembalikan" // Pastikan hanya update yang belum dikembalikan
+          } 
+      });
 
-        await PengembalianVendor.update({ status_admin }, { where: { id } });
+      if (!pengembalian) {
+          return res.status(404).json({ message: "Data pengembalian tidak ditemukan" });
+      }
 
-        res.json({ message: "Status pengembalian berhasil diperbarui", status_admin });
-    } catch (error) {
-        console.error("Error updating status:", error);
-        res.status(500).json({ message: "Terjadi kesalahan dalam memperbarui status." });
-    }
+      // Update menggunakan instance yang sudah ditemukan
+      pengembalian.status_admin = status_admin;
+      await pengembalian.save();
+
+      // Kirim response dengan data yang sudah diupdate
+      res.json({ 
+          message: "Status pengembalian berhasil diperbarui", 
+          status_admin: pengembalian.status_admin,
+          id: pengembalian.id 
+      });
+
+  } catch (error) {
+      console.error("Error updating status:", error);
+      res.status(500).json({ message: "Terjadi kesalahan dalam memperbarui status." });
+  }
 };
 
 const updateStatusPengembalian = async (req, res) => {

@@ -45,16 +45,18 @@
 
     // Card Template Function
     function createCard(item) {
+      const isOutOfStock = item.stock === 0;
+      
       return `
-        <div class="group flex flex-col h-full bg-white border-2 border-gray-200 shadow-sm rounded-xl 
-                    hover:border-black hover:shadow-md transition duration-300" 
-             onclick="handleCardClick(event, '${item.id}')">
-          
+        <div class="group flex flex-col h-full ${isOutOfStock ? 'bg-gray-200' : 'bg-white'} border-2 border-gray-200 shadow-sm rounded-xl 
+                    ${isOutOfStock ? '' : 'hover:border-black hover:shadow-md'} transition duration-300" 
+            ${isOutOfStock ? '' : `onclick="handleCardClick(event, '${item.id}')"`}>
+              
           <!-- Card Image -->
           <div class="block h-full bg-gray-100 rounded-t-xl overflow-hidden">
             <img class="w-full h-full object-cover" 
-                 src="${item.image}" 
-                 alt="${item.title}">
+                src="${item.image}" 
+                alt="${item.title}">
           </div>
           
           <!-- Card Content -->
@@ -66,17 +68,29 @@
           <!-- Card Footer -->
           <div class="px-6 py-4 mt-auto flex justify-between items-center">
             <p class="text-sm text-gray-500">Stok tersedia: ${item.stock}</p>
-            <button type="button"
-                    class="request-btn inline-flex items-center justify-center w-8 h-8 text-sm 
-                           font-semibold rounded-lg bg-red-600 text-white hover:bg-red-800"
-                    data-serial="${item.serial_number}"
-                    data-title="${item.title}">
-              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" 
-                   viewBox="0 0 24 24" stroke="white">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
+            ${isOutOfStock ? `
+              <button type="button" disabled
+                      class="inline-flex items-center justify-center w-8 h-8 text-sm 
+                            font-semibold rounded-lg bg-gray-400 text-white cursor-not-allowed">
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" 
+                    viewBox="0 0 24 24" stroke="white">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            ` : `
+              <button type="button"
+                      class="request-btn inline-flex items-center justify-center w-8 h-8 text-sm 
+                            font-semibold rounded-lg bg-red-600 text-white hover:bg-red-800"
+                      data-serial="${item.serial_number}"
+                      data-title="${item.title}">
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" 
+                    viewBox="0 0 24 24" stroke="white">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            `}
           </div>
         </div>
       `;

@@ -1,6 +1,19 @@
 <%- include("../../layout/sidebar.ejs") %>
 
 
+<style>
+    .container2 .details p,
+.container2 .details2 p {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.container2 .details p strong,
+.container2 .details2 p strong {
+    min-width: 150px; /* Pastikan label sejajar */
+}
+
+</style>
 <main class="content">
     <div class="header-content">
         <td>
@@ -21,17 +34,17 @@
             width="200"
         />
         <div class="details"x>
-            <p><strong>Serial Number:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.serial_number || 'Tidak tersedia' %></p>
-            <p><strong>Nama Barang:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.nama_barang || 'Tidak tersedia' %></p>
-            <p><strong>Kategori:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.nama_kategori || 'Tidak tersedia' %></p>
-            <p><strong>Deskripsi:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Tidak tersedia' %></p>
+            <p><strong>Serial Number</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.serial_number || 'Tidak tersedia' %></p>
+            <p><strong>Nama Barang</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.nama_barang || 'Tidak tersedia' %></p>
+            <p><strong>Kategori</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.nama_kategori || 'Tidak tersedia' %></p>
+            <p><strong>Deskripsi</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Tidak tersedia' %></p>
         </div>
     </div>
 
     <div class="container2">
         <div class="details2">
-            <p><strong>Nama User:</strong> <%= detailAset.PengajuanCek.Penyerahan.Permintaan.User.nama || 'Tidak tersedia' %></p>
-            <p><strong>Keluhan:</strong> <%= detailAset.PengajuanCek.keluhan || 'Tidak tersedia' %></p>
+            <p><strong>Nama User</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.User.nama || 'Tidak tersedia' %></p>
+            <p><strong>Keluhan</strong> : <%= detailAset.PengajuanCek.keluhan || 'Tidak tersedia' %></p>
         </div>
     </div>
 </main>

@@ -4,9 +4,9 @@
     
     <style>
         th:nth-child(1), td:nth-child(1) { width: 5%; }
-        th:nth-child(2), td:nth-child(2) { width: 15%; }
-        th:nth-child(3), td:nth-child(3) { width: 25%; }
-        th:nth-child(4), td:nth-child(4) { width: 25%; }
+        th:nth-child(2), td:nth-child(2) { width: 10%; }
+        th:nth-child(3), td:nth-child(3) { width: 10%; }
+        th:nth-child(4), td:nth-child(4) { width: 15%; }
         th:nth-child(5), td:nth-child(5) { width: 15%; }
         th:nth-child(6), td:nth-child(6) { width: 15%; }
     </style>
@@ -20,38 +20,45 @@
                             <table class="table-compact">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Tanggal</th>
-                                        <th>Nama Barang</th>
-                                        <th>Gambar</th>
-                                        <th>Status Pengecekan</th>
-                                        <th>Status Pengembalian</th>
+                                        <th width="5%">No</th>
+                                        <th width="15%">Tanggal</th>
+                                        <th width="15%">Nama Barang</th>
+                                        <th width="15%">Gambar</th>
+                                        <th width="15%">Status Pengecekan</th>
+                                        <th width="15%">Status Pengembalian</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <% if ( laporanCekList && laporanCekList.length > 0) { %>
                                         <% laporanCekList.forEach((item, index) => { %>
                                             <tr>
-                                                <td><%= index + 1 %></td>
+                                                <td width="5%"><%= index + 1 %></td>
                                                 <td width="15%"> <%= new Date(item.tanggal_pengecekan).toLocaleDateString() %> </td>
-                                                <td><%= item.Penyerahan.Permintaan.Aset.nama_barang %></td>
-                                                <td>
+                                                <td width="15%"><%= item.Penyerahan.Permintaan.Aset.nama_barang %></td>
+                                                <td width="15%">
                                                     <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= item.Penyerahan.Permintaan.Aset.Kategori.gambar %>"/>
                                                 </td>
                                                 <td>
                                                     <% if (item.status_cek === "sedang diproses") { %>
-                                                        <div class="status-badge default">sedang diproses</div>
+                                                        <div class="status-badge default" style="min-width: 200px; text-align: center;">sedang diproses</div>
                                                     <% } else if (item.status_cek === "dibawa ke workshoop" || item.status_cek === "diajukan ke vendor"  ) { %>
-                                                        <div class="status-badge diproses">Sedang Diperbaiki</div>
+                                                        <div class="status-badge diproses" style="min-width: 200px; text-align: center;">Sedang Diperbaiki</div>
                                                     <% } else if (item.status_cek === "sudah diperbaiki" ) { %>
-                                                        <div class="status-badge selesai">Selesai</div>
+                                                        <div class="status-badge selesai" style="min-width: 200px; text-align: center;">Selesai</div>
                                                     <% } else if (item.status_cek === "tidak dapat diperbaiki") { %>
-                                                        <div class="status-badge gagal">tidak dapat diperbaiki, silakan dikembalikan</div>
+                                                        <div class="status-badge gagal" style="min-width: 200px; text-align: center;">Tidak dapat diperbaiki, Silakan kembalikan</div>
                                                     <% } %>
                                                 </td>
-                                                <td>
-                                                    <span class="status-badge <%= item.status_pengembalian %>"><%= item.status_pengembalian %></span>
+                                                
+                                                <td width="15%">
+                                                    <% if (item.status_pengembalian === "sudah") { %>
+                                                        <span class="status-badge sudah" style="min-width: 150px; display: inline-block; text-align: center;">Sudah</span>
+                                                    <% } else if (item.status_pengembalian === "belum") { %>
+                                                        <span class="status-badge belum" style="min-width: 150px; display: inline-block; text-align: center;">Belum</span>
+                                                    <% } %>
                                                 </td>
+                                                
+                                                
                                             </tr>
                                         <% }); %>
                                     <% } else { %>
@@ -59,8 +66,7 @@
                                             <td colspan="6" class="text-center">Data tidak ditemukan</td>
                                         </tr>
                                     <% } %>
-                                </tbody>
-                                
+                                </tbody>      
                             </table>
                         </div>
                     </div>

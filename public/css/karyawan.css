@@ -413,11 +413,16 @@ td img {
   cursor: not-allowed; 
 }
 
-/*Permintaaan dan penyerahan Karyawan*/
+td {
+  text-align: center; /* Pusatkan teks di dalam kolom */
+  vertical-align: middle; /* Pusatkan elemen di tengah vertikal */
+}
+/* Permintaan dan penyerahan Karyawan */
 .status-badge {
-  justify-content: center;
-  align-items: center;
-  padding: 7px 10px;
+  display: flex;
+  justify-content: center; /* Pusatkan teks secara horizontal */
+  align-items: center; /* Pusatkan teks secara vertikal */
+  padding: 7px 12px;
   font-size: 12px;
   font-weight: bold;
   color: black;
@@ -425,9 +430,16 @@ td img {
   text-transform: capitalize;
   line-height: 1.5;
   height: 30px;
-  width: 100%;
+  min-width: 120px;
+  max-width: 120px;
 }
 
+/* Tambahkan margin otomatis untuk memastikan pusat horizontal */
+td > .status-badge {
+  margin: auto;
+}
+
+/* Status warna */
 .status-badge.disetujui { 
   background-color: #A2E180;
 }
@@ -439,40 +451,49 @@ td img {
 
 .status-badge.default {
   background-color: #CACACA ;
+  padding: 20px;
+  border-radius: 20px;
 }
 
 .status-badge.diproses {
   background-color: #FDEC80;
+  padding: 20px;
+  border-radius: 20px;
 }
 
 .status-badge.selesai {
-  background-color: #44C400;
+  background-color: #A2E180;
 }
 
 .status-badge.gagal {
   background-color: #DD5F61;
-  height: 50px;
+  border-radius: 22px;
+  padding: 30px;
   color: white;
-  border-radius: 30px;
 }
 
-.status-badge.returned {
-  background-color: #A2E180;
+/* Status untuk "sudah" */
+.status-badge.sudah {
+  background-color: #A2E180; /* Hijau */
 }
 
-.status-badge.Notreturned {
+/* Status untuk "belum" */
+.status-badge.belum {
+  background-color: #DD5F61; /* Merah */
   color: white;
-  background-color: #DD5F61;
 }
 
+/* Responsif untuk layar kecil */
 @media (max-width: 768px) {
   .status-badge {
-    width: auto;
+    min-width: 100px;
+    max-width: 100px;
     height: 30px;
     font-size: 12px;
     padding: 4px 8px;
   }
 }
+
 
 .modal {
   display: none; 

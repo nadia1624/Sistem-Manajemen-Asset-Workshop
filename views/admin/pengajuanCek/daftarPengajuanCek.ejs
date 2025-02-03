@@ -3,46 +3,31 @@
 <style>
     /* CSS untuk status Sedang Diproses */
 .status-sedang-diproses {
-  background-color: #ff9800; /* Warna oranye */
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
+  background-color: #ff9800;
   color: white;
 }
 
 /* CSS untuk status Sudah diperbaiki */
 .status-sudah-diperbaiki {
-  background-color: #4caf50; /* Warna hijau */
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: white;
+  background-color: #A2E180;
+  color: black;
 }
 
 /* CSS untuk status Dibawa ke Workshop */
 .status-dibawa-ke-workshop {
-  background-color: #3f586d; /* Warna biru */
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
+  background-color: #D9D9D9;
   color: white;
 }
 
 /* CSS untuk status Diajukan ke Vendor */
 .status-diajukan-ke-vendor {
-  background-color: #27b0a5; /* Warna ungu */
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: white;
+  background-color: #6dd6ce; 
+  color: black;
 }
 
 /* CSS untuk status Tidak Dapat Diperbaiki */
 .status-tidak-dapat-diperbaiki {
-  background-color: #f44336; /* Warna merah */
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
+  background-color: #DD5F61; 
   color: white;
 }
 
@@ -85,11 +70,11 @@
                                         </td>
                                         <td width="20%" class="custom-td">
                                             <span class="custom-span 
-                                                <% if (pengajuanCek.status_cek === 'Sedang Diproses') { %>status-sedang-diproses<% } %>
-                                                <% if (pengajuanCek.status_cek === 'Sudah diperbaiki') { %>status-sudah-diperbaiki<% } %>
-                                                <% if (pengajuanCek.status_cek === 'Dibawa ke Workshop') { %>status-dibawa-ke-workshop<% } %>
-                                                <% if (pengajuanCek.status_cek === 'Diajukan ke Vendor') { %>status-diajukan-ke-vendor<% } %>
-                                                <% if (pengajuanCek.status_cek === 'Tidak Dapat Diperbaiki') { %>status-tidak-dapat-diperbaiki<% } %>">
+                                                <% if (pengajuanCek.status_cek === 'sedang diproses') { %>status-sedang-diproses<% } %>
+                                                <% if (pengajuanCek.status_cek === 'sudah diperbaiki') { %>status-sudah-diperbaiki<% } %>
+                                                <% if (pengajuanCek.status_cek === 'dibawa ke workshop') { %>status-dibawa-ke-workshop<% } %>
+                                                <% if (pengajuanCek.status_cek === 'diajukan ke vendor') { %>status-diajukan-ke-vendor<% } %>
+                                                <% if (pengajuanCek.status_cek === 'tidak dapat diperbaiki') { %>status-tidak-dapat-diperbaiki<% } %>">
                                                 <% if (pengajuanCek.status_cek && pengajuanCek.status_cek.trim() !== '') { %>
                                                     <%= pengajuanCek.status_cek %>
                                                 <% } else { %>

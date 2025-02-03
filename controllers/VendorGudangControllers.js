@@ -1,8 +1,5 @@
 const express = require('express');
-const PengembalianVendor = require('../models/pengembalianVendor');
-const Aset = require('../models/aset');
-const Kategori = require('../models/kategori');
-const DetailPemeliharaan = require('../models/detailPemeliharaan')
+const { PengembalianVendor, Aset, Kategori, PengajuanCek, Penyerahan, Permintaan } = require('../models');
 
 const getReturnGudang = async (req, res) => {
     try {
@@ -56,33 +53,59 @@ const getReturnGudang = async (req, res) => {
     }
 };
 
-
-
 const getRiwayatPengembalianVendor = async (req, res) => {
-  try {
+    try {
       const pengembalian = await PengembalianVendor.findAll({
         where: { status_pengembalian: 'sudah dikembalikan' },
-          include: [
+        include: [
+          {
+            model: Aset,
+            attributes: ['serial_number', 'nama_barang'],
+            include: [
               {
-                model: Aset,
-                attributes: ['serial_number', 'nama_barang'],
+                model: Kategori,
+                attributes: ['gambar', 'deskripsi']
+              }
+            ]
+          },
+          {
+            model: PengajuanCek,
+            attributes: ['status_cek', 'tanggal_pengecekan', 'keluhan'],
+            include: [
+              {
+                model: Penyerahan,
                 include: [
-                    {
-                        model: Kategori,
-                        attributes: ['gambar', 'deskripsi']
-                    },
+                  {
+                    model: Permintaan,
+                    include: [
+                      {
+                        model: Aset,
+                        attributes: ['serial_number', 'nama_barang'],
+                        include: [
+                          {
+                            model: Kategori,
+                            attributes: ['gambar', 'deskripsi']
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 ]
               }
-          ],
-          order: [['created_at', 'DESC']]
+            ]
+          }
+        ],
+        order: [['created_at', 'DESC']]
       });
-
+  
       res.render('admin/pengembalianVendor/riwayatVendor', { pengembalian });
-  } catch (error) {
+    } catch (error) {
       console.error("Error fetching riwayat pengembalian:", error);
       res.status(500).send("Terjadi kesalahan dalam mengambil data.");
-  }
-};
+    }
+  };
+  
+  
 
 const getDetailVendorGudang = async (req, res) => {
   try {
@@ -128,46 +151,82 @@ const getDetailVendorGudang = async (req, res) => {
 };
 
 const getDetailRiwayatVendor = async (req, res) => {
-  try {
+    try {
       const { id } = req.params;
-
+  
       const pengembalian = await PengembalianVendor.findOne({
-          where: { id },
-          include: [
+        where: { id },
+        include: [
+          {
+            model: Aset,
+            attributes: ['serial_number', 'nama_barang', 'hostname', 'cara_dapat', 'kondisi_aset'],
+            include: [
               {
-                  model: Aset,
-                  attributes: ['serial_number', 'nama_barang', 'hostname', 'cara_dapat', 'kondisi_aset'],
-                  include: [
-                      {
-                          model: Kategori,
-                          attributes: ['nama_kategori', 'gambar', 'deskripsi']
-                      }
-                  ]
+                model: Kategori,
+                attributes: ['nama_kategori', 'gambar', 'deskripsi']
               }
-          ]
+            ]
+          },
+          {
+            model: PengajuanCek,
+            include: [
+              {
+                model: Penyerahan,
+                include: [
+                  {
+                    model: Permintaan,
+                    include: [
+                      {
+                        model: Aset,
+                        attributes: ['serial_number', 'nama_barang', 'hostname', 'cara_dapat', 'kondisi_aset'],
+                        include: [
+                          {
+                            model: Kategori,
+                            attributes: ['nama_kategori', 'gambar', 'deskripsi']
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       });
-
+  
       if (!pengembalian) {
-          return res.status(404).json({ message: "Data pengembalian tidak ditemukan" });
+        return res.status(404).json({ message: "Data pengembalian tidak ditemukan" });
       }
 
+      // Render the detail page without the unnecessary fields
       res.render('admin/pengembalianVendor/detailAsetRiwayat', {
-          title: "Detail Riwayat Pengembalian",
-          pengembalian: pengembalian,
-          serial_number: pengembalian.Aset?.serial_number || '-',
-          nama_barang: pengembalian.Aset?.nama_barang || '-',
-          hostname: pengembalian.Aset?.hostname || '-',
-          cara_dapat: pengembalian.Aset?.cara_dapat || '-',
-          kondisi_aset: pengembalian.Aset?.kondisi_aset || '-',
-          nama_kategori: pengembalian.Aset?.Kategori?.nama_kategori || '-',
-          deskripsi: pengembalian.Aset?.Kategori?.deskripsi || '-',
-          gambar: pengembalian.Aset?.Kategori?.gambar || 'https://placehold.co/150x150'
+        title: "Detail Riwayat Pengembalian",
+        pengembalian: pengembalian,
+        serial_number: pengembalian.Aset?.serial_number || '-',
+        nama_barang: pengembalian.Aset?.nama_barang || '-',
+        hostname: pengembalian.Aset?.hostname || '-',
+        cara_dapat: pengembalian.Aset?.cara_dapat || '-',
+        kondisi_aset: pengembalian.Aset?.kondisi_aset || '-',
+        nama_kategori: pengembalian.Aset?.Kategori?.nama_kategori || '-',
+        deskripsi: pengembalian.Aset?.Kategori?.deskripsi || '-',
+        gambar: pengembalian.Aset?.Kategori?.gambar || 'https://placehold.co/150x150',
+  
+        // Nested Aset and Kategori under PengajuanCek (without unnecessary fields)
+        aset_pengajuan_serial_number: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.serial_number || '-',
+        aset_pengajuan_nama_barang: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.nama_barang || '-',
+        aset_pengajuan_hostname: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.hostname || '-',
+        aset_pengajuan_cara_dapat: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.cara_dapat || '-',
+        aset_pengajuan_kondisi_aset: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.kondisi_aset || '-',
+        aset_pengajuan_nama_kategori: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.Kategori?.nama_kategori || '-',
+        aset_pengajuan_deskripsi: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.Kategori?.deskripsi || '-',
+        aset_pengajuan_gambar: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.Kategori?.gambar || 'https://placehold.co/150x150'
       });
-
-  } catch (error) {
+  
+    } catch (error) {
       console.error("Error fetching detail pengembalian:", error);
       res.status(500).json({ message: "Terjadi kesalahan dalam mengambil data." });
-  }
+    }
 };
 
 const updateStatusVendorGudang = async (req, res) => {
@@ -209,12 +268,19 @@ const updateStatusPengembalian = async (req, res) => {
         pengembalian.status_pengembalian = 'sudah dikembalikan';
         await pengembalian.save();
 
+        const aset = await Aset.findOne({ where: { serial_number: pengembalian.serial_number } });
+        if (aset) {
+            aset.kondisi_aset = 'baik';
+            await aset.save();
+        }
+
         res.status(200).json({ message: "Status pengembalian berhasil diperbarui", pengembalian });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Terjadi kesalahan dalam proses pengembalian" });
     }
 };
+
 
 
 

@@ -5,7 +5,7 @@ const path = require('path');
 const PizZip = require('pizzip');
 const Docxtemplater = require('docxtemplater');
 const ImageModule = require('docxtemplater-image-module-free'); 
-
+const sizeOf = require("image-size");
 
 const getPenyerahan = async (req, res) => {
   try {
@@ -120,7 +120,13 @@ const updatePenyerahan = async (req, res) => {
     const imageOpts = {
       centered: false,
       getImage: (tagValue) => fs.readFileSync(tagValue),
-      getSize: () => [150, 150],
+      getSize: (tagValue) => {
+        const dimensions = sizeOf(tagValue); // Dapatkan ukuran asli gambar
+        const width = 150; // Tetapkan lebar 150px
+        const aspectRatio = dimensions.height / dimensions.width; // Hitung rasio aspek
+        const height = Math.round(width * aspectRatio); // Sesuaikan tinggi secara otomatis
+        return [width, height];
+      },
     };
 
     // Ambil path tanda tangan
@@ -188,6 +194,7 @@ const updatePenyerahan = async (req, res) => {
       nama_kategori : penyerahan.Permintaan?.Aset?.Kategori?.nama_kategori || "-",
       gambar: kategoriGambarPath || "",
       gambar_bukti: gambarBuktiFilePath || "",
+      year: new Date().getFullYear()
     });
 
     const suratDir = path.resolve(__dirname, "../public/data/surat");

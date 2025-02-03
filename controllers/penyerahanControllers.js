@@ -4,15 +4,15 @@ const fs = require("fs");
 const path = require('path');
 const PizZip = require('pizzip');
 const Docxtemplater = require('docxtemplater');
-const { getImageXml } = require("docxtemplater-image-module/js/templates");
-const { where } = require('sequelize');
-const { Op } = require('sequelize');
 const ImageModule = require('docxtemplater-image-module-free'); 
-const { hostname } = require('os');
+
 
 const getPenyerahan = async (req, res) => {
   try {
     const listPenyerahan = await Penyerahan.findAll({
+      where: {
+        status_penyerahan: ["sudah diserahkan", "belum diserahkan"] // Filter status penyerahan
+      },
       include: [
         {
           model: Permintaan,
@@ -120,7 +120,7 @@ const updatePenyerahan = async (req, res) => {
     const imageOpts = {
       centered: false,
       getImage: (tagValue) => fs.readFileSync(tagValue),
-      getSize: () => [120, 120],
+      getSize: () => [150, 150],
     };
 
     // Ambil path tanda tangan

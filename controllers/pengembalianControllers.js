@@ -15,7 +15,7 @@ const returnAset = async (req, res) => {
         const { idpenyerahan } = req.params; 
 
         const penyerahan = await Penyerahan.findOne({
-            where: { id: idpenyerahan, status_penyerahan: 'sudah diserahkan' },
+            where: { id: idpenyerahan},
             include: [
                 {
                     model: Permintaan,
@@ -41,7 +41,6 @@ const returnAset = async (req, res) => {
 
         await Penyerahan.update(
             { 
-                status_penyerahan: 'sudah dikembalikan', 
                 penyerahanId: null 
             },
             { where: { id: idpenyerahan } }
@@ -164,6 +163,14 @@ const addAssetReturn = async (req, res) => {
             gambar_bukti,
             tanggal_dikembalikan: new Date()
         });
+        const idPenyerahan = pengembalian.penyerahanId
+
+        await Penyerahan.update(
+            { 
+                status_penyerahan: "telah dikembalikan"                                                                                                             
+            },
+            { where: { id: idPenyerahan } }
+        );
 
         // Update asset status
         const aset = await Aset.findByPk(serialNumber);
@@ -175,6 +182,7 @@ const addAssetReturn = async (req, res) => {
             kondisi_aset: kondisi_terakhir,
             status_peminjaman: "tersedia"
         });
+
 
         // Generate the document
         const templatePath = path.resolve(__dirname, "../public/templates/template_pengembalian.docx");
@@ -343,7 +351,7 @@ const getRiwayatKaryawan = async (req, res) => {
                     ]
                 }
             ],
-            attributes: ['tanggal_dikembalikan', 'gambar_bukti'],
+            attributes: ['tanggal_dikembalikan', 'gambar_bukti', 'surat'],
             order: [['created_at', 'DESC']]
         });
 
@@ -361,6 +369,12 @@ const getRiwayatKaryawan = async (req, res) => {
             });
 
             const gambarBukti = asset.gambar_bukti;
+            const suratPengembalian = asset.surat;
+            const suratPenyerahan = asset.Penyerahan.surat;
+
+            console.log(suratPengembalian)
+            console.log(suratPenyerahan)
+
 
             return {
                 nama_barang: asset.Penyerahan.Permintaan.Aset.nama_barang,
@@ -369,7 +383,10 @@ const getRiwayatKaryawan = async (req, res) => {
                 //gambar: asset.Penyerahan.Permintaan.Aset.Kategori.gambar,
                 tanggal_peminjaman: formattedTanggalPeminjaman,
                 tanggal_pengembalian: formattedTanggalPengembalian,
-                gambar_bukti: gambarBukti
+                gambar_bukti: gambarBukti,
+                suratPengembalian : suratPengembalian,
+                suratPenyerahan : suratPenyerahan
+
             };
         });
 

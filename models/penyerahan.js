@@ -24,7 +24,7 @@ const Penyerahan = db.define(
         },
         status_penyerahan : {
             type : Sequelize.ENUM,
-            values : ['belum diserahkan', 'sudah diserahkan'],
+            values : ['belum diserahkan', 'sudah diserahkan', 'telah dikembalikan'],
             allowNull : false
         },
         penerima : {

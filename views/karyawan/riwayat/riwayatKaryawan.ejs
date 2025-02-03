@@ -26,6 +26,8 @@
                                         <th width="10%">Gambar</th>
                                         <th width="15%">Tanggal Peminjaman</th>
                                         <th width="15%">Tanggal Pengembalian</th>
+                                        <th width="15%">Bukti Penyerahan</th>
+                                        <th width="15%">Bukti Pengembalian</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -40,6 +42,20 @@
                                         </td> <!-- Gambar -->
                                         <td><%= item.tanggal_peminjaman %></td> <!-- Tanggal Peminjaman -->
                                         <td><%= item.tanggal_pengembalian %></td> <!-- Tanggal Pengembalian -->
+                                        <td>
+                                            <a href="/data/surat/<%= item.suratPenyerahan %>" target="_blank" 
+                                                class="btn btn-action" 
+                                                style="background-color: #ffffff; padding: 6px 10px; font-size: 25px; border: 2px solid #000; padding-right: 6px; border-radius: 8px; color: #000; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: auto;">
+                                                 <i class="fa-solid fa-download" style="font-size: 15px;"></i>
+                                             </a>
+                                        </td>
+                                        <td>
+                                            <a href="/data/surat/<%= item.suratPengembalian %>" target="_blank" 
+                                                class="btn btn-action" 
+                                                style="background-color: #ffffff; padding: 6px 10px; font-size: 25px; border: 2px solid #000; padding-right: 6px; border-radius: 8px; color: #000; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: auto;">
+                                                 <i class="fa-solid fa-download" style="font-size: 15px;"></i>
+                                             </a>
+                                        </td>
                                     </tr>
                                     <% }); %>
                                 </tbody>

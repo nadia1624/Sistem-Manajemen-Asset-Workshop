@@ -187,41 +187,53 @@ const updateStatusVendorKaryawan = async (req, res) => {
   }
 };
 
-const updateStatusPengembalianKaryawan = async (req, res) => {
-  try {
-      const { id } = req.params;
-      console.log("Processing request for ID:", id);
-      
-      const pengembalian = await PengembalianVendor.findByPk(id);
-      
-      if (!pengembalian) {
-          return res.status(404).json({ message: "Data tidak ditemukan" });
-      }
-      
+  const updateStatusPengembalianKaryawan = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log("Processing request for ID:", id);
+        
+        const pengembalian = await PengembalianVendor.findByPk(id);
+        
+        if (!pengembalian) {
+            return res.status(404).json({ message: "Data tidak ditemukan" });
+        }
+        
 
-      if (pengembalian.status_pengembalian === 'sudah dikembalikan') {
-          return res.status(400).json({ message: "Aset sudah dikembalikan" });
-      }
-      
-      if (pengembalian.status_admin !== 'selesai') {
-          return res.status(400).json({ message: "Status admin belum selesai, tidak dapat melakukan pengembalian" });
-      }
-      console.log("Status updated successfully");
+        if (pengembalian.status_pengembalian === 'sudah dikembalikan') {
+            return res.status(400).json({ message: "Aset sudah dikembalikan" });
+        }
+        
+        if (pengembalian.status_admin !== 'selesai') {
+            return res.status(400).json({ message: "Status admin belum selesai, tidak dapat melakukan pengembalian" });
+        }
+        console.log("Status updated successfully");
 
-      pengembalian.status_pengembalian = 'sudah dikembalikan';
-      await pengembalian.save();
+        pengembalian.status_pengembalian = 'sudah dikembalikan';
+        await pengembalian.save();
 
-      console.log("Status updated successfully");
+        console.log("Status updated successfully");
 
-      res.json({             
-        success: true, 
-        message: "Status pengembalian berhasil diperbarui"  });
+        const pengajuan = await PengajuanCek.findOne({ where: { id: pengembalian.cekId } });
 
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Terjadi kesalahan dalam proses pengembalian" });
-  }
-};
+        if (pengajuan) {
+          pengajuan.status_cek = 'sudah diperbaiki'
+            pengajuan.status_pengembalian  = 'sudah';
+            await pengajuan.save();
+            console.log("Status pengajuan updated successfully");
+
+        } else {
+            console.log("No related PengajuanCek found for this PengembalianVendor");
+        }
+
+        res.json({             
+          success: true, 
+          message: "Status pengembalian berhasil diperbarui"  });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Terjadi kesalahan dalam proses pengembalian" });
+    }
+  };
 
 module.exports = { 
   getReturnKaryawan,

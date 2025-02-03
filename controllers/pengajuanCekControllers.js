@@ -134,10 +134,13 @@ const updateStatusPengajuanCek = async (req, res) => {
             return res.status(404).json({ message: "Data pengajuan tidak ditemukan" });
         }
 
-        const cara_dapat = pengajuan.Penyerahan.Permintaan.Aset.cara_dapat;
-        if (cara_dapat !== 'sewa') {
-            return res.status(400).json({ message: "Hanya aset dengan cara dapat 'sewa' yang dapat diperbarui" });
-        } 
+        if ( status === 'diajukan ke vendor'){
+            const cara_dapat = pengajuan.Penyerahan.Permintaan.Aset.cara_dapat;
+            if (cara_dapat !== 'sewa') {
+            return res.status(400).json({ message: "Hanya aset dengan cara dapat 'sewa' yang dapat diperbarui" });} 
+        }
+
+        
 
         // Update status_cek
         await PengajuanCek.update({ status_cek: status }, { where: { id } });

@@ -3,11 +3,15 @@ const { Sequelize } = require('sequelize');
 const path = require('path');
 // Controller untuk membuat permintaan aset oleh karyawan
 const createPermintaanAset = async (req, res) => {
-  const { serial_number } = req.body;
+  const { serial_number, reason } = req.body; // Tambahkan reason (alasan)
   const userId = req.userId;
 
   if (!serial_number) {
     return res.status(400).json({ message: 'Serial number aset tidak ditemukan' });
+  }
+
+  if (!reason || reason.trim() === '') {
+    return res.status(400).json({ message: 'Alasan permintaan harus diisi' });
   }
 
   try {
@@ -22,10 +26,11 @@ const createPermintaanAset = async (req, res) => {
       { where: { serial_number } }
     );
 
-    // Buat data permintaan di tabel Permintaan
+    // Buat data permintaan di tabel Permintaan dengan menyertakan alasan
     await Permintaan.create({
       serial_number,
       userId,
+      alasan: reason, // Simpan alasan di database
       status_permintaan: 'diproses',
       tanggal_permintaan: new Date(),
     });
@@ -36,6 +41,7 @@ const createPermintaanAset = async (req, res) => {
     return res.status(500).json({ message: 'Terjadi kesalahan saat membuat permintaan' });
   }
 };
+
 
 
 const getPermintaanAsetKaryawan = async (req, res) => {
@@ -273,7 +279,7 @@ const updateStatusPermintaanAset = async (req, res) => {
 };
 
 
-// const uploadTtd = async (req, res) => {
+// INI YG BETUL const uploadTtd = async (req, res) => {
 //   try {
 //     const { permintaanId } = req.body;
 
@@ -303,6 +309,45 @@ const updateStatusPermintaanAset = async (req, res) => {
 //       message: 'Tanda tangan berhasil diupload.',
 //       data: penyerahan,
 //     });
+//   } catch (error) {
+//     console.error('Error saat mengupload tanda tangan:', error);
+//     return res.status(500).json({ message: 'Terjadi kesalahan pada server.', error: error.message });
+//   }
+// };
+
+// const uploadTtd = async (req, res) => {
+//   const ttdPath = req.file ? `${req.file.filename}` : null;
+//   try {
+//     const { permintaanId } = req.body;
+
+//     if (!permintaanId) {
+//       return res.status(400).json({ message: 'Permintaan ID tidak boleh kosong.' });
+//     }
+
+//     const permintaan = await Permintaan.findByPk(permintaanId);
+//     if (!permintaan) {
+//       return res.status(404).json({ message: 'Data permintaan tidak ditemukan.' });
+//     }
+
+//     if (!req.file || !req.file.path) {
+//       return res.status(400).json({ message: 'File tanda tangan tidak ditemukan.' });
+//     }
+
+//     // Periksa apakah sudah ada penyerahan untuk permintaanId ini
+//     const existingPenyerahan = await Penyerahan.findOne({ where: { permintaanId } });
+//     if (existingPenyerahan) {
+//       return res.status(400).json({ message: 'Tanda tangan untuk permintaan ini sudah ada.' });
+//     }
+
+//     // Buat data penyerahan baru
+//     await Penyerahan.create({
+//       permintaanId,
+//       tanda_tangan: ttdPath,
+//       status_penyerahan: 'belum diserahkan',
+//     });
+
+//     // Kirim pesan sukses
+//     return res.status(200).json({ message: 'Tanda tangan berhasil diupload.' });
 //   } catch (error) {
 //     console.error('Error saat mengupload tanda tangan:', error);
 //     return res.status(500).json({ message: 'Terjadi kesalahan pada server.', error: error.message });
@@ -347,8 +392,6 @@ const uploadTtd = async (req, res) => {
     return res.status(500).json({ message: 'Terjadi kesalahan pada server.', error: error.message });
   }
 };
-
-
 
 
 

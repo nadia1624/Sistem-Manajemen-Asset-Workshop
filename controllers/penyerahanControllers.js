@@ -61,11 +61,12 @@ const getPenyerahan = async (req, res) => {
 const updatePenyerahan = async (req, res) => {
   console.log("Memulai proses penyerahan aset...");
   const { id } = req.params;
-  const { penerima } = req.body;
+  const { nama_perwakilan, isDiwakilkan } = req.body; // Ambil data dari form
+
   const gambarBuktiPath = req.file ? `${req.file.filename}` : null;
   const tanggalPenyerahan = new Date();
 
-  if (!id || !penerima || !gambarBuktiPath) {
+  if (!id || !gambarBuktiPath) {
     console.error("Input tidak lengkap.");
     return res.status(400).json({ error: "Input tidak lengkap." });
   }
@@ -84,7 +85,7 @@ const updatePenyerahan = async (req, res) => {
             { 
               model: Aset, 
               attributes: ["nama_barang", "serial_number", "status_peminjaman", "hostname"],
-              include: [{ model: Kategori, attributes: ["gambar", "nama_kategori"] }] // Pastikan ini diambil
+              include: [{ model: Kategori, attributes: ["gambar", "nama_kategori"] }] 
             },
           ],
         },
@@ -96,6 +97,11 @@ const updatePenyerahan = async (req, res) => {
       throw new Error("Data penyerahan tidak ditemukan.");
     }
 
+    // Tentukan penerima berdasarkan apakah aset diwakilkan atau tidak
+      const penerima = isDiwakilkan === "true" && nama_perwakilan 
+      ? nama_perwakilan 
+      : penyerahan.Permintaan?.User?.nama;
+  
     console.log(`[STEP 2] Memperbarui data penyerahan`);
     await penyerahan.update(
       {

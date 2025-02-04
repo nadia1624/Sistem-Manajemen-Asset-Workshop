@@ -91,139 +91,154 @@
 
 
 <!-- Modal -->
-<div id="addModal" class="popup-modal"><
-    <div class="modal-content">
-        <span id="close" class="close-btn">&times;</span>
-        <h3 id="modalTitle">Konfirmasi Penyerahan Aset</h3>
-        <p id="modalContent"></p>
-        <form id="penyerahanForm" enctype="multipart/form-data">
-        <label for="namaKaryawan" class="left-label">Nama Peminjam</label>
-        <input 
-            type="text" 
-            id="namaKaryawan" 
-            name="namaKaryawan" 
-            value="" 
-            readonly 
-            required 
-        />
-        
-        <label for="unitKerja" class="left-label">Unit Kerja</label>
-        <input 
-            type="text" 
-            id="unitKerja" 
-            name="unitKerja" 
-            value="" 
-            readonly 
-            required 
-        />
-        
-        <label for="namaAset" class="left-label">Nama Aset</label>
-        <input 
-            type="text" 
-            id="namaAset" 
-            name="namaAset" 
-            value="" 
-            readonly 
-            required 
-        />
-        
-        <label for="namaPenerima" class="left-label">Nama Penerima:</label>
-        <input type="text" name="penerima" placeholder="Nama penerima" required />
-        
-        <label for="gambarBukti" class="left-label">Bukti Penyerahan:</label>
-        <input 
-            type="file" 
-            id="gambarBukti" 
-            name="gambar_bukti" 
-            class="form-control" 
-            accept="image/*" 
-            required 
-        />
-        
-        <div class="flex justify-center space-x-4">
-            <button type="button" class="btn cancel-btn">Tidak</button>
-            <button type="submit" class="btn finish-btn">Ya</button>
-        </div>
+<div id="addModal" class="popup-modal">
+  <div class="modal-content">
+      <span id="close" class="close-btn">&times;</span>
+      <h3 id="modalTitle">Konfirmasi Penyerahan Aset</h3>
+      <form id="penyerahanForm" enctype="multipart/form-data">
+          <label for="namaKaryawan" class="left-label">Nama Peminjam</label>
+          <input type="text" id="namaKaryawan" name="namaKaryawan" value="" readonly required />
+
+          <label for="unitKerja" class="left-label">Unit Kerja</label>
+          <input type="text" id="unitKerja" name="unitKerja" value="" readonly required />
+
+          <label for="namaAset" class="left-label">Nama Aset</label>
+          <input type="text" id="namaAset" name="namaAset" value="" readonly required />
+
+          <label class="left-label">Penerima Aset:</label>
+          <div class="radio-group">
+              <label>
+                  <input type="radio" id="penerimaKaryawan" name="jenisPenerima" value="karyawan" checked />
+                  Yang bersangkutan
+              </label>
+              <label>
+                  <input type="radio" id="penerimaLain" name="jenisPenerima" value="lain" />
+                  Diwakilkan
+              </label>
+          </div>
+
+          <div id="perwakilanInput" style="display: none;">
+              <label for="namaPenerima" class="left-label">Nama Perwakilan:</label>
+              <input type="text" id="namaPenerima" name="namaPenerima" placeholder="Nama perwakilan" />
+          </div>
+
+          <label for="gambarBukti" class="left-label">Bukti Penyerahan:</label>
+          <input type="file" id="gambarBukti" name="gambar_bukti" class="form-control" accept="image/*" required />
+
+          <div class="flex justify-center space-x-4">
+              <button type="button" class="btn cancel-btn">Tidak</button>
+              <button type="submit" class="btn finish-btn">Ya</button>
+          </div>
       </form>
-    </div>
+  </div>
+  <!-- Loading spinner -->
+  <div id="loading" class="loading-container" style="display: none;">
+    <div class="spinner"></div>
+    <p>Proses sedang berlangsung...</p>
+  </div>
 </div>
   
-
-  <script>
+<script>
   const modal = document.getElementById("addModal");
-  const closeBtn = document.getElementById("close");
-  const modalContent = document.getElementById("modalContent");
-  const cancelBtn = document.querySelector(".cancel-btn");
-  const penyerahanForm = document.getElementById("penyerahanForm");
-  
+const closeBtn = document.getElementById("close");
+const cancelBtn = document.querySelector(".cancel-btn");
+const penyerahanForm = document.getElementById("penyerahanForm");
+const penerimaKaryawan = document.getElementById("penerimaKaryawan");
+const penerimaLain = document.getElementById("penerimaLain");
+const perwakilanInput = document.getElementById("perwakilanInput");
+const namaPenerimaInput = document.getElementById("namaPenerima");
+const namaKaryawanInput = document.getElementById("namaKaryawan");
 
-  
 function showModal(id, namaAset, namaKaryawan, unitKerja) {
-  // Tampilkan modal
-  modal.style.display = "flex";
+    modal.style.display = "flex";
 
-  // Isi konten modal
-  modalContent.textContent = `Apakah Anda yakin ingin menyerahkan aset "${namaAset}"?`;
-
-  // Isi form dengan data yang diterima
-  document.getElementById("namaKaryawan").value = namaKaryawan;
-  document.getElementById("unitKerja").value = unitKerja;
-  document.getElementById("namaAset").value = namaAset;
-
-  // Simpan ID ke dalam dataset form untuk submit
-  penyerahanForm.dataset.id = id;
+    document.getElementById("namaKaryawan").value = namaKaryawan;
+    document.getElementById("unitKerja").value = unitKerja;
+    document.getElementById("namaAset").value = namaAset;
+    penyerahanForm.dataset.id = id;
 }
 
-  // Close modal when clicking the close button
-  closeBtn.onclick = function () {
-    modal.style.display = "none";
-  };
-  
-  // Close modal when clicking the cancel button
-  cancelBtn.onclick = function () {
-    modal.style.display = "none";
-  };
-  
-  // Close modal when clicking outside the modal content
-  window.onclick = function (event) {
-    if (event.target === modal) {
-      modal.style.display = "none";
+function togglePenerima() {
+    if (penerimaLain.checked) {
+        perwakilanInput.style.display = "block";
+        namaPenerimaInput.setAttribute("required", "true");
+    } else {
+        perwakilanInput.style.display = "none";
+        namaPenerimaInput.removeAttribute("required");
+        namaPenerimaInput.value = "";
     }
-  };
-  
- // Event handler saat form disubmit
- penyerahanForm.onsubmit = async function (event) {
-    event.preventDefault(); // Cegah reload halaman
-    const formData = new FormData(penyerahanForm); // Ambil data dari form
-    const id = penyerahanForm.dataset.id; // Ambil ID penyerahan dari dataset
+}
+
+penerimaKaryawan.addEventListener("change", togglePenerima);
+penerimaLain.addEventListener("change", togglePenerima);
+
+closeBtn.onclick = function () {
+    modal.style.display = "none";
+};
+
+cancelBtn.onclick = function () {
+    modal.style.display = "none";
+};
+
+window.onclick = function (event) {
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+};
+
+penyerahanForm.onsubmit = async function (event) {
+    event.preventDefault();
+    const formData = new FormData(penyerahanForm);
+    const id = penyerahanForm.dataset.id;
+
+    // Menampilkan spinner loading
+    document.getElementById("loading").style.display = "flex";
+
+    // Pastikan untuk menambahkan data penerima dan status diwakilkan
+    if (document.getElementById("penerimaKaryawan").checked) {
+        formData.append("nama_perwakilan", "");
+        formData.append("isDiwakilkan", "false");
+    } else {
+        const namaPerwakilan = document.getElementById("namaPenerima").value;
+        formData.append("nama_perwakilan", namaPerwakilan);
+        formData.append("isDiwakilkan", "true");
+    }
 
     try {
-      // Kirim request ke server
-      const response = await fetch(`/penyerahanAset/${id}`, {
-        method: "PATCH",
-        body: formData,
-      });
+        const response = await fetch(`/penyerahanAset/${id}`, {
+            method: "PATCH",
+            body: formData,
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (response.ok) {
-        alert(result.message); // Menampilkan pesan sukses dari server
-        location.reload();
-      } else {
-        alert(`Error: ${result.error}`);
-      }
+        // Sembunyikan loading sebelum menampilkan alert, dengan sedikit delay agar tampilan diperbarui dulu
+        document.getElementById("loading").style.display = "none";
 
+        setTimeout(() => {
+            if (response.ok) {
+                alert(result.message);
+                location.reload();
+            } else {
+                alert(`Error: ${result.error}`);
+            }
+        }, 100); // Delay 100ms agar browser bisa menyegarkan tampilan sebelum alert
     } catch (error) {
-      console.error("Terjadi kesalahan:", error);
-      alert("Terjadi kesalahan saat menyerahkan aset. Silakan coba lagi.");
-    } finally {
-      modal.style.display = "none"; // Tutup modal
-    }
-  };
+        console.error("Terjadi kesalahan:", error);
+        
+        // Sembunyikan loading sebelum menampilkan alert
+        document.getElementById("loading").style.display = "none";
 
- 
-  
-  function filterTable() {
+        setTimeout(() => {
+            alert("Terjadi kesalahan saat menyerahkan aset. Silakan coba lagi.");
+        }, 100);
+    } finally {
+        // Pastikan modal juga ditutup setelah proses selesai
+        modal.style.display = "none";
+    }
+};
+
+function filterTable() {
     const input = document.getElementById("search-input").value.toLowerCase();
     const rows = document.querySelectorAll(".table-compact tbody tr");
     let hasMatch = false;
@@ -238,17 +253,14 @@ function showModal(id, namaAset, namaKaryawan, unitKerja) {
         }
     });
 
-    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
     const noDataMessage = document.getElementById("no-data-message");
     if (hasMatch) {
-        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+        noDataMessage.style.opacity = "0";
         setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
     } else {
         noDataMessage.style.display = "block"; 
-        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50);
     }
 }
 
-
-  </script>
-  
+</script>

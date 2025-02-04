@@ -96,6 +96,11 @@
             <button type="button" class="btn cancel-btn" onclick="closeModal()">Batal</button>
         </form>
     </div>
+      <!-- Loading spinner -->
+        <div id="loading" class="loading-container" style="display: none;">
+            <div class="spinner"></div>
+            <p>Proses sedang berlangsung...</p>
+        </div>
 </div>
 
 <script>
@@ -119,19 +124,26 @@
     };
 
     returnForm.addEventListener('submit', async function(event) {
-        event.preventDefault(); // Mencegah submit default
+    event.preventDefault(); // Mencegah submit default
 
-        const formData = new FormData(returnForm);
-        const pengembalianId = returnForm.dataset.pengembalianId;
+    const formData = new FormData(returnForm);
+    const pengembalianId = returnForm.dataset.pengembalianId;
 
-        try {
-            const response = await fetch(`/admin/pengembalianAset/${pengembalianId}`, {
-                method: 'POST',
-                body: formData
-            });
+    // Menampilkan spinner loading
+    document.getElementById("loading").style.display = "flex";
 
-            const data = await response.json();
+    try {
+        const response = await fetch(`/admin/pengembalianAset/${pengembalianId}`, {
+            method: 'POST',
+            body: formData
+        });
 
+        const data = await response.json();
+
+        // Sembunyikan loading sebelum alert tampil, dengan sedikit delay
+        document.getElementById("loading").style.display = "none";
+
+        setTimeout(() => {
             if (response.ok) {
                 alert(data.message);
                 location.reload();
@@ -139,12 +151,17 @@
             } else {
                 alert(data.message);
             }
-        } catch (error) {
-            alert('Terjadi kesalahan, coba lagi nanti.');
-        }
-    });
+        }, 100); // Delay 100ms agar browser bisa menyegarkan tampilan sebelum alert
+    } catch (error) {
+        // Sembunyikan loading sebelum menampilkan alert error
+        document.getElementById("loading").style.display = "none";
 
-    
+        setTimeout(() => {
+            alert('Terjadi kesalahan, coba lagi nanti.');
+        }, 100);
+    }
+});
+
 
     function closeModal() {
         modal.style.display = 'none';

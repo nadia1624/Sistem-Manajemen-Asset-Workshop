@@ -48,19 +48,20 @@
   </main>
 
   <!-- Modal -->
-  <div id="addModal" class="modal" style="display: none;">
-      <div class="modal-content">
-          <span id="close" class="close-btn">&times;</span>
-          <form action="/karyawan/permintaanAset" method="POST">
-              <h3 id="modalTitle"></h3>
-              <p id="modalContent">Apakah Anda yakin ingin membuat permintaan untuk aset ini?</p>
-              <input type="hidden" name="serial_number" id="serialNumberInput">
-              <div class="modal-actions">
-                  <button type="button" class="btn cancel-btn">Tidak</button>
-                  <button type="submit" class="btn finish-btn">Ya</button>
-              </div>
-          </form>
-      </div>
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <span id="close" class="close-btn">&times;</span>
+      <form action="/karyawan/permintaanAset" method="POST">
+        <h3 id="modalTitle">Permintaan Aset</h3>
+        <input type="hidden" name="serial_number" id="serialNumberInput">
+        <label for="reasonInput" class="modal-label">Alasan Permintaan</label>
+        <textarea name="reason" id="reasonInput" class="modal-textarea" placeholder="Masukkan alasan permintaan..." required></textarea>
+        <div class="modal-actions">
+          <button type="button" class="btn cancel-btn" id="cancelBtn">Batal</button>
+          <button type="submit" class="btn finish-btn">Kirim</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script>

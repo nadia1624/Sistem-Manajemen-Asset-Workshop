@@ -74,7 +74,10 @@
                                 <tbody>
                                       <% if (listPeminjaman && listPeminjaman.length > 0) { %>
                                           <% listPeminjaman.forEach((penyerahan, index) => { %>
-                                              <tr>
+                                            <% let pengajuanData = pengajuanStatusMap[penyerahan.id] || { adaPengajuan: false, semuaSelesai: true };
+                                            let showButton = !pengajuanData.adaPengajuan || pengajuanData.semuaSelesai; 
+                                            %>
+           
                                                   <td><%= index + 1 %></td>
                                                   <td><%= penyerahan.Permintaan.Aset.nama_barang %></td>
                                                   <td>
@@ -84,9 +87,20 @@
                                                   <td><%= penyerahan.Permintaan.Aset.Kategori ? penyerahan.Permintaan.Aset.Kategori.nama_kategori : 'N/A' %></td>
                                                   <td><%= penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Deskripsi tidak tersedia' %></td>
                                                   <td>
-                                                    <button class="btn btn-success" onclick="openModal('<%= penyerahan.id %>')" style="background-color:#c2ef97; font-size:12px; border:2px solid #c2ef97; border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
+                                                    <% if (showButton) { %>
+                                                        <button class="btn btn-success check-btn" 
+                                                            data-id="<%= penyerahan.id %>"
+                                                            onclick="openModal('<%= penyerahan.id %>')" 
+                                                            style="background-color:#c2ef97; font-size:12px; border:2px solid #c2ef97; 
+                                                            border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
+                                                            <i class="fa-solid fa-check"></i> Check
+                                                        </button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-secondary" disabled style="width: 90px;">Menunggu</button>
+                                                    <% } %>
+                                                    <!-- <button class="btn btn-success" onclick="openModal('<%= penyerahan.id %>')" style="background-color:#c2ef97; font-size:12px; border:2px solid #c2ef97; border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
                                                         <i class="fa-solid fa-check"></i> Check
-                                                    </button>
+                                                    </button> -->
                                                   </td>
                                                   <td>
                                                     <button class="btn btn-secondary" onclick="openReturnModal('<%= penyerahan.id %>')" style="background-color:#6dd6ce; font-size:12px; border:2px solid #6dd6ce; border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">

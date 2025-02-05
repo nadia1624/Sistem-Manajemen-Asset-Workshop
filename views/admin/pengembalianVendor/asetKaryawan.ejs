@@ -54,8 +54,8 @@
 <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Pengembalian Aset Vendor</h3>
-        <div class="search-bar">
-            <input placeholder="Search..." type="text" />
+        <div class="search-bar" style="margin-right: 30px;">
+            <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
             <i class="fas fa-search"></i>
         </div>
     </div>
@@ -85,10 +85,10 @@
                                         <% vendorSubmissions.forEach((submission, index) => { %>
                                             <tr data-submission-id="<%= submission.id %>"> 
                                                 <td width="5%"><%= index + 1 %></td>
-                                                <td width="15%"><%= submission.PengajuanCek.Penyerahan.Permintaan.Aset.serial_number %></td>
-                                                <td width="15%"><%= submission.PengajuanCek.Penyerahan.Permintaan.Aset.nama_barang %></td>
+                                                <td width="15%"><%= submission.PengajuanCek.Penyerahan.Permintaan?.Aset?.serial_number %></td>
+                                                <td width="15%"><%= submission.PengajuanCek.Penyerahan.Permintaan?.Aset?.nama_barang %></td> 
                                                 <td width="15%">
-                                                        <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= submission.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.gambar %>" />
+                                                        <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= submission.PengajuanCek.Penyerahan.Permintaan?.Aset?.Kategori.gambar %>" />
                                                 </td>
                                                 <td width="15%" class="custom-td text-center align-middle">
                                                     <span class="custom-span 
@@ -122,6 +122,9 @@
                                 </tbody>
 
                         </table>
+                        <div id="no-data-message"id="no-data-message" class="no-data-message">
+                            Data tidak ditemukan.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -303,6 +306,33 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 });
+
+function filterTable() {
+    const input = document.getElementById("search-input").value.toLowerCase();
+    const rows = document.querySelectorAll(".table-compact tbody tr");
+    let hasMatch = false;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(input)) {
+            row.style.display = "";
+            hasMatch = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
+    const noDataMessage = document.getElementById("no-data-message");
+    if (hasMatch) {
+        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+    } else {
+        noDataMessage.style.display = "block"; 
+        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+    }
+}
+   
 </script>
 
 </body>

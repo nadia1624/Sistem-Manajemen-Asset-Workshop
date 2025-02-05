@@ -3,8 +3,7 @@
 <style>
     /* CSS untuk status Sedang Diproses */
 .status-sedang-diproses {
-  background-color: #ff9800;
-  color: white;
+  background-color: #FDEC80;
 }
 
 /* CSS untuk status Sudah diperbaiki */
@@ -35,8 +34,8 @@
 <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Pengajuan Cek</h3>
-        <div class="search-bar">
-            <input placeholder="Search..." type="text"/>
+        <div class="search-bar" style="margin-right: 30px;">
+            <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
             <i class="fas fa-search"></i>
         </div>
     </div>
@@ -53,59 +52,76 @@
                                     <th width="15%">Tanggal</th>
                                     <th width="15%">Serial Number</th>
                                     <th width="20%">Nama Aset</th>
+                                    <th width="15%">Jenis Aset</th>
                                     <th width="15%">Gambar Aset</th>
                                     <th width="20%">Status Cek</th>
                                     <th width="25%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% pengajuanCekList.forEach((pengajuanCek, index) => { %>
-                                    <tr>
-                                        <td width="5%"><%= index + 1 %></td>
-                                        <td width="15%"> <%= new Date(pengajuanCek.tanggal_pengecekan).toLocaleDateString() %> </td>
-                                        <td width="15%"><%= pengajuanCek.Penyerahan.Permintaan.Aset.serial_number %></td>
-                                        <td width="20%"><%= pengajuanCek.Penyerahan.Permintaan.Aset.nama_barang %></td>
-                                        <td width="15%">
-                                            <img class="img-fluid" alt="Bukti Gambar" src="/public/uploads/<%= pengajuanCek.Penyerahan.Permintaan.Aset.Kategori.gambar %>" />
-                                        </td>
-                                        <td width="20%" class="custom-td">
-                                            <span class="custom-span 
-                                                <% if (pengajuanCek.status_cek === 'sedang diproses') { %>status-sedang-diproses<% } %>
-                                                <% if (pengajuanCek.status_cek === 'sudah diperbaiki') { %>status-sudah-diperbaiki<% } %>
-                                                <% if (pengajuanCek.status_cek === 'dibawa ke workshop') { %>status-dibawa-ke-workshop<% } %>
-                                                <% if (pengajuanCek.status_cek === 'diajukan ke vendor') { %>status-diajukan-ke-vendor<% } %>
-                                                <% if (pengajuanCek.status_cek === 'tidak dapat diperbaiki') { %>status-tidak-dapat-diperbaiki<% } %>">
-                                                <% if (pengajuanCek.status_cek && pengajuanCek.status_cek.trim() !== '') { %>
-                                                    <%= pengajuanCek.status_cek %>
+                                <% if (pengajuanCekList.length > 0) { %>
+                                    <% pengajuanCekList.forEach((pengajuanCek, index) => { %>
+                                        <tr>
+                                            <td width="5%"><%= index + 1 %></td>
+                                            <td width="15%"> <%= new Date(pengajuanCek.tanggal_pengecekan).toLocaleDateString() %> </td>
+                                            <td width="15%"><%= pengajuanCek.Penyerahan.Permintaan.Aset.serial_number %></td>
+                                            <td width="20%"><%= pengajuanCek.Penyerahan.Permintaan.Aset.nama_barang %></td>
+                                            <td width="15%"><%= pengajuanCek.Penyerahan.Permintaan.Aset.cara_dapat %></td>
+                                            <td width="15%">
+                                                <img class="img-fluid" alt="Bukti Gambar" src="/public/uploads/<%= pengajuanCek.Penyerahan.Permintaan.Aset.Kategori.gambar %>" />
+                                            </td>
+                                            <td width="20%" class="custom-td">
+                                                <span class="custom-span 
+                                                    <% if (pengajuanCek.status_cek === 'sedang diproses') { %>status-sedang-diproses<% } %>
+                                                    <% if (pengajuanCek.status_cek === 'sudah diperbaiki') { %>status-sudah-diperbaiki<% } %>
+                                                    <% if (pengajuanCek.status_cek === 'dibawa ke workshop') { %>status-dibawa-ke-workshop<% } %>
+                                                    <% if (pengajuanCek.status_cek === 'diajukan ke vendor') { %>status-diajukan-ke-vendor<% } %>
+                                                    <% if (pengajuanCek.status_cek === 'tidak dapat diperbaiki') { %>status-tidak-dapat-diperbaiki<% } %>">
+                                                    <% if (pengajuanCek.status_cek && pengajuanCek.status_cek.trim() !== '') { %>
+                                                        <%= pengajuanCek.status_cek %>
+                                                    <% } else { %>
+                                                        Sedang Diproses
+                                                    <% } %>
+                                                </span>
+                                            </td>                                                                                
+                                            <td width="25%">
+                                                <% if(pengajuanCek.status_cek !== 'sudah diperbaiki') { %>
+                                                <button class="button-edit" data-id="<%= pengajuanCek.id %>" style="margin-right: 10px;">
+                                                    <i class="fa-regular fa-pen-to-square"></i>
+                                                </button>
                                                 <% } else { %>
-                                                    Sedang Diproses
+                                                    <button class="button-edit" data-id="<%= pengajuanCek.id %>" style="margin-right: 10px; background-color: gray; cursor: not-allowed;border: gray;" disabled>
+                                                        <i class="fa-regular fa-pen-to-square"></i>
+                                                    </button>
                                                 <% } %>
-                                            </span>
-                                        </td>                                                                                
-                                        <td width="25%">
-                                            <button class="button-edit" data-id="<%= pengajuanCek.id %>" style="margin-right: 10px;">
-                                                <i class="fa-regular fa-pen-to-square"></i>
-                                            </button>
-                                            <a href="detailPengajuanCek/<%= pengajuanCek.id %>">
-                                                <button class="button-info" style="margin-right: 10px;">
-                                                    <i class="fa-solid fa-circle-info"></i>
-                                                </button>
-                                            </a>
-                                            <% if(pengajuanCek.status_pengembalian !== 'sudah') { %>
-                                                <button class="btn finishButton" data-id="<%= pengajuanCek.id %>">
-                                                    <i class="fas fa-check"></i> Selesai
-                                                </button>
-                                            <% } else { %>
-                                                <button class="btn finishButton" data-id="<%= pengajuanCek.id %>" style="background-color: rgb(168, 168, 168); cursor: not-allowed ;" disabled>
-                                                    <i class="fas fa-check"></i> Selesai
-                                                </button>
-                                            <% } %>
-                                        </td>
-                                        
+                                                <a href="detailPengajuanCek/<%= pengajuanCek.id %>">
+                                                    <button class="button-info" style="margin-right: 10px;">
+                                                        <i class="fa-solid fa-circle-info"></i>
+                                                    </button>
+                                                </a>
+                                                <% if(pengajuanCek.status_pengembalian !== 'sudah') { %>
+                                                    <button class="btn finishButton" data-id="<%= pengajuanCek.id %>">
+                                                        <i class="fas fa-check"></i> Selesai
+                                                    </button>
+                                                <% } else { %>
+                                                    <button class="btn finishButton" data-id="<%= pengajuanCek.id %>" style="background-color: rgb(168, 168, 168); cursor: not-allowed;" disabled>
+                                                        <i class="fas fa-check"></i> Selesai
+                                                    </button>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="8" style="text-align: center;">Tidak ada data pengajuan cek</td>
                                     </tr>
-                                <% }); %>
-                            </tbody>                            
+                                <% } %>
+                            </tbody>
+                                                   
                         </table>
+                        <div id="no-data-message"id="no-data-message" class="no-data-message">
+                            Data tidak ditemukan.
+                        </div> 
                     </div>
                 </div>
             </div>
@@ -288,6 +304,33 @@
 });
     
     });
+
+    function filterTable() {
+    const input = document.getElementById("search-input").value.toLowerCase();
+    const rows = document.querySelectorAll(".table-compact tbody tr");
+    let hasMatch = false;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(input)) {
+            row.style.display = "";
+            hasMatch = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
+    const noDataMessage = document.getElementById("no-data-message");
+    if (hasMatch) {
+        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+    } else {
+        noDataMessage.style.display = "block"; 
+        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+    }
+}
+   
 
 
 </script>

@@ -6,6 +6,7 @@
 .container2 .details2 p {
     display: flex;
     justify-content: flex-start;
+    
 }
 
 .container2 .details p strong,
@@ -31,12 +32,14 @@
             alt="<%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.nama_kategori || 'Gambar tidak tersedia' %>" 
             height="150" 
             src="/public/uploads/<%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.gambar || 'https://placehold.co/200x150' %>" 
-            width="200"
+            width="300"
         />
         <div class="details"x>
+            <p><strong>Kategori</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.nama_kategori || 'Tidak tersedia' %></p>
             <p><strong>Serial Number</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.serial_number || 'Tidak tersedia' %></p>
             <p><strong>Nama Barang</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.nama_barang || 'Tidak tersedia' %></p>
-            <p><strong>Kategori</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.nama_kategori || 'Tidak tersedia' %></p>
+            <p><strong>Hostname</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.hostname || 'Tidak tersedia' %></p>
+            <p><strong>Kondisi Aset</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.kondisi_aset || 'Tidak tersedia' %></p>
             <p><strong>Deskripsi</strong> : <%= detailAset.PengajuanCek.Penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Tidak tersedia' %></p>
         </div>
     </div>

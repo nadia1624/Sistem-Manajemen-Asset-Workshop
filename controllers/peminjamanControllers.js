@@ -33,6 +33,8 @@ const getPeminjaman = async (req, res) => {
               ]
         });
 
+        
+
         return res.render('karyawan/peminjaman/peminjamanAset', { listPeminjaman, currentPath });
     } catch (error) {
         console.error(error);

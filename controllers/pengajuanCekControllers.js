@@ -15,7 +15,7 @@ const getPengajuanCek = async (req, res) => {
                             include: [
                                 {
                                     model: Aset,
-                                    attributes: ['serial_number', 'nama_barang'],
+                                    attributes: ['serial_number', 'nama_barang', 'cara_dapat'],
                                     include: [
                                         {
                                             model: Kategori,
@@ -58,7 +58,7 @@ const getDetailPengajuanCek = async (req, res) => {
                             include: [
                                 {
                                     model: Aset,
-                                    attributes: ['serial_number', 'nama_barang'],
+                                    attributes: ['serial_number', 'nama_barang', 'hostname', 'kondisi_aset', ],
                                     include: [
                                         {
                                             model: Kategori,
@@ -107,7 +107,6 @@ const updateStatusPengajuanCek = async (req, res) => {
             return res.status(400).json({ message: "Status tidak valid" });
         }
 
-        // Cari pengajuan berdasarkan ID
         // Cari pengajuan berdasarkan ID dengan relasi yang benar
         const pengajuan = await PengajuanCek.findOne({
             where: { id },
@@ -140,21 +139,46 @@ const updateStatusPengajuanCek = async (req, res) => {
             return res.status(400).json({ message: "Hanya aset dengan cara dapat 'sewa' yang dapat diperbarui" });} 
         }
 
-        
+        if ( status === 'tidak dapat diperbaiki'){
+            const cara_dapat = pengajuan.Penyerahan.Permintaan.Aset.cara_dapat;
+            if (cara_dapat !== 'beli') {
+            return res.status(400).json({ message: "Hanya aset dengan cara dapat 'beli' yang dapat diperbarui" });} 
+        }
+
+        const idAset = pengajuan.Penyerahan.Permintaan.serial_number
+        console.log (idAset)
+        console.log (id)
 
         // Update status_cek
         await PengajuanCek.update({ status_cek: status }, { where: { id } });
 
         // Jika status adalah 'diajukan ke vendor', tambahkan data ke tabel PengembalianVendor
         if (status === 'diajukan ke vendor') {
+
+            await Aset.update({
+                kondisi_aset : 'rusak berat',
+            },
+        {
+            where : {serial_number : idAset}
+        })
             // Buat entri baru di PengembalianVendor
             await PengembalianVendor.create({
                 status_admin: 'belum diproses',  // Status awal
                 status_pengembalian: 'belum dikembalikan',  // Status awal
                 cekId: pengajuan.id
+                
             });
 
             console.log("Data berhasil ditambahkan ke PengembalianVendor");
+        }
+
+        if (status === 'tidak dapat diperbaiki'){
+            await Aset.update({
+                kondisi_aset : 'rusak berat',
+            },
+        {
+            where : {serial_number : idAset}
+        })
         }
 
         res.json({ message: "Status pengajuan berhasil diperbarui", status });
@@ -163,6 +187,8 @@ const updateStatusPengajuanCek = async (req, res) => {
         res.status(500).json({ message: "Terjadi kesalahan dalam memperbarui status." });
     }
 };
+
+
 
 const updateStatusPengembalian = async (req, res) => {
     try {

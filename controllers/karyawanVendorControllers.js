@@ -3,70 +3,6 @@ const { where } = require('sequelize');
 const {Penyerahan, Permintaan, PengajuanCek, Kategori, Aset, PengembalianVendor, User, Sequelize } = require('../models');
 
 
-// const getReturnKaryawan = async (req, res) => {
-//   try {
-//     // Ambil data pengajuan cek dengan status "diajukan ke vendor"
-//     const vendorSubmissions = await PengajuanCek.findAll({
-//       where: { status_cek: 'diajukan ke vendor' },
-//       attributes: ['id', 'tanggal_pengecekan'],
-//       include: [
-//         {
-//             model: Penyerahan,
-//             include: [
-//                 {
-//                     model: Permintaan,
-//                     include: [
-//                         {
-//                             model: Aset,
-//                             attributes: ['serial_number', 'nama_barang'],
-//                             include: [
-//                                 {
-//                                     model: Kategori,
-//                                     attributes: ['gambar']
-//                                 }
-//                             ]
-//                         }
-//                     ]                            
-//                 }
-//             ]
-//         }
-//     ],
-//     });
-
-//     // Ambil serial_number dari aset
-//     const serialNumbers = vendorSubmissions.flatMap((submission) =>
-//       submission.Penyerahan?.Permintaan?.Aset?.serial_number || []
-//     );
-
-//     // Ambil data pengembalian vendor berdasarkan serial_number aset
-//     const returnedItems = await PengembalianVendor.findAll({
-//       where: {
-//         serial_number: serialNumbers, // Gunakan serial_number dari aset
-//       },
-//       attributes: ['id', 'status_admin', ],
-//       include: [
-//         {
-//           model: PengajuanCek,
-//           where: { status_cek: 'diajukan ke vendor' },
-//           attributes: ['id'],
-//           include: [
-//             {
-//               model: Kategori,
-//               attributes: ['nama_kategori', 'gambar', 'deskripsi'],
-//             },
-//           ],
-//         },
-//       ],
-//     });
-
-
-//     // Render halaman aset karyawan dengan data yang didapat
-//     res.render('admin/pengembalianVendor/asetKaryawan', { vendorSubmissions, returnedItems });
-//   } catch (error) {
-//     // Tampilkan error jika terjadi kesalahan
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 const getReturnKaryawan = async (req, res) => {
   try {
@@ -101,9 +37,11 @@ const getReturnKaryawan = async (req, res) => {
             }
           ]
         }
-      ]
-      
-    })
+      ],
+      order: [['created_at', 'DESC']]
+    })  
+
+    console.log(vendorSubmissions)
 
     res.render('admin/pengembalianVendor/asetKaryawan', { vendorSubmissions: vendorSubmissions  });
 
@@ -133,7 +71,7 @@ const getDetailAsetKaryawanVendor = async (req, res) => {
                                   include: [
                                       {
                                           model: Aset,
-                                          attributes: ['serial_number', 'nama_barang'],
+                                          attributes: ['serial_number', 'nama_barang', 'kondisi_aset', 'hostname'],
                                           include: [
                                               {
                                                   model: Kategori,
@@ -187,53 +125,78 @@ const updateStatusVendorKaryawan = async (req, res) => {
   }
 };
 
-  const updateStatusPengembalianKaryawan = async (req, res) => {
-    try {
-        const { id } = req.params;
-        console.log("Processing request for ID:", id);
-        
-        const pengembalian = await PengembalianVendor.findByPk(id);
-        
-        if (!pengembalian) {
-            return res.status(404).json({ message: "Data tidak ditemukan" });
+
+const updateStatusPengembalianKaryawan = async (req, res) => { 
+  try { 
+      const { id } = req.params; 
+      console.log("Processing request for ID:", id); 
+       
+      const pengembalian = await PengembalianVendor.findByPk(id); 
+       
+      if (!pengembalian) { 
+          return res.status(404).json({ message: "Data tidak ditemukan" }); 
+      } 
+       
+      if (pengembalian.status_pengembalian === 'sudah dikembalikan') { 
+          return res.status(400).json({ message: "Aset sudah dikembalikan" }); 
+      } 
+       
+      if (pengembalian.status_admin !== 'selesai') { 
+          return res.status(400).json({ message: "Status admin belum selesai, tidak dapat melakukan pengembalian" }); 
+      } 
+
+      // Update pengembalian status
+      pengembalian.status_pengembalian = 'sudah dikembalikan'; 
+      await pengembalian.save(); 
+      console.log("Status updated successfully"); 
+
+      // Update pengajuan status
+      const pengajuan = await PengajuanCek.findOne({ where: { id: pengembalian.cekId },
+      include : [
+        {
+          model : Penyerahan,
+          include : [{
+            model : Permintaan,
+            include : [{
+              model : Aset,
+              atrributes : ['serial_number', 'kondisi_aset']
+            }]
+          }]
         }
-        
+      ] },
+      ); 
+      if (pengajuan) { 
+          pengajuan.status_cek = 'sudah diperbaiki' 
+          pengajuan.status_pengembalian = 'sudah'; 
+          await pengajuan.save(); 
+          console.log("Status pengajuan updated successfully"); 
+      } else { 
+          console.log("No related PengajuanCek found for this PengembalianVendor"); 
+      }
 
-        if (pengembalian.status_pengembalian === 'sudah dikembalikan') {
-            return res.status(400).json({ message: "Aset sudah dikembalikan" });
-        }
-        
-        if (pengembalian.status_admin !== 'selesai') {
-            return res.status(400).json({ message: "Status admin belum selesai, tidak dapat melakukan pengembalian" });
-        }
-        console.log("Status updated successfully");
+      // Update kondisi aset
+      const aset = await Aset.findOne({ 
+          where: { serial_number: pengajuan.Penyerahan.Permintaan.Aset.serial_number }
+      });
+      
+      if (aset) {
+          aset.kondisi_aset = 'baik';
+          await aset.save();
+          console.log("Kondisi aset updated successfully");
+      } else {
+          console.log("No related Aset found for this serial number");
+      }
+       
+      res.json({              
+          success: true,  
+          message: "Status pengembalian dan kondisi aset berhasil diperbarui"
+      }); 
 
-        pengembalian.status_pengembalian = 'sudah dikembalikan';
-        await pengembalian.save();
-
-        console.log("Status updated successfully");
-
-        const pengajuan = await PengajuanCek.findOne({ where: { id: pengembalian.cekId } });
-
-        if (pengajuan) {
-          pengajuan.status_cek = 'sudah diperbaiki'
-            pengajuan.status_pengembalian  = 'sudah';
-            await pengajuan.save();
-            console.log("Status pengajuan updated successfully");
-
-        } else {
-            console.log("No related PengajuanCek found for this PengembalianVendor");
-        }
-
-        res.json({             
-          success: true, 
-          message: "Status pengembalian berhasil diperbarui"  });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Terjadi kesalahan dalam proses pengembalian" });
-    }
-  };
+  } catch (error) { 
+      console.error(error); 
+      res.status(500).json({ message: "Terjadi kesalahan dalam proses pengembalian" }); 
+  } 
+};
 
 module.exports = { 
   getReturnKaryawan,

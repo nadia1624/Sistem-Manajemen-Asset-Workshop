@@ -11,9 +11,9 @@
     th:nth-child(7), td:nth-child(7) { width: 15%; }
     th:nth-child(8), td:nth-child(8) { width: 10%; }
   </style>
-
   <main class="content">
     <div class="container-fluid px-4">
+      <div id="toastNotification" class="toast hide"></div>
       <div class="table-wrapper">
         <div class="table-responsive">
           <div class="table-bungkus">
@@ -26,7 +26,7 @@
                     <th>Nama Aset</th>
                     <th>Deskripsi</th>
                     <th>Gambar</th>
-                    <th>Kategori</th>
+                    <th>Alasan</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -43,7 +43,7 @@
                       <img class="img-fluid" alt="Gambar Aset: <%= permintaan.Aset.nama_barang %>"
                           src="/public/uploads/<%= permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
                   </td>
-                    <td><%= permintaan.Aset.Kategori.nama_kategori %></td>
+                    <td><%= permintaan.alasan%></td>
                     <td width="15%">
                       <% if (permintaan.status_permintaan === "diterima") { %>
                           <div class="status-badge disetujui">Disetujui</div>
@@ -89,24 +89,24 @@
   </main>
 
 
-<!-- Modal Pop-Up Tanda Tangan -->
-<div id="uploadModal" class="modal">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
-    <h3>Upload Tanda Tangan</h3>
-    <form id="uploadForm" enctype="multipart/form-data">
-      <input type="hidden" id="permintaanId" name="permintaanId" value="" />
-      <label for="signatureInput">Pilih file tanda tangan:</label>
-      <input type="file" id="signatureInput" name="file" accept="image/*" required />
-      <div class="modal-actions">
-        <button type="button" class="btn cancel-btn" onclick="closeModal('uploadModal')">Batal</button>
-        <button type="button" class="btn finish-btn" onclick="submitUpload()">Upload</button>
-      </div>
-    </form>
+
+
+  <!-- Modal Pop-Up Tanda Tangan -->
+  <div id="uploadModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
+      <h3>Upload Tanda Tangan</h3>
+      <form id="uploadForm" enctype="multipart/form-data">
+        <input type="hidden" id="permintaanId" name="permintaanId" value="" />
+        <label for="signatureInput">Pilih file tanda tangan:</label>
+        <input type="file" id="signatureInput" name="file" accept="image/*" required />
+        <div class="modal-actions">
+          <button type="button" class="btn cancel-btn" onclick="closeModal('uploadModal')">Batal</button>
+          <button type="button" class="btn finish-btn" onclick="submitUpload()">Upload</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
-
-
 
   <!-- Modal Pop-Up Cancel Permintaan -->
   <div id="cancelModal" class="modal">
@@ -116,7 +116,7 @@
       <p>Apakah Anda yakin ingin membatalkan permintaan ini?</p>
       <div class="modal-actions">
         <button type="button" class="btn cancel-btn"  onclick="closeModal('cancelModal')">Tidak</button>
-        <button type="submit" class="btn finish-btn" onclick="confirmCancel()">Ya</button>
+        <button type="submit" style="background-color: #B60017; color: #fff;" class="btn finish-btn" onclick="confirmCancel()">Ya</button>
       </div>
     </div>
   </div>
@@ -125,104 +125,122 @@
 </html>
 
 <script>
-// Fungsi untuk membuka modal dan menyimpan ID permintaan
-
+  // Fungsi untuk membuka modal dan menyimpan ID permintaan
 function openModal(modalId, permintaanId) {
-  const modal = document.getElementById(modalId);
-  modal.style.display = 'flex';
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
 
-  // Jika modal adalah cancelModal, tetapkan data-permintaan-id
-  if (modalId === 'cancelModal' && permintaanId) {
-    modal.setAttribute('data-permintaan-id', permintaanId);
-  }
+    if (modalId === 'cancelModal' && permintaanId) {
+        modal.setAttribute('data-permintaan-id', permintaanId);
+    }
 
-  // Menetapkan permintaanId ke input field di modal upload tanda tangan
-  if (modalId === 'uploadModal' && permintaanId) {
-    document.getElementById('permintaanId').value = permintaanId;
-  }
+    if (modalId === 'uploadModal' && permintaanId) {
+        document.getElementById('permintaanId').value = permintaanId;
+    }
 }
 
 // Fungsi untuk menutup modal
 function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  modal.style.display = 'none';
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'none';
 }
 
 // Fungsi untuk mengirim upload tanda tangan
 async function submitUpload() {
-  const permintaanId = document.getElementById('permintaanId').value;
-  const fileInput = document.getElementById('signatureInput');
+    const permintaanId = document.getElementById('permintaanId').value;
+    const fileInput = document.getElementById('signatureInput');
 
-  if (!fileInput.files[0]) {
-    alert('Harap pilih file tanda tangan terlebih dahulu.');
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('file', fileInput.files[0]);
-  formData.append('permintaanId', permintaanId);
-
-  try {
-    const response = await fetch('/karyawan/permintaanAset/uploadTandaTangan', {
-      method: 'POST',
-      body: formData,
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      // Jika berhasil
-      alert(result.message || 'Tanda tangan berhasil diupload.');
-      window.location.reload();
-    } else {
-      // Jika gagal dari sisi backend
-      alert(result.message || 'Gagal mengupload tanda tangan.');
-      window.location.reload();
+    if (!fileInput.files[0]) {
+        showToast('Harap pilih file tanda tangan terlebih dahulu.', false);
+        return;
     }
-  } catch (error) {
-    // Jika error terjadi pada sisi client
-    console.error('Error saat mengupload tanda tangan:', error);
-    alert('Terjadi kesalahan saat mengupload tanda tangan.');
-  }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('permintaanId', permintaanId);
+
+    try {
+        const response = await fetch('/karyawan/permintaanAset/uploadTandaTangan', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const result = await response.json();
+
+        closeModal("uploadModal"); 
+
+        if (response.ok) {
+            showToast(result.message || 'Tanda tangan berhasil diupload.');
+            setTimeout(() => window.location.reload(), 3000);
+        } else {
+            showToast(result.message || 'Gagal mengupload tanda tangan.', false);
+        }
+    } catch (error) {
+        console.error('Error saat mengupload tanda tangan:', error);
+        showToast('Terjadi kesalahan saat mengupload tanda tangan.', false);
+    }
 }
 
 // Fungsi untuk menghandle penghapusan permintaan
 async function confirmCancel() {
-  const cancelModal = document.getElementById("cancelModal");
-  const permintaanId = cancelModal.getAttribute("data-permintaan-id"); // Ambil ID permintaan
+    const cancelModal = document.getElementById("cancelModal");
+    const permintaanId = cancelModal.getAttribute("data-permintaan-id"); // Ambil ID permintaan
 
-  if (!permintaanId) {
-    alert("ID permintaan tidak valid.");
-    return;
-  }
-
-  try {
-    const response = await fetch(`/karyawan/permintaanAset/${permintaanId}`, {
-      method: "DELETE",
-    });
-
-    if (response.ok) {
-      alert("Permintaan berhasil dibatalkan dan dihapus.");
-      window.location.reload(); // Refresh halaman
-    } else {
-      const result = await response.json();
-      alert(result.message || "Gagal membatalkan permintaan.");
+    if (!permintaanId) {
+        showToast("ID permintaan tidak valid.", false);
+        return;
     }
-  } catch (error) {
-    console.error("Error saat membatalkan permintaan:", error);
-    alert("Terjadi kesalahan saat membatalkan permintaan.");
-  } finally {
+
+    // Tutup modal sebelum melakukan fetch
     closeModal("cancelModal");
-  }
+
+    try {
+        const response = await fetch(`/karyawan/permintaanAset/${permintaanId}`, {
+            method: "DELETE",
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showToast("Permintaan berhasil dibatalkan(hapus).");
+            setTimeout(() => window.location.reload(), 3000);
+        } else {
+            showToast(result.message || "Gagal membatalkan permintaan.", false);
+        }
+    } catch (error) {
+        console.error("Error saat membatalkan permintaan:", error);
+        showToast("Terjadi kesalahan saat membatalkan permintaan.", false);
+    }
 }
 
-// Menutup modal jika user mengklik di luar modal
+// Menutup modal jika user mengklik di luar modal (untuk semua modal)
 window.onclick = function (event) {
-  const cancelModal = document.getElementById('cancelModal');
-  if (event.target === cancelModal) {
-    closeModal('cancelModal');
-  }
+    const modals = document.querySelectorAll(".modal");
+    modals.forEach(modal => {
+        if (event.target === modal) {
+            closeModal(modal.id);
+        }
+    });
 };
+
+// Fungsi untuk menampilkan notifikasi toast
+function showToast(message, isSuccess = true) {
+    const toast = document.getElementById("toastNotification");
+    toast.textContent = message;
+    toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
+
+    // Pastikan animasi ulang jika toast sebelumnya masih ditampilkan
+    toast.classList.remove('show', 'hide');
+    void toast.offsetWidth; // **Trik untuk memaksa browser reset animasi**
+    
+    toast.classList.add('show');
+
+    // Sembunyikan toast setelah 3 detik
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.classList.add('hide');
+    }, 2500);
+}
 
 </script>
   

@@ -20,6 +20,10 @@ const Permintaan = db.define (
             type : Sequelize.DATE,
             allowNull : true
         },
+        alasan : {
+            type : Sequelize.STRING,
+            allowNull : false
+        },
         serial_number : {
             type : Sequelize.STRING,
             allowNull : false

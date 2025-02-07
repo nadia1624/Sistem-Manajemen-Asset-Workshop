@@ -126,51 +126,78 @@
     <div class="profile-container">
         <div class="profile-section">
             <div class="profile-pic">
-                <img src="/image/logo.png" alt="Profile picture" width="150" height="150"/>
-                <a href="#">Ganti Foto</a>
+                <img src="<%= user.gambar ? '/uploads/' + user.gambar : '/image/logo.png' %>" alt="Profile picture"/>
             </div>
             <div class="form-section">
                 <div class="form-group">
                     <div>
                         <label for="name">Nama</label>
-                        <div id="name" class="field-value">John Doe</div>
+                        <div id="name" class="field-value"><%= user.nama || 'Tidak tersedia' %></div>
                     </div>
                     <div>
                         <label for="email">Email</label>
-                        <div id="email" class="field-value">john.doe@example.com</div>
+                        <div id="email" class="field-value"><%= user.email || 'Tidak tersedia' %></div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div>
                         <label for="nip">NIP</label>
-                        <div id="nip" class="field-value">198504122010051001</div>
+                        <div id="nip" class="field-value"><%= user.nip || 'Tidak tersedia' %></div>
                     </div>
                     <div>
                         <label for="unit">Unit Kerja</label>
-                        <div id="unit" class="field-value">Departemen IT</div>
+                        <div id="unit" class="field-value"><%= user.unit_kerja || 'Tidak tersedia' %></div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div>
                         <label for="phone">Nomor Telepon</label>
-                        <div id="phone" class="field-value">081234567890</div>
+                        <div id="phone" class="field-value"><%= user.no_hp || 'Tidak tersedia' %></div>
                     </div>
                     <div>
                         <label for="position">Jabatan</label>
-                        <div id="position" class="field-value">Senior Developer</div>
+                        <div id="position" class="field-value"><%= user.jabatan || 'Tidak tersedia' %></div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="buttons">
-            <a href="ubahPass">
+            <a href="/karyawan/ubahPass">
                 <button class="ubahpassword">Ubah Password</button>
             </a>
             <a href="ubahProfil">
                 <button class="ubahprofil">Ubah Profil</button>
             </a>
         </div>
-
     </div>
-</body>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const successMessage = urlParams.get('success');
+        const errorMessage = urlParams.get('error');
+
+        if (successMessage) {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: successMessage,
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        if (errorMessage) {
+            Swal.fire({
+                title: 'Gagal!',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+</script>
+
+  </body>
+
 </html>

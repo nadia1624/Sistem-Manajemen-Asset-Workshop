@@ -197,7 +197,7 @@ const addAssetReturn = async (req, res) => {
             getImage: (tagValue) => fs.readFileSync(tagValue),
             getSize: (tagValue) => {
               const dimensions = sizeOf(tagValue); // Dapatkan ukuran asli gambar
-              const width = 150; // Tetapkan lebar 150px
+              const width = 200; // Tetapkan lebar 150px
               const aspectRatio = dimensions.height / dimensions.width; // Hitung rasio aspek
               const height = Math.round(width * aspectRatio); // Sesuaikan tinggi secara otomatis
               return [width, height];

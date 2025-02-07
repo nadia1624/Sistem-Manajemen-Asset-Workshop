@@ -3,6 +3,7 @@ const pengembalianControllers = require('../controllers/pengembalianControllers'
 const verifyToken = require('../middleware/validtokenMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 const role = require("../middleware/checkroleMiddleware");
+const profileMiddleware = require('../middleware/profilMiddleware')
 
 const pengembalianRouter = express.Router()
 
@@ -22,6 +23,7 @@ pengembalianRouter.get('/admin/riwayatPengembalian',
 pengembalianRouter.get('/karyawan/riwayatKaryawan',
     verifyToken, 
     role("karyawan"), 
+    profileMiddleware,
     pengembalianControllers.getRiwayatKaryawan
 );
 

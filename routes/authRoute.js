@@ -3,6 +3,8 @@ const authController = require('../controllers/AuthControllers')
 const isLogin = require('../middleware/isloginMiddleware');
 const verifyToken= require ('../middleware/validtokenMiddleware');
 const role = require("../middleware/checkroleMiddleware");
+const upload = require('../middleware/uploadMiddleware');
+const profileMiddleware = require('../middleware/profilMiddleware')
 
 const authRouter = express.Router()
 
@@ -15,23 +17,24 @@ authRouter.post('/logout', verifyToken, authController.logout);
 // });
 
 //admin
-authRouter.get('/admin/dashboard', verifyToken, role("admin"),  authController.dashboard )
+authRouter.get('/admin/dashboard', verifyToken, role("admin"), authController.dashboard )
 
 
 //pengguna
-authRouter.get('/profil', (req, res) => {
-    res.render('profil', { currentPath: req.path });
-});
+authRouter.get('/karyawan/profil',  verifyToken, role("karyawan"),profileMiddleware,  authController.getUserProfile)
 
-authRouter.get('/ubahProfil', (req, res) => {
-    res.render('ubahProfil', { currentPath: req.path });
-});
+authRouter.post('/karyawan/uploadProfilePicture', 
+    verifyToken, 
+    upload.single('profilePicture'), 
+    authController.uploadProfilePicture
+);
 
-authRouter.get('/ubahPass', (req, res) => {
-    res.render('ubahPass', { currentPath: req.path });
-});
+authRouter.get('/karyawan/ubahProfil', verifyToken, role("karyawan"),profileMiddleware,  authController.getUbahProfile);
 
+authRouter.post('/karyawan/ubahProfil/update', verifyToken, role("karyawan"), authController.updateUserProfile);
 
+authRouter.get('/karyawan/ubahPass', verifyToken, role("karyawan"),profileMiddleware, authController.getUbahPasswordPage);
 
+authRouter.post('/karyawan/ubahPass', verifyToken, role('karyawan'), authController.updatePassword) 
 
 module.exports = authRouter

@@ -4,10 +4,11 @@ const role = require("../middleware/checkroleMiddleware");
 const upload = require('../middleware/uploadMiddleware');
 const { tampilkanAsetBerdasarkanKategori, tampilkanKategori, tambahKategori, tampilkanEditKategori, editKategori, tambahAset, editAset, hapusKategori, tampilkanEditAset, hapusAset, tampilkanDetailAset, tampilkanDaftarAsetKaryawan, tampilkanDetailAsetKaryawan } = require('../controllers/pengelolaanController');
 const router = express.Router();
+const profileMiddleware = require('../middleware/profilMiddleware')
 
-router.get('/karyawan/daftar-aset', verifyToken, role('karyawan'), tampilkanDaftarAsetKaryawan);
+router.get('/karyawan/daftar-aset', verifyToken, role('karyawan'),profileMiddleware, tampilkanDaftarAsetKaryawan);
 
-router.get('/karyawan/detail-aset/:id', verifyToken, role('karyawan'), tampilkanDetailAsetKaryawan);
+router.get('/karyawan/detail-aset/:id', verifyToken, role('karyawan'),profileMiddleware, tampilkanDetailAsetKaryawan);
 
 router.get('/admin/pengelolaan-aset', verifyToken, role('admin'), tampilkanKategori);
 

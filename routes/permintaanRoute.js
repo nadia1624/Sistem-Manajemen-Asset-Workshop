@@ -4,6 +4,7 @@ const PermintaanController = require('../controllers/PermintaanControllers');
 const verifyToken= require ('../middleware/validtokenMiddleware');
 const role = require("../middleware/checkroleMiddleware");
 const upload = require('../middleware/uploadMiddleware');
+const profileMiddleware = require('../middleware/profilMiddleware')
 //admin
   // Endpoint untuk admin: Bisa melihat semua permintaan aset dari semua karyawan
   permintaanRouter.get(
@@ -38,6 +39,7 @@ permintaanRouter.get(
     '/karyawan/permintaanAset',
     verifyToken,
     role("karyawan"),
+    profileMiddleware,
     PermintaanController.getPermintaanAsetKaryawan
   );
   

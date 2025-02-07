@@ -1,4 +1,4 @@
-<%- include('layout/header.ejs', { currentPath: currentPath }) %>
+<%- include('layout/header.ejs', { currentPath: currentPath, user: user }) %>
 
 <html>
 <head>
@@ -136,29 +136,60 @@
 <body>
     <div class="page-wrapper">
         <div class="profile-container">
+            <form action="/karyawan/ubahPass" method="post">
             <div class="form-section">
                 <div class="form-group">
                     <label for="old-password">Password Lama</label>
-                    <input type="password" id="old-password" placeholder="Masukkan password lama" />
+                    <input name="oldPassword" type="password" id="old-password" placeholder="Masukkan password lama" />
                 </div>
                 <div class="form-group">
                     <label for="new-password">Password Baru</label>
-                    <input type="password" id="new-password" placeholder="Masukkan password baru" />
+                    <input name="newPassword" type="password" id="new-password" placeholder="Masukkan password baru" />
                 </div>
                 <div class="form-group">
                     <label for="confirm-password">Konfirmasi Password Baru</label>
-                    <input type="password" id="confirm-password" placeholder="Konfirmasi password baru" />
+                    <input name="confirmPassword" type="password" id="confirm-password" placeholder="Konfirmasi password baru" />
                 </div>
             </div>
             <div class="buttons">
-                <a href="profil">
-                    <button class="batal-profil">Batal</button>
+                <a href="/profil">
+                    <button type="button" class="batal-profil">Batal</button>
                 </a>
-                <a href="profil">
-                    <button class="simpan-profil">Simpan</button>
-                </a>
-            </div>
+                <a>
+                    <button type="submit" class="simpan-profil">Simpan</button>
+                </a>     
+           
         </div>
+        </form>
     </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const successMessage = urlParams.get('success');
+            const errorMessage = urlParams.get('error');
+    
+            if (successMessage) {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: successMessage,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            }
+    
+            if (errorMessage) {
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: errorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    </script>
+    
+    
 </body>
 </html>

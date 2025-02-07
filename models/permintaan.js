@@ -13,7 +13,7 @@ const Permintaan = db.define (
         },
         status_permintaan : {
             type : Sequelize.ENUM,
-            values : ['diproses', 'diterima','ditolak','dicancel'],
+            values : ['diproses', 'diterima','ditolak'],
             allowNull : false
         },
         tanggal_permintaan : {

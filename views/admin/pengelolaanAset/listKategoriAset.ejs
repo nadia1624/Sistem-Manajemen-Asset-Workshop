@@ -43,7 +43,7 @@
                                             <td width="17%"><%= item.deskripsi %></td>
                                             <td width="15%">
                                                 <% if (item.gambar) { %>
-                                                    <img class="img-fluid" alt="<%= item.nama_kategori %>" src="/uploads/<%= item.gambar %>" />
+                                                    <img class="img-fluid" onclick="openOverlay(this.src)"  alt="<%= item.nama_kategori %>" src="/uploads/<%= item.gambar %>" />
                                                 <% } else { %>
                                                     <img class="img-fluid" alt="Default" src="https://placehold.co/100x100" />
                                                 <% } %>
@@ -156,7 +156,10 @@
         </div>
     </div>
 </div>
-
+  <!-- Overlay untuk menampilkan gambar -->
+  <div id="overlay" class="overlay" onclick="closeOverlay()">
+    <img id="overlayImage" class="overlay-img">
+  </div>
 
 <script>
     // Modal Elements
@@ -330,6 +333,14 @@
     }
 }
    
+function openOverlay(imageSrc) {
+    document.getElementById('overlayImage').src = imageSrc;
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('show');
+  }
     </script>
 
 </body>

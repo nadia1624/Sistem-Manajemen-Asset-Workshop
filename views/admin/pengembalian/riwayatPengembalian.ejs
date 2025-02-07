@@ -46,7 +46,7 @@
                                         <td width="15"><%= pengembalian.kondisi_terakhir %></td>
                                         <td width="15"><%= pengembalian.keterangan_kondisi || '-' %></td>
                                         <td width="15">
-                                            <img class="img-fluid" alt="Bukti Gambar" src="/public/uploads/<%= pengembalian.gambar_bukti %>" />
+                                            <img class="img-fluid" onclick="openOverlay(this.src)" alt="Bukti Gambar" src="/public/uploads/<%= pengembalian.gambar_bukti %>" />
                                         </td>
                                         <td width="15">
                                             <% if (pengembalian.surat) { %>
@@ -71,6 +71,17 @@
                 </div>
             </div>
         </div>
+
+    </main>
+
+      <!-- Overlay untuk menampilkan gambar -->
+<div id="overlay" class="overlay" onclick="closeOverlay()">
+    <img id="overlayImage" class="overlay-img">
+  </div>
+
+</body>
+</html>
+
 <script>
     function filterTable() {
     const input = document.getElementById("search-input").value.toLowerCase();
@@ -97,9 +108,14 @@
         setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
     }
 }
+
+function openOverlay(imageSrc) {
+    document.getElementById('overlayImage').src = imageSrc;
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('show');
+  }
 </script>
-</main>
 
-
-</body>
-</html>

@@ -40,9 +40,9 @@
                     <td><%= permintaan.Aset.nama_barang %></td>
                     <td><%= permintaan.Aset.Kategori.deskripsi %></td>
                     <td>
-                      <img class="img-fluid" alt="Gambar Aset: <%= permintaan.Aset.nama_barang %>"
-                          src="/public/uploads/<%= permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
-                  </td>
+                      <img class="img-fluid"  onclick="openOverlay(this.src)" alt="Gambar Aset: <%= permintaan.Aset.nama_barang %>"
+                          src="/public/uploads/<%= permintaan.Aset.Kategori.gambar %>" />
+                    </td>
                     <td><%= permintaan.alasan%></td>
                     <td width="15%">
                       <% if (permintaan.status_permintaan === "diterima") { %>
@@ -150,6 +150,11 @@
       </div>
     </div>
   </div>
+
+  <!-- Overlay untuk menampilkan gambar -->
+<div id="overlay" class="overlay" onclick="closeOverlay()">
+  <img id="overlayImage" class="overlay-img">
+</div>
 
 </body>
 </html>
@@ -356,6 +361,15 @@
           toast.classList.remove('show');
           toast.classList.add('hide');
       }, 2500);
+  }
+
+  function openOverlay(imageSrc) {
+    document.getElementById('overlayImage').src = imageSrc;
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('show');
   }
   </script>
   

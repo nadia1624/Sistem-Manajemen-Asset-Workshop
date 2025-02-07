@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { User } = require("../models");
+const { User, Aset, Permintaan, Penyerahan, Pemeliharaan, Kategori, PengajuanCek } = require("../models");
 
 const form = (req, res) => {
   res.render("login", { title: "Express", error: null });
@@ -49,15 +49,88 @@ const checklogin = async (req, res) => {
   }
 };
 
-const dashboard = async(req, res)=> {
+const dashboard = async (req, res) => {
   try {
     const title = "Dashboard";
-    res.render("admin/dashboard", {title})
+
+    // Ambil semua data aset
+    const semuaAset = await Aset.findAll({
+      attributes: ['status_peminjaman'] 
+    });
+
+    const semuaPermintaan = await Permintaan.findAll({
+      attributes: ['status_permintaan'] 
+    });
+
+    const semuaPenyerahan = await Penyerahan.findAll({
+      attributes: ['status_penyerahan'] 
+    });
+
+    const semuaCek = await PengajuanCek.findAll({
+      attributes: ['status_cek'] 
+    });
+
+    const pemeliharaanTerdekat = await Pemeliharaan.findOne({
+      where: { status_pemeliharaan: 'belum terlaksana' },
+      order: [['jadwal', 'ASC']], // Urutkan dari jadwal terdekat
+      attributes: ['status_pemeliharaan', 'jadwal'] // Ambil field yang diperlukan
+    });
+
+    let formattedDate = null;
+
+    if (pemeliharaanTerdekat) {
+      const bulanNama = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      ];
+
+      const jadwalDate = new Date(pemeliharaanTerdekat.jadwal);
+      formattedDate = `${jadwalDate.getDate()} ${bulanNama[jadwalDate.getMonth()]} ${jadwalDate.getFullYear()}`;
+    }
+
+    const kategoriData = await Kategori.findAll({
+      include: [{ model: Aset }]
+    });
+
+    // Hitung total aset
+    const totalAset = semuaAset.length;
+
+    // Hitung jumlah aset tersedia dan dipinjam
+    const asetTersedia = semuaAset.filter(aset => aset.status_peminjaman === 'tersedia').length;
+    const asetDipinjam = semuaAset.filter(aset => aset.status_peminjaman === 'dipinjam').length;
+
+    const permintaanDiproses = semuaPermintaan.filter(permintaan => permintaan.status_permintaan === 'diproses').length;
+
+    const penyerahanDiproses = semuaPenyerahan.filter(penyerahan => penyerahan.status_penyerahan === 'belum diserahkan').length;
+
+    const pengajuanDicek = semuaCek.filter(pengajuanCek => pengajuanCek.status_cek === 'sedang diproses').length;
+
+    const labels = kategoriData.map(k => k.nama_kategori);
+    const data = kategoriData.map(k => k.Asets.length);
+
+    res.render("admin/dashboard", {
+      title,
+      req: req,
+      statistik: {
+        totalAset,
+        asetTersedia,
+        asetDipinjam,
+        permintaanDiproses,
+        penyerahanDiproses,
+        pengajuanDicek,
+        labels,
+        data
+      },
+      jadwalTerdekat: pemeliharaanTerdekat ? { ...pemeliharaanTerdekat.toJSON(), formattedDate } : null
+    });
+
   } catch (error) {
-    console.error("Error during login: ", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error during dashboard access:", error);
+    res.status(500).json({ message: error.message });
   }
-}
+};
+
+
 function logout(req, res) {
   res.clearCookie("token");
   res.redirect("/");

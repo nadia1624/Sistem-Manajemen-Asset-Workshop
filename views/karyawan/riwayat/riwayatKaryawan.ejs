@@ -38,7 +38,7 @@
                                         <td><%= item.kategori %></td> <!-- Kategori -->
                                         <td><%= item.deskripsi %></td> <!-- Deskripsi -->
                                         <td>
-                                            <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= item.gambar_bukti %>" />
+                                            <img class="img-fluid" onclick="openOverlay(this.src)" alt="Gambar Aset" src="/public/uploads/<%= item.gambar_bukti %>" />
                                         </td> <!-- Gambar -->
                                         <td><%= item.tanggal_peminjaman %></td> <!-- Tanggal Peminjaman -->
                                         <td><%= item.tanggal_pengembalian %></td> <!-- Tanggal Pengembalian -->
@@ -66,4 +66,20 @@
             </div>
         </div>
     </main>
+
+          <!-- Overlay untuk menampilkan gambar -->
+          <div id="overlay" class="overlay" onclick="closeOverlay()">
+            <img id="overlayImage" class="overlay-img">
+       </div>
 </body>
+
+<script>
+    function openOverlay(imageSrc) {
+    document.getElementById('overlayImage').src = imageSrc;
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('show');
+  }
+</script>

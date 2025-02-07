@@ -1,5 +1,27 @@
 <%- include("../../layout/sidebar.ejs") %>
+<style>
+    /* Container untuk input dan kamera dengan ukuran seragam */
+    .preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
 
+  .preview-container img,
+  .preview-container video,
+  .preview-container canvas {
+    width: 100%;
+    max-width: 350px; /* Pastikan ukuran tetap sama */
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  #cameraPreview {
+    transform: scaleX(-1);
+}
+  
+</style>
 <main class="content">
     <div class="header-content">
       <h3 style="font-weight: bold;">Penyerahan Aset</h3>
@@ -89,57 +111,98 @@
   </div>
 </main>
 
-
 <!-- Modal -->
 <div id="addModal" class="popup-modal">
-  <div class="modal-content">
-      <span id="close" class="close-btn">&times;</span>
-      <h3 id="modalTitle">Konfirmasi Penyerahan Aset</h3>
-      <form id="penyerahanForm" enctype="multipart/form-data">
-          <label for="namaKaryawan" class="left-label">Nama Peminjam</label>
-          <input type="text" id="namaKaryawan" name="namaKaryawan" value="" readonly required />
+  <div class="modal-content" style="max-height: 80vh; min-width: 425px; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
+    <span id="close" class="close-btn">&times;</span>
+    <h3 id="modalTitle">Konfirmasi Penyerahan Aset</h3>
+    <form id="penyerahanForm" enctype="multipart/form-data">
+      <label for="namaKaryawan" class="left-label">Nama Peminjam</label>
+      <input type="text" id="namaKaryawan" name="namaKaryawan" value="" readonly required />
 
-          <label for="unitKerja" class="left-label">Unit Kerja</label>
-          <input type="text" id="unitKerja" name="unitKerja" value="" readonly required />
+      <label for="unitKerja" class="left-label">Unit Kerja</label>
+      <input type="text" id="unitKerja" name="unitKerja" value="" readonly required />
 
-          <label for="namaAset" class="left-label">Nama Aset</label>
-          <input type="text" id="namaAset" name="namaAset" value="" readonly required />
+      <label for="namaAset" class="left-label">Nama Aset</label>
+      <input type="text" id="namaAset" name="namaAset" value="" readonly required />
 
-          <label class="left-label">Penerima Aset:</label>
-          <div class="radio-group">
-              <label>
-                  <input type="radio" id="penerimaKaryawan" name="jenisPenerima" value="karyawan" checked />
-                  Yang bersangkutan
-              </label>
-              <label>
-                  <input type="radio" id="penerimaLain" name="jenisPenerima" value="lain" />
-                  Diwakilkan
-              </label>
-          </div>
+      <label class="left-label">Penerima Aset:</label>
+      <div class="radio-group">
+        <label>
+          <input type="radio" id="penerimaKaryawan" name="jenisPenerima" value="karyawan" checked />
+          Yang bersangkutan
+        </label>
+        <label>
+          <input type="radio" id="penerimaLain" name="jenisPenerima" value="lain" />
+          Diwakilkan
+        </label>
+      </div>
 
-          <div id="perwakilanInput" style="display: none;">
-              <label for="namaPenerima" class="left-label">Nama Perwakilan:</label>
-              <input type="text" id="namaPenerima" name="namaPenerima" placeholder="Nama perwakilan" />
-          </div>
+      <div id="perwakilanInput" style="display: none;">
+        <label for="namaPenerima" class="left-label">Nama Perwakilan:</label>
+        <input type="text" id="namaPenerima" name="namaPenerima" placeholder="Nama perwakilan"/>
+      </div>
 
-          <label for="gambarBukti" class="left-label">Bukti Penyerahan:</label>
-          <input type="file" id="gambarBukti" name="gambar_bukti" class="form-control" accept="image/*" required />
+      <label class="left-label">Bukti Penyerahan:</label>
+      <div class="radio-group">
+        <label>
+          <input type="radio" id="uploadFile" name="jenisBukti" value="upload" checked />
+          Upload File
+        </label>
+        <label>
+          <input type="radio" id="gunakanKamera" name="jenisBukti" value="kamera" />
+          Gunakan Kamera
+        </label>
+      </div>
 
-          <div class="flex justify-center space-x-4">
-              <button type="button" class="btn cancel-btn">Tidak</button>
-              <button type="submit" class="btn finish-btn">Ya</button>
-          </div>
-      </form>
+<!-- Upload File Container -->
+<div id="uploadContainer">
+  <input type="file" id="gambarBukti" name="gambar_bukti" class="form-control" accept="image/*" onchange="previewImage(event)" />
+  <div id="filePreviewContainer" class="preview-container" style="display: none;">
+    <img id="filePreview" src="" alt="Preview Gambar" />
   </div>
+</div>
+
+<!-- Kamera Container -->
+<div id="kameraContainer" style="display: none;">
+  <div class="preview-container">
+    <video id="cameraPreview" autoplay playsinline></video>
+    <canvas id="capturedCanvas" style="display: none;"></canvas>
+  </div>
+  <button type="button" id="capturePhoto" class="btn btn-capture" style="  background-color: #4CAF50; color: white;
+  border-radius: 4px;
+  cursor: pointer;">
+    <i class="fas fa-camera"></i> Ambil Foto
+  </button>
+  <button type="button" id="retakePhoto" class="btn btn-retake" style="display: none;     background-color: #f44336;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;">
+    <i class="fas fa-redo"></i> Ambil Ulang
+  </button>
+  <div id="cameraPreviewContainer" class="preview-container" style="display: none;">
+    <img id="cameraPreviewImage" src="" alt="Preview Gambar Kamera" />
+  </div>
+</div>
+
+      <div class="flex justify-center space-x-4">
+        <button type="button" class="btn cancel-btn">Tidak</button>
+        <button type="submit" class="btn finish-btn">Ya</button>
+      </div>
+    </form>
+  </div>
+
   <!-- Loading spinner -->
   <div id="loading" class="loading-container" style="display: none;">
     <div class="spinner"></div>
-    <p>Proses sedang berlangsung...</p>
   </div>
 </div>
-  
+
 <script>
-  const modal = document.getElementById("addModal");
+ let stream = null;
+let capturedBlob = null;
+
+const modal = document.getElementById("addModal");
 const closeBtn = document.getElementById("close");
 const cancelBtn = document.querySelector(".cancel-btn");
 const penyerahanForm = document.getElementById("penyerahanForm");
@@ -147,120 +210,295 @@ const penerimaKaryawan = document.getElementById("penerimaKaryawan");
 const penerimaLain = document.getElementById("penerimaLain");
 const perwakilanInput = document.getElementById("perwakilanInput");
 const namaPenerimaInput = document.getElementById("namaPenerima");
-const namaKaryawanInput = document.getElementById("namaKaryawan");
+const uploadFileOption = document.getElementById("uploadFile");
+const gunakanKameraOption = document.getElementById("gunakanKamera");
+const uploadContainer = document.getElementById("uploadContainer");
+const kameraContainer = document.getElementById("kameraContainer");
+const video = document.getElementById("cameraPreview");
+const captureBtn = document.getElementById("capturePhoto");
+const retakeBtn = document.getElementById("retakePhoto");
+const canvas = document.getElementById("capturedCanvas");
+const filePreviewContainer = document.getElementById("filePreviewContainer");
+const filePreview = document.getElementById("filePreview");
+const cameraPreviewContainer = document.getElementById("cameraPreviewContainer");
+const cameraPreviewImage = document.getElementById("cameraPreviewImage");
 
-function showModal(id, namaAset, namaKaryawan, unitKerja) {
-    modal.style.display = "flex";
-
-    document.getElementById("namaKaryawan").value = namaKaryawan;
-    document.getElementById("unitKerja").value = unitKerja;
-    document.getElementById("namaAset").value = namaAset;
-    penyerahanForm.dataset.id = id;
+// Fungsi untuk membuka kamera
+async function openCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    });
+    video.srcObject = stream;
+    video.style.display = "block";
+    captureBtn.style.display = "block";
+    retakeBtn.style.display = "none";
+    cameraPreviewContainer.style.display = "none";
+  } catch (error) {
+    console.error("Error accessing camera:", error);
+    alert("Gagal mengakses kamera: " + error.message);
+  }
 }
 
-function togglePenerima() {
-    if (penerimaLain.checked) {
-        perwakilanInput.style.display = "block";
-        namaPenerimaInput.setAttribute("required", "true");
-    } else {
-        perwakilanInput.style.display = "none";
-        namaPenerimaInput.removeAttribute("required");
-        namaPenerimaInput.value = "";
+// Fungsi untuk menghentikan kamera
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+  video.srcObject = null;
+}
+
+// Toggle antara upload file dan kamera
+function toggleBuktiPenyerahan() {
+  stopCamera();
+  
+  if (uploadFileOption.checked) {
+    uploadContainer.style.display = "block";
+    kameraContainer.style.display = "none";
+    filePreviewContainer.style.display = "none";
+    cameraPreviewContainer.style.display = "none";
+    capturedBlob = null;
+  } else if (gunakanKameraOption.checked) {
+    uploadContainer.style.display = "none";
+    kameraContainer.style.display = "block";
+    openCamera();
+    // Reset file input
+    const fileInput = document.getElementById("gambarBukti");
+    if (fileInput) fileInput.value = "";
+  }
+}
+
+// Event handler untuk capture foto
+captureBtn.addEventListener("click", () => {
+  const context = canvas.getContext("2d");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+    // Membalik gambar horizontal agar hasilnya tidak cermin
+    context.translate(canvas.width, 0);
+    context.scale(-1, 1);
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  canvas.toBlob((blob) => {
+    capturedBlob = blob;
+    const imageUrl = URL.createObjectURL(blob);
+    cameraPreviewImage.src = imageUrl;
+    cameraPreviewContainer.style.display = "block";
+    
+    stopCamera();
+    video.style.display = "none";
+    captureBtn.style.display = "none";
+    retakeBtn.style.display = "block";
+  }, "image/jpeg", 0.8);
+});
+
+// Event handler untuk mengambil ulang foto
+retakeBtn.addEventListener("click", () => {
+  capturedBlob = null;
+  cameraPreviewContainer.style.display = "none";
+  openCamera();
+});
+
+// Fungsi preview image yang diperbaiki
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                filePreview.src = e.target.result;
+                filePreviewContainer.style.display = "block";
+                cameraPreviewContainer.style.display = "none";
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert('Mohon upload file gambar (jpg, png, gif, etc.)');
+            event.target.value = ''; // Reset input file
+            filePreviewContainer.style.display = "none";
+        }
     }
+}
+
+// Toggle input perwakilan
+function togglePenerima() {
+  if (penerimaLain.checked) {
+    perwakilanInput.style.display = "block";
+    namaPenerimaInput.setAttribute("required", "true");
+  } else {
+    perwakilanInput.style.display = "none";
+    namaPenerimaInput.removeAttribute("required");
+    namaPenerimaInput.value = "";
+  }
 }
 
 penerimaKaryawan.addEventListener("change", togglePenerima);
 penerimaLain.addEventListener("change", togglePenerima);
+uploadFileOption.addEventListener("change", toggleBuktiPenyerahan);
+gunakanKameraOption.addEventListener("change", toggleBuktiPenyerahan);
 
-closeBtn.onclick = function () {
-    modal.style.display = "none";
-};
-
-cancelBtn.onclick = function () {
-    modal.style.display = "none";
-};
-
-window.onclick = function (event) {
-    if (event.target === modal) {
-        modal.style.display = "none";
-    }
-};
-
+// Submit form handler
 penyerahanForm.onsubmit = async function (event) {
     event.preventDefault();
-    const formData = new FormData(penyerahanForm);
+    const formData = new FormData();
     const id = penyerahanForm.dataset.id;
 
-    // Menampilkan spinner loading
-    document.getElementById("loading").style.display = "flex";
+    // Tambahkan data formulir dasar
+    formData.append('namaKaryawan', document.getElementById('namaKaryawan').value);
+    formData.append('unitKerja', document.getElementById('unitKerja').value);
+    formData.append('namaAset', document.getElementById('namaAset').value);
 
-    // Pastikan untuk menambahkan data penerima dan status diwakilkan
-    if (document.getElementById("penerimaKaryawan").checked) {
+    // Handle file upload dan camera capture
+    if (gunakanKameraOption.checked && capturedBlob) {
+        formData.append("gambar_bukti", capturedBlob, "capture.jpg");
+    } else if (uploadFileOption.checked) {
+        const fileInput = document.getElementById("gambarBukti");
+        if (fileInput.files[0]) {
+            formData.append("gambar_bukti", fileInput.files[0]);
+        }
+    }
+
+    // Validasi gambar
+    const hasImage = formData.has("gambar_bukti") || document.getElementById("gambarBukti").files.length > 0;
+    if (!hasImage) {
+        alert("Harap unggah bukti gambar melalui file atau gunakan kamera!");
+        return;
+    }
+
+    // Tambahkan data penerima
+    if (penerimaKaryawan.checked) {
         formData.append("nama_perwakilan", "");
         formData.append("isDiwakilkan", "false");
     } else {
         const namaPerwakilan = document.getElementById("namaPenerima").value;
+        if (!namaPerwakilan) {
+            alert("Harap isi nama perwakilan!");
+            return;
+        }
         formData.append("nama_perwakilan", namaPerwakilan);
         formData.append("isDiwakilkan", "true");
     }
 
+    // Tampilkan loading
+    document.getElementById("loading").style.display = "flex";
+
     try {
         const response = await fetch(`/penyerahanAset/${id}`, {
             method: "PATCH",
-            body: formData,
+            body: formData
         });
 
         const result = await response.json();
 
-        // Sembunyikan loading sebelum menampilkan alert, dengan sedikit delay agar tampilan diperbarui dulu
+        // Hide loading spinner before alerting
         document.getElementById("loading").style.display = "none";
 
-        setTimeout(() => {
-            if (response.ok) {
+        if (response.ok) {
+            setTimeout(() => {
                 alert(result.message);
                 location.reload();
-            } else {
+            }, 100); // Tambahkan sedikit delay agar UI lebih smooth
+        } else {
+            setTimeout(() => {
                 alert(`Error: ${result.error}`);
-            }
-        }, 100); // Delay 100ms agar browser bisa menyegarkan tampilan sebelum alert
+            }, 100);
+        }
     } catch (error) {
-        console.error("Terjadi kesalahan:", error);
-        
-        // Sembunyikan loading sebelum menampilkan alert
+        console.error("Error occurred:", error);
         document.getElementById("loading").style.display = "none";
-
         setTimeout(() => {
-            alert("Terjadi kesalahan saat menyerahkan aset. Silakan coba lagi.");
+            alert("Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
         }, 100);
     } finally {
-        // Pastikan modal juga ditutup setelah proses selesai
         modal.style.display = "none";
     }
 };
 
-function filterTable() {
+// Show modal with filled information
+function showModal(id, namaAset, namaKaryawan, unitKerja) {
+    modal.style.display = "flex";
+
+    // Set values to form inputs
+    document.getElementById("namaKaryawan").value = namaKaryawan;
+    document.getElementById("unitKerja").value = unitKerja;
+    document.getElementById("namaAset").value = namaAset;
+    penyerahanForm.dataset.id = id;
+
+    // Default to upload file view when modal is opened
+    uploadFileOption.checked = true;
+    toggleBuktiPenyerahan();
+}
+
+// Fungsi reset form yang diperbaiki
+function resetForm() {
+    stopCamera();
+    penyerahanForm.reset();
+    filePreviewContainer.style.display = "none";
+    cameraPreviewContainer.style.display = "none";
+    capturedBlob = null;
+    perwakilanInput.style.display = "none";
+    
+    // Reset file input
+    const fileInput = document.getElementById("gambarBukti");
+    if (fileInput) {
+        fileInput.value = "";
+    }
+    
+    uploadFileOption.checked = true;
+    toggleBuktiPenyerahan();
+}
+
+// Modal event handlers
+closeBtn.onclick = function() {
+    resetForm();
+    modal.style.display = "none";
+};
+
+cancelBtn.onclick = function() {
+    resetForm();
+    modal.style.display = "none";
+};
+
+window.onclick = function(event) {
+    if (event.target === modal) {
+        resetForm();
+        modal.style.display = "none";
+    }
+};
+
+  // Filter table rows based on search input
+  function filterTable() {
     const input = document.getElementById("search-input").value.toLowerCase();
     const rows = document.querySelectorAll(".table-compact tbody tr");
     let hasMatch = false;
 
     rows.forEach(row => {
-        const rowText = row.textContent.toLowerCase();
-        if (rowText.includes(input)) {
-            row.style.display = "";
-            hasMatch = true;
-        } else {
-            row.style.display = "none";
-        }
+      const rowText = row.textContent.toLowerCase();
+      if (rowText.includes(input)) {
+        row.style.display = "";
+        hasMatch = true;
+      } else {
+        row.style.display = "none";
+      }
     });
 
-    const noDataMessage = document.getElementById("no-data-message");
-    if (hasMatch) {
-        noDataMessage.style.opacity = "0";
-        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
-    } else {
-        noDataMessage.style.display = "block"; 
-        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50);
+    const noResultsMessage = document.getElementById("noResultsMessage");
+    noResultsMessage.style.display = hasMatch ? "none" : "block";
+  }
+// Initialize when document loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Initial setup
+    resetForm();
+    
+    // Add search input event listener
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", filterTable);
     }
-}
-
+});
 </script>

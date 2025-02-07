@@ -89,24 +89,54 @@
   </main>
 
 
-
-
-  <!-- Modal Pop-Up Tanda Tangan -->
-  <div id="uploadModal" class="modal">
-    <div class="modal-content">
+<!-- Modal Upload Tanda Tangan -->
+<div id="uploadModal" class="modal">
+  <div class="modal-content">
       <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
-      <h3>Upload Tanda Tangan</h3>
+      <h3>Upload atau Gambar Tanda Tangan</h3>
+      
       <form id="uploadForm" enctype="multipart/form-data">
-        <input type="hidden" id="permintaanId" name="permintaanId" value="" />
-        <label for="signatureInput">Pilih file tanda tangan:</label>
-        <input type="file" id="signatureInput" name="file" accept="image/*" required />
-        <div class="modal-actions">
-          <button type="button" class="btn cancel-btn" onclick="closeModal('uploadModal')">Batal</button>
-          <button type="button" class="btn finish-btn" onclick="submitUpload()">Upload</button>
-        </div>
+          <input type="hidden" id="permintaanId" name="permintaanId" value="" />
+
+          <!-- Pilihan metode upload dengan radio button -->
+          <div class="upload-options">
+              <label>
+                  <input type="radio" name="uploadMethod" value="file" checked onclick="toggleSignatureMethod('file')">
+                  Unggah File
+              </label>
+              <label>
+                  <input type="radio" name="uploadMethod" value="canvas" onclick="toggleSignatureMethod('canvas')">
+                  Gambar Tanda Tangan
+              </label>
+          </div>
+
+          <!-- Input File Upload (Default Ditampilkan) -->
+          <div id="fileUploadSection">
+              <label for="signatureInput">Pilih file tanda tangan:</label>
+              <input type="file" id="signatureInput" name="file" accept="image/*" onchange="previewSignature(event)" />
+              <img id="signaturePreview" src="" class="preview-image" />
+          </div>
+
+          <!-- Canvas untuk menggambar tanda tangan -->
+          <div id="canvasSection">
+              <label>Gambar tanda tangan:</label>
+              <canvas id="signatureCanvas" width="350" height="200" style="width: 350px; height: 200px;"></canvas>
+              <button type="button" class="clear-canvas-btn" onclick="clearCanvas()">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.24 2c-.66 0-1.3.26-1.77.73L2.73 14.47a2.5 2.5 0 000 3.54l3.54 3.54c.98.98 2.56.98 3.54 0L21.27 10c.98-.98.98-2.56 0-3.54L18.73 4c-.47-.47-1.11-.73-1.77-.73h-.72zm-3.65 3.06l5.65 5.65-9.17 9.17c-.19.19-.44.29-.71.29s-.52-.1-.71-.29l-3.54-3.54c-.39-.39-.39-1.02 0-1.41l9.17-9.17zm6.71.7l1.54 1.54c.39.39.39 1.02 0 1.41L19.5 10l-2.83-2.83 1.41-1.41c.19-.19.44-.29.71-.29s.52.1.71.29zM5 20h14v2H5v-2z"/>
+                </svg>
+                Hapus
+            </button>                    
+          </div>
+
+          <div class="modal-actions">
+              <button type="button" class="btn cancel-btn" onclick="closeModal('uploadModal')">Batal</button>
+              <button type="button" class="btn finish-btn" onclick="submitUpload()">Upload</button>
+          </div>
       </form>
-    </div>
   </div>
+</div>
+
 
   <!-- Modal Pop-Up Cancel Permintaan -->
   <div id="cancelModal" class="modal">
@@ -126,122 +156,210 @@
 
 <script>
   // Fungsi untuk membuka modal dan menyimpan ID permintaan
-function openModal(modalId, permintaanId) {
-    const modal = document.getElementById(modalId);
-    modal.style.display = 'flex';
+  function openModal(modalId, permintaanId) {
+      const modal = document.getElementById(modalId);
+      modal.style.display = 'flex';
+  
+      if (modalId === 'cancelModal' && permintaanId) {
+          modal.setAttribute('data-permintaan-id', permintaanId);
+      }
+  
+      if (modalId === 'uploadModal' && permintaanId) {
+          document.getElementById('permintaanId').value = permintaanId;
+          toggleSignatureMethod('file'); // Set default ke "Unggah File" saat modal dibuka
+      }
+  }
+  
+  // Fungsi untuk menutup modal
+  function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+  }
+  
+  // Inisialisasi canvas dan event listener
+  const canvas = document.getElementById("signatureCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 150;  // Set ukuran canvas eksplisit
+canvas.height = 100;
+  let drawing = false;
+  
+  // Toggle metode tanda tangan
+  function toggleSignatureMethod(method) {
+      const fileSection = document.getElementById("fileUploadSection");
+      const canvasSection = document.getElementById("canvasSection");
+      const fileInput = document.getElementById("signatureInput");
+      const preview = document.getElementById("signaturePreview");
+  
+      if (method === "file") {
+          fileSection.style.display = "block";
+          canvasSection.style.display = "none";
+          clearCanvas(); // Reset canvas jika sebelumnya menggambar
+      } else {
+          fileSection.style.display = "none";
+          canvasSection.style.display = "block";
+          fileInput.value = ""; // Reset input file jika sebelumnya memilih file
+          preview.style.display = "none"; // Sembunyikan preview gambar
+      }
+  }
+  
+  // Preview gambar sebelum upload
+  function previewSignature(event) {
+      const file = event.target.files[0];
+      if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+              document.getElementById("signaturePreview").src = e.target.result;
+              document.getElementById("signaturePreview").style.display = "block";
+              clearCanvas(); // Reset canvas jika sebelumnya menggambar
+          };
+          reader.readAsDataURL(file);
+      }
+  }
+  
+  // Event menggambar di canvas
+  canvas.addEventListener("mousedown", (e) => {
+    drawing = true;
+    const rect = canvas.getBoundingClientRect();
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+});
 
-    if (modalId === 'cancelModal' && permintaanId) {
-        modal.setAttribute('data-permintaan-id', permintaanId);
-    }
+  
+  canvas.addEventListener("mousemove", (e) => {
+    if (!drawing) return;
 
-    if (modalId === 'uploadModal' && permintaanId) {
-        document.getElementById('permintaanId').value = permintaanId;
-    }
-}
+    const rect = canvas.getBoundingClientRect(); // Dapatkan posisi canvas di layar
+    const x = e.clientX - rect.left; // Hitung koordinat X relatif ke canvas
+    const y = e.clientY - rect.top; // Hitung koordinat Y relatif ke canvas
 
-// Fungsi untuk menutup modal
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.style.display = 'none';
-}
+    ctx.lineTo(x, y);
+    ctx.stroke();
+});
 
-// Fungsi untuk mengirim upload tanda tangan
-async function submitUpload() {
-    const permintaanId = document.getElementById('permintaanId').value;
-    const fileInput = document.getElementById('signatureInput');
-
-    if (!fileInput.files[0]) {
-        showToast('Harap pilih file tanda tangan terlebih dahulu.', false);
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    formData.append('permintaanId', permintaanId);
-
-    try {
-        const response = await fetch('/karyawan/permintaanAset/uploadTandaTangan', {
-            method: 'POST',
-            body: formData,
-        });
-
-        const result = await response.json();
-
-        closeModal("uploadModal"); 
-
-        if (response.ok) {
-            showToast(result.message || 'Tanda tangan berhasil diupload.');
-            setTimeout(() => window.location.reload(), 3000);
-        } else {
-            showToast(result.message || 'Gagal mengupload tanda tangan.', false);
-        }
-    } catch (error) {
-        console.error('Error saat mengupload tanda tangan:', error);
-        showToast('Terjadi kesalahan saat mengupload tanda tangan.', false);
-    }
-}
-
-// Fungsi untuk menghandle penghapusan permintaan
-async function confirmCancel() {
-    const cancelModal = document.getElementById("cancelModal");
-    const permintaanId = cancelModal.getAttribute("data-permintaan-id"); // Ambil ID permintaan
-
-    if (!permintaanId) {
-        showToast("ID permintaan tidak valid.", false);
-        return;
-    }
-
-    // Tutup modal sebelum melakukan fetch
-    closeModal("cancelModal");
-
-    try {
-        const response = await fetch(`/karyawan/permintaanAset/${permintaanId}`, {
-            method: "DELETE",
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            showToast("Permintaan berhasil dibatalkan(hapus).");
-            setTimeout(() => window.location.reload(), 3000);
-        } else {
-            showToast(result.message || "Gagal membatalkan permintaan.", false);
-        }
-    } catch (error) {
-        console.error("Error saat membatalkan permintaan:", error);
-        showToast("Terjadi kesalahan saat membatalkan permintaan.", false);
-    }
-}
-
-// Menutup modal jika user mengklik di luar modal (untuk semua modal)
-window.onclick = function (event) {
-    const modals = document.querySelectorAll(".modal");
-    modals.forEach(modal => {
-        if (event.target === modal) {
-            closeModal(modal.id);
-        }
-    });
-};
-
-// Fungsi untuk menampilkan notifikasi toast
-function showToast(message, isSuccess = true) {
-    const toast = document.getElementById("toastNotification");
-    toast.textContent = message;
-    toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
-
-    // Pastikan animasi ulang jika toast sebelumnya masih ditampilkan
-    toast.classList.remove('show', 'hide');
-    void toast.offsetWidth; // **Trik untuk memaksa browser reset animasi**
-    
-    toast.classList.add('show');
-
-    // Sembunyikan toast setelah 3 detik
-    setTimeout(() => {
-        toast.classList.remove('show');
-        toast.classList.add('hide');
-    }, 2500);
-}
-
-</script>
+  
+  canvas.addEventListener("mouseup", () => {
+      drawing = false;
+  });
+  
+  canvas.addEventListener("mouseleave", () => {
+      drawing = false;
+  });
+  
+  // Fungsi untuk membersihkan canvas
+  function clearCanvas(event) {
+      if (event) event.preventDefault(); // Mencegah form submit
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  
+  // Fungsi submit upload tanda tangan
+  async function submitUpload() {
+      const permintaanId = document.getElementById('permintaanId').value;
+      const fileInput = document.getElementById('signatureInput');
+      const fileSection = document.getElementById("fileUploadSection");
+      const canvasSection = document.getElementById("canvasSection");
+  
+      const formData = new FormData();
+      formData.append('permintaanId', permintaanId);
+  
+      if (fileSection.style.display === "block" && fileInput.files.length > 0) {
+          formData.append('file', fileInput.files[0]);
+      } else if (canvasSection.style.display === "block") {
+          if (!isCanvasEmpty(canvas)) {
+              formData.append('signatureData', canvas.toDataURL("image/png"));
+          } else {
+              showToast("Silakan gambar tanda tangan terlebih dahulu.", false);
+              return;
+          }
+      } else {
+          showToast("Silakan pilih atau gambar tanda tangan terlebih dahulu.", false);
+          return;
+      }
+  
+      try {
+          const response = await fetch('/karyawan/permintaanAset/uploadTandaTangan', {
+              method: 'POST',
+              body: formData,
+          });
+  
+          const result = await response.json();
+          closeModal("uploadModal");
+  
+          if (response.ok) {
+              showToast(result.message || 'Tanda tangan berhasil diupload.');
+              setTimeout(() => window.location.reload(), 3000);
+          } else {
+              showToast(result.message || 'Gagal mengupload tanda tangan.', false);
+          }
+      } catch (error) {
+          console.error('Error saat mengupload tanda tangan:', error);
+          showToast('Terjadi kesalahan saat mengupload tanda tangan.', false);
+      }
+  }
+  
+  // Fungsi untuk mengecek apakah canvas kosong
+  function isCanvasEmpty(canvas) {
+      const empty = document.createElement('canvas');
+      empty.width = canvas.width;
+      empty.height = canvas.height;
+      return canvas.toDataURL() === empty.toDataURL();
+  }
+  
+  // Fungsi untuk menghandle penghapusan permintaan
+  async function confirmCancel() {
+      const cancelModal = document.getElementById("cancelModal");
+      const permintaanId = cancelModal.getAttribute("data-permintaan-id");
+  
+      if (!permintaanId) {
+          showToast("ID permintaan tidak valid.", false);
+          return;
+      }
+  
+      closeModal("cancelModal");
+  
+      try {
+          const response = await fetch(`/karyawan/permintaanAset/${permintaanId}`, {
+              method: "DELETE",
+          });
+  
+          const result = await response.json();
+  
+          if (response.ok) {
+              showToast("Permintaan berhasil dibatalkan(hapus).");
+              setTimeout(() => window.location.reload(), 2500);
+          } else {
+              showToast(result.message || "Gagal membatalkan permintaan.", false);
+          }
+      } catch (error) {
+          console.error("Error saat membatalkan permintaan:", error);
+          showToast("Terjadi kesalahan saat membatalkan permintaan.", false);
+      }
+  }
+  
+  // Menutup modal jika user mengklik di luar modal
+  window.onclick = function(event) {
+      document.querySelectorAll(".modal").forEach(modal => {
+          if (event.target === modal) {
+              closeModal(modal.id);
+          }
+      });
+  };
+  
+  // Fungsi untuk menampilkan notifikasi toast
+  function showToast(message, isSuccess = true) {
+      const toast = document.getElementById("toastNotification");
+      toast.textContent = message;
+      toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
+  
+      toast.classList.remove('show', 'hide');
+      void toast.offsetWidth; // Reset animasi
+  
+      toast.classList.add('show');
+  
+      setTimeout(() => {
+          toast.classList.remove('show');
+          toast.classList.add('hide');
+      }, 2500);
+  }
+  </script>
+  
   
 

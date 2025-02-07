@@ -393,16 +393,16 @@ returnForm.addEventListener('submit', async function(event) {
         
         // Hide loading spinner
         loadingSpinner.style.display = 'none';
-
+        
         if (response.ok) {
-            // Show alert first, then reload and close
-            alert(data.message);
             setTimeout(() => {
-                closeModal();
+                alert(data.message);
                 location.reload();
-            }, 100);
+            }, 100); 
         } else {
-            alert(data.message);
+            setTimeout(() => {
+                alert(data.message);
+            }, 100);
         }
     } catch (error) {
         // Add delay before hiding spinner and showing error

@@ -1,7 +1,7 @@
 <%- include("../../layout/sidebar.ejs") %>
 
 <main class="content">
-    <div class="header-content">
+    <div class="header-content" style="position: sticky; top: 0;  background-color: #f5f5f5;  z-index: 1000; ">
         <td>
             <a href="/admin/permintaanAset">
                 <button id="" style="display: flex; align-items: center;">
@@ -12,57 +12,79 @@
         </td>
     </div>
 
-    <body>
-        <!-- Detail Informasi Aset -->
-        <div class="container-fluid px-4">
-            <div class="container2">
-                <div class="content-section">
-                    <h3>Detail Aset</h3>
-                    <div class="details-with-image">
-                        <div class="details">
-                            <p><strong>Serial Number</strong> : <%= permintaan.Aset.serial_number || 'Tidak Tersedia' %></p>
-                            <p><strong>Nama Barang</strong>    : <%= permintaan.Aset.nama_barang %></p>
-                            <p><strong>Kategori</strong>       : <%= permintaan.Aset.Kategori.nama_kategori %></p>
-                            <p><strong>Deskripsi</strong>      : <%= permintaan.Aset.Kategori.deskripsi || 'Tidak ada deskripsi.' %></p>
+    <div class="detail">
+            <!-- Detail Informasi Aset -->
+            <div class="container-fluid px-4">
+                <div class="container2">
+                    <div class="content-section">
+                        <h3>Detail Aset</h3>
+                        <div class="details-with-image">
+                            <div class="details">
+                                <p><strong>Serial Number</strong> : <%= permintaan.Aset.serial_number || 'Tidak Tersedia' %></p>
+                                <p><strong>Nama Barang</strong>    : <%= permintaan.Aset.nama_barang %></p>
+                                <p><strong>Kategori</strong>       : <%= permintaan.Aset.Kategori.nama_kategori %></p>
+                                <p><strong>Deskripsi</strong>      : <%= permintaan.Aset.Kategori.deskripsi || 'Tidak ada deskripsi.' %></p>
+                            </div>
+                            <img 
+                                alt="Gambar Aset" 
+                                height="auto" width="250" 
+                                src="/public/uploads/<%= permintaan.Aset.Kategori.gambar || 'https://placehold.co/200x150' %>" 
+                            />
                         </div>
-                        <img 
-                            alt="Gambar Aset" 
-                            height="auto" width="150" 
-                            src="/public/uploads/<%= permintaan.Aset.Kategori.gambar || 'https://placehold.co/200x150' %>" 
-                        />
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Detail Informasi Peminjam -->
-        <div class="container-fluid px-4">
-            <div class="container2">
-                <div class="content-section">
-                    <h3>Detail Peminjam</h3>
-                    <div class="details">
-                        <p><strong>Tanggal Permintaan</strong> : <%= permintaan.tanggal_permintaan %></p>
-                        <p><strong>Nama Karyawan</strong>      : <%= permintaan.User.nama %></p>
-                        <p><strong>Unit Kerja</strong>         : <%= permintaan.User.unit_kerja %></p>
-                        <p><strong>Alasan</strong>             : <%= permintaan.alasan %></p>
-                        <p><strong>Status Permintaan</strong>  : 
-                            <% if (permintaan.status_permintaan === "diterima") { %>
-                                Disetujui
-                            <% } else if (permintaan.status_permintaan === "ditolak") { %>
-                                Ditolak
-                            <% } else { %>
-                                 Diproses
-                            <% } %>
-                        </p>
+    
+            <!-- Detail Informasi Peminjam -->
+            <div class="container-fluid px-4">
+                <div class="container2">
+                    <div class="content-section">
+                        <h3>Detail Peminjam</h3>
+                        <div class="details">
+                            <p><strong>Tanggal Permintaan</strong> : <%= permintaan.tanggal_permintaan %></p>
+                            <p><strong>Nama Karyawan</strong>      : <%= permintaan.User.nama %></p>
+                            <p><strong>Unit Kerja</strong>         : <%= permintaan.User.unit_kerja %></p>
+                            <p><strong>Alasan</strong>             : <%= permintaan.alasan %></p>
+                            <p><strong>Status Permintaan</strong>  : 
+                                <% if (permintaan.status_permintaan === "diterima") { %>
+                                    Disetujui
+                                <% } else if (permintaan.status_permintaan === "ditolak") { %>
+                                    Ditolak
+                                <% } else { %>
+                                     Diproses
+                                <% } %>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
+    
 
-    </body>
+   
 </main>
 
 <style>
+    .header-content {
+    position: sticky;
+    top: 0;
+    background-color: #f5f5f5;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+/* Bagian detail saja yang bisa di-scroll */
+.detail {
+    height: calc(100vh - 60px); /* 60px adalah tinggi header */
+    padding-top: 20px; /* Jaga jarak agar konten tidak terlalu rapat */
+}
+
+/* Menyesuaikan tinggi container agar tidak terlalu panjang */
+.container-fluid {
+    margin-bottom: 20px;
+}
+
+
     /* General styling for the main container */
     .container-fluid {
         margin-bottom: 20px;

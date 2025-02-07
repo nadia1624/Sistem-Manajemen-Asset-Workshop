@@ -195,8 +195,6 @@ const tambahAset = async (req, res) => {
       namaAset,
       ipAddress,
       caraDapat,
-      kondisiAset,
-      statusPinjam,
       kategoriId,
     } = req.body;
 
@@ -206,8 +204,8 @@ const tambahAset = async (req, res) => {
       nama_barang: namaAset,
       ip_address: ipAddress,
       cara_dapat: caraDapat,
-      kondisi_aset: kondisiAset,
-      status_peminjaman: statusPinjam,
+      kondisi_aset: "baik",            
+      status_peminjaman: "tersedia",   
       kategoriId,
     });
 
@@ -220,6 +218,7 @@ const tambahAset = async (req, res) => {
     });
   }
 };
+
 
 const tampilkanEditAset = async (req, res) => {
     try {
@@ -247,31 +246,33 @@ const tampilkanEditAset = async (req, res) => {
 };
 
 const editAset = async (req, res) => {
-    try {
-        const { serialNumber } = req.params;
-        const { hostname, namaAset, ipAddress, caraDapat, kondisiAset, statusPinjam } = req.body;
+  try {
+      const { serialNumber } = req.params;
+      const { hostname, namaAset, ipAddress, caraDapat, kondisiAset, statusPinjam } = req.body;
 
-        const aset = await Aset.findByPk(serialNumber);
-        if (!aset) {
-            return res.status(404).json({ message: 'Aset tidak ditemukan' });
-        }
-        
-        await aset.update({
-            hostname,
-            nama_barang: namaAset,
-            ip_address: ipAddress,
-            cara_dapat: caraDapat,
-            kondisi_aset: kondisiAset,
-            status_peminjaman: statusPinjam
-        });
+      const aset = await Aset.findByPk(serialNumber);
+      if (!aset) {
+          return res.status(404).json({ message: 'Aset tidak ditemukan' });
+      }
 
-        res.redirect(`/admin/list-aset/${aset.kategoriId}`);
+      await aset.update({
+          hostname,
+          nama_barang: namaAset,
+          ip_address: ipAddress,
+          cara_dapat: caraDapat,
+          kondisi_aset: (aset.status_peminjaman === 'dipinjam' || aset.status_peminjaman === 'sedang diajukan') 
+            ? aset.kondisi_aset 
+            : kondisiAset,
+          status_peminjaman: statusPinjam || aset.status_peminjaman,
+      });
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Gagal mengupdate aset' });
-    }
+      res.redirect(`/admin/list-aset/${aset.kategoriId}`);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Gagal mengupdate aset' });
+  }
 };
+
 
 const hapusAset = async (req, res) => {
     try {

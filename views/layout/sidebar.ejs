@@ -230,11 +230,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Get current page path
-    const currentPath = window.location.pathname;
-    
-    // Find and activate the corresponding nav link
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
     const navLinks = document.querySelectorAll('.nav-link');
+    
+    // Get current page path dan set active state
+    const currentPath = window.location.pathname;
     navLinks.forEach(link => {
         if (link.getAttribute('href') === currentPath) {
             link.classList.add('active');
@@ -245,19 +247,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Menu toggle functionality (keeping your original mobile menu code)
-    const menuToggle = document.querySelector('.menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.querySelector('.sidebar-overlay');
-
+    // Perbaiki toggle functionality
     if (menuToggle) {
-        menuToggle.addEventListener('click', function() {
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
             this.classList.toggle('active');
         });
     }
 
+    // Perbaiki overlay click
     if (overlay) {
         overlay.addEventListener('click', function() {
             sidebar.classList.remove('active');
@@ -265,6 +265,40 @@ document.addEventListener('DOMContentLoaded', function() {
             menuToggle.classList.remove('active');
         });
     }
+
+    // Pastikan link tetap berfungsi di mobile dengan active state
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            // Hapus active class dari semua link
+            navLinks.forEach(l => {
+                l.classList.remove('active');
+                const icon = l.querySelector('lord-icon');
+                if (icon) {
+                    if (l.getAttribute('href') === '/admin/daftarPengajuanCek') {
+                        icon.setAttribute('colors', 'primary:#ffffff,secondary:#ffffff');
+                    } else {
+                        icon.setAttribute('colors', 'primary:#ffffff');
+                    }
+                }
+            });
+            
+            // Tambah active class ke link yang diklik
+            this.classList.add('active');
+            const lordIcon = this.querySelector('lord-icon');
+            if (lordIcon) {
+                lordIcon.setAttribute('colors', 'primary:#000000,secondary:#000000');
+            }
+            
+            // Jika di mobile view, tutup sidebar setelah link diklik
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                menuToggle.classList.remove('active');
+            }
+        });
+    });
 });
 
 // Handle mouse out for icons

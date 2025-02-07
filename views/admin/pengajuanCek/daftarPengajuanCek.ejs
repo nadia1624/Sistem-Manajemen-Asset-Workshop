@@ -144,27 +144,25 @@
     <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
 
-<!-- Form untuk Edit -->
-<div id="editForm" style="position: relative; border-radius: 10px; background: white; width: 370px; padding: 20px;">
-    <h3 style="margin-bottom: 1px;">Ubah Status Pengajuan</h3>
-    <form id="editAssetForm">
-        <div class="form-group">
-            <label for="status" style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px;">Status</label>
-            <select id="status" name="status" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
-                <option value="" disabled selected>Pilih Status</option>
-                <option value="sedang diproses" >Sedang Diproses</option>
-                <option value="sudah diperbaiki">Sudah diperbaiki</option>
-                <option value="dibawa ke workshoop">Dibawa ke Workshop</option>
-                <option value="diajukan ke vendor">Diajukan ke Vendor</option>
-                <option value="tidak dapat diperbaiki">Tidak Dapat Diperbaiki</option>
-            </select>
-        </div>
-        <div style="display: flex; justify-content: center; margin-top: 5px;">
-            <button type="button" class="btn cancel-btn" style="padding: 5px 10px; ">Batal</button>
-            <button type="submit" class="btn finish-btn" style="padding: 5px 10px; ">Selesai</button>
-        </div>
-    </form>
-</div>
+        <!-- Form untuk Edit -->
+            <h3 style="margin-bottom: 1px;">Ubah Status Pengajuan</h3>
+            <form id="editAssetForm">
+                <div class="form-group">
+                    <label for="status" style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px;">Status</label>
+                    <select id="status" name="status" class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm text-gray-700 py-2 h-10">
+                        <option value="" disabled selected>Pilih Status</option>
+                        <option value="sedang diproses" >Sedang Diproses</option>
+                        <option value="sudah diperbaiki">Sudah diperbaiki</option>
+                        <option value="dibawa ke workshoop">Dibawa ke Workshop</option>
+                        <option value="diajukan ke vendor">Diajukan ke Vendor</option>
+                        <option value="tidak dapat diperbaiki">Tidak Dapat Diperbaiki</option>
+                    </select>
+                </div>
+                <div style="display: flex; justify-content: center; margin-top: 5px;">
+                    <button type="button" class="btn cancel-btn" style="padding: 5px 10px; ">Batal</button>
+                    <button type="submit" class="btn finish-btn" style="padding: 5px 10px; ">Selesai</button>
+                </div>
+            </form>
 
         <!-- Pesan Popup untuk Tombol Selesai -->
         <div id="finishMessage" style="display: none;">

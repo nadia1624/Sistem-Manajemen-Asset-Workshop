@@ -67,7 +67,7 @@
                         </td>
                         <td width="15%">
                           <% if (penyerahan.gambar_bukti) { %>
-                            <img class="img-fluid" alt="Bukti Penyerahan" src="/public/uploads/<%= penyerahan.gambar_bukti %>" />
+                            <img class="img-fluid" onclick="openOverlay(this.src)" alt="Bukti Penyerahan" src="/public/uploads/<%= penyerahan.gambar_bukti %>" />
                           <% } else { %>
                             <span>-</span>
                           <% } %>
@@ -199,6 +199,13 @@
     <div class="spinner"></div>
   </div>
 </div>
+
+  <!-- Overlay untuk menampilkan gambar -->
+  <div id="overlay" class="overlay" onclick="closeOverlay()">
+    <img id="overlayImage" class="overlay-img">
+  </div>
+</body>
+</html>
 
 <script>
  let stream = null;
@@ -503,4 +510,14 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.addEventListener("input", filterTable);
     }
 });
+
+function openOverlay(imageSrc) {
+    document.getElementById('overlayImage').src = imageSrc;
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('show');
+  }
+
 </script>

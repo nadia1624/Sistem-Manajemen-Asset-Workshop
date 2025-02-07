@@ -103,7 +103,7 @@
                                                   <td><%= index + 1 %></td>
                                                   <td><%= penyerahan.Permintaan.Aset.nama_barang %></td>
                                                   <td>
-                                                      <img class="img-fluid" alt="Gambar Aset: <%= penyerahan.Permintaan.Aset.nama_barang %>"
+                                                      <img class="img-fluid" onclick="openOverlay(this.src)" alt="Gambar Aset: <%= penyerahan.Permintaan.Aset.nama_barang %>"
                                                           src="/public/uploads/<%= penyerahan.Permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
                                                   </td>
                                                   <td><%= penyerahan.Permintaan.Aset.Kategori ? penyerahan.Permintaan.Aset.Kategori.nama_kategori : 'N/A' %></td>
@@ -189,9 +189,13 @@
         <div id="returnNotification" class="notification hidden">
             <p>Pengembalian aset berhasil dilakukan!</p>
         </div>
-        
+          <!-- Overlay untuk menampilkan gambar -->
+<div id="overlay" class="overlay" onclick="closeOverlay()">
+    <img id="overlayImage" class="overlay-img">
+  </div>
     </main>
-  
+</body>
+
     <script>
         function openModal(id) {
             document.getElementById(`checkModal_${id}`).style.display = "flex";
@@ -245,5 +249,14 @@
             event.target.submit();
         }, 500);
     }
+
+    function openOverlay(imageSrc) {
+    document.getElementById('overlayImage').src = imageSrc;
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('show');
+  }
     </script>
-  </body>
+ 

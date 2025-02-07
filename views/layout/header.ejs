@@ -81,23 +81,20 @@
       </div>
   
       <div class="relative flex items-center ml-auto">
-        <button id="profileButton" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-500">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 12c2.209 0 4-1.791 4-4s-1.791-4-4-4-4 1.791-4 4 1.791 4 4 4zM4.508 20c0-3.315 2.686-6 6-6h3.984c3.315 0 6 2.686 6 6H4.508z" />
-          </svg>
+        <button id="profileButton" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-300 transition overflow-hidden">
+            <% if (user && user.gambar) { %>
+                <img src="/uploads/<%= user.gambar %>" alt="Profile" class="w-full h-full object-cover">
+            <% } else { %>
+                <img src="/image/logo.png" alt="Default Profile" class="w-full h-full object-cover">
+            <% } %>
         </button>
-        <!-- Dropdown Menu -->
         <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
-          <a href="/profil" class="block px-4 py-2 text-gray-700">Lihat Profil</a>
-          <a href="/ubahPass" class="block px-4 py-2 text-gray-700">Ubah Password</a>
-          <form id="logoutForm" action="/logout" method="POST" style="display:none;"></form>
-          <a href="#" class="block px-4 py-2 text-gray-700" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-          
-          
+            <a href="/karyawan/profil" class="block px-4 py-2 text-gray-700">Lihat Profil</a>
+            <a href="/karyawan/ubahPass" class="block px-4 py-2 text-gray-700">Ubah Password</a>
+            <form id="logoutForm" action="/logout" method="POST" style="display:none;"></form>
+            <a href="#" class="block px-4 py-2 text-gray-700" onclick="document.getElementById('logoutForm').submit();">Logout</a>
         </div>
-      </div>
-      
-
+    </div>
   
       <!-- Mobile Menu Button -->
       <div class="sm:hidden ml-4">

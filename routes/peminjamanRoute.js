@@ -2,6 +2,7 @@ const express = require('express');
 const peminjamanControllers = require('../controllers/peminjamanControllers');
 const verifyToken = require('../middleware/validtokenMiddleware');
 const role = require("../middleware/checkroleMiddleware");
+const profileMiddleware = require('../middleware/profilMiddleware')
 
 const peminjamanRouter = express.Router()
 
@@ -9,12 +10,14 @@ const peminjamanRouter = express.Router()
 peminjamanRouter.get('/karyawan/peminjamanAset', 
     verifyToken, 
     role("karyawan"), 
+    profileMiddleware,
     peminjamanControllers.getPeminjaman
 );
 
 peminjamanRouter.get('/karyawan/laporanCek', 
     verifyToken, 
     role("karyawan"), 
+    profileMiddleware,
     peminjamanControllers.getAllDataLaporancek
 );
 

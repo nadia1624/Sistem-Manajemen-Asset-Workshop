@@ -3,6 +3,8 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { User, Aset, Permintaan, Penyerahan, Pemeliharaan, Kategori, PengajuanCek } = require("../models");
+const path = require('path');
+const { where } = require('sequelize');
 
 const form = (req, res) => {
   res.render("login", { title: "Express", error: null });
@@ -136,9 +138,201 @@ function logout(req, res) {
   res.redirect("/");
 }
 
+const getUserProfile = async (req, res) => {
+  try {
+      const userId = req.userId
+      const successMessage = req.query.successMessage;
+      const errorMessage = req.query.errorMessage;
+      
+      const user = await User.findByPk(userId, {
+          attributes: ['nama', 'nip', 'email', 'unit_kerja', 'jabatan', 'gambar', 'no_hp']
+      });
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.render('profil', { 
+          currentPath: req.path, 
+          user: user ,
+          successMessage: successMessage, 
+          errorMessage: errorMessage
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const uploadProfilePicture = async (req, res) => {
+try {
+    if (!req.file) {
+        return res.redirect('/karyawan/ubahProfil?error=Tidak ada file yang diunggah!');
+    }
+
+    const userId = req.userId;
+    const imagePath = req.file.filename; 
+    const fileExt = path.extname(imagePath).toLowerCase();
+
+    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+    if (!allowedExtensions.includes(fileExt)) {
+        return res.redirect('/karyawan/ubahProfil?error=Format file harus JPG, JPEG, atau PNG!');
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+        return res.redirect('/karyawan/ubahProfil?error=User tidak ditemukan!');
+    }
+
+    const [updated] = await User.update(
+        { gambar: imagePath }, 
+        { where: { id: userId } }
+    );
+
+    if (updated) {
+        return res.redirect('/karyawan/profil?success=Foto profil berhasil diperbarui!');
+    } else {
+        return res.redirect('/karyawan/profil?error=Gagal memperbarui foto profil!');
+    }
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Gagal mengunggah foto' });
+}
+};
+
+const getUbahProfile= async (req, res) => {
+try {
+  const userId = req.userId;
+
+  const user = await User.findByPk(userId);
+
+  if (!user) {
+    return res.status(404).json({ message: 'User tidak ditemukan' });
+  }
+
+  res.render('ubahProfil', {
+    currentPath: req.path,
+    user
+  });
+} catch (error) {
+  console.error(error);
+  res.status(500).json({ message: 'Gagal mengambil data profil' });
+}
+};
+
+const updateUserProfile = async (req, res) => {
+try {
+  const userId = req.userId;
+  const {email, unit_kerja, jabatan, no_hp } = req.body;
+
+  if (!email || !unit_kerja || !jabatan || !no_hp) {
+    return res.redirect('/karyawan/ubahProfil?error=Semua field harus diisi!');
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.redirect('/karyawan/ubahProfil?error=Format email tidak valid!');
+  }
+
+  if (!/^\d{10,}$/.test(no_hp)) {
+    return res.redirect('/karyawan/ubahProfil?error=No HP harus berupa angka dan minimal 10 digit!');
+  }
+
+  const user = await User.findByPk(userId);
+  if (!user) {
+    return res.redirect('/karyawan/ubahProfil?error=User tidak ditemukan!');
+  }
+
+  if (
+    user.email === email &&
+    user.unit_kerja === unit_kerja &&
+    user.jabatan === jabatan &&
+    user.no_hp === no_hp
+  ) {
+    return res.redirect('/karyawan/ubahProfil?error=Tidak ada perubahan data!');
+  }
+
+  const [updated] = await User.update(
+    { email, unit_kerja, jabatan, no_hp },
+    { where: { id: userId } }
+  );
+
+  if (updated) {
+    return res.redirect('/karyawan/profil?success=Profil berhasil diperbarui!');
+  } else {
+    return res.redirect('/karyawan/profil?error=Gagal memperbarui profil!');
+  }
+} catch (error) {
+  console.error(error);
+  res.status(500).json({ message: 'Gagal memperbarui profil' });
+}
+};
+
+
+const updatePassword = async (req, res) => {
+try {
+  const userId = req.userId;
+  const {oldPassword, newPassword, confirmPassword} = req.body;
+
+  const user = await User.findByPk(userId);
+  
+  const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password);
+  if (!isOldPasswordValid) {
+    return res.redirect('/karyawan/ubahPass?error=Password lama yang dimasukkan salah!');
+  }
+  
+  if(newPassword !== confirmPassword) {
+    return res.redirect('/karyawan/ubahPass?error=Password baru dan konfirmasi tidak cocok!');
+  }
+  
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+  await User.update(
+    { password: hashedPassword },
+    { where: { id: userId } }
+  );
+
+  return res.redirect('/karyawan/profil?success=Password berhasil diperbarui!');
+      
+} catch (error) {
+  console.error(error);
+  return res.redirect('/karyawan/ubahPass?error=Gagal memperbarui password');
+}
+}
+
+const getUbahPasswordPage = async (req, res) => {
+try {
+    const userId = req.userId;
+    
+    const user = await User.findByPk(userId, {
+        attributes: ['nama', 'gambar', 'nip', 'email', 'unit_kerja', 'jabatan', 'no_hp']
+    });
+
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.render('ubahPass', { 
+        currentPath: req.path,
+        user: user,
+        successMessage: req.query.success,
+        errorMessage: req.query.error
+    });
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+}
+};
+
 module.exports = {
   form,
   checklogin,
   logout,
-  dashboard
+  dashboard,
+  getUserProfile,
+  uploadProfilePicture,
+  updateUserProfile,
+  getUbahProfile,
+  updatePassword,
+  getUbahPasswordPage
 };

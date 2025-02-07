@@ -103,36 +103,18 @@
                         <label for="namaAset" class="left-label">Nama Aset</label>
                         <input type="text" id="namaAset" name="namaAset" placeholder="Masukkan Nama Aset" required>
                     </div>
+                </div>
+                <div class="form-column">
                     <div class="form-group">
                         <label for="ipAddress" class="left-label">IP Address</label>
                         <input type="text" id="ipAddress" name="ipAddress" placeholder="Masukkan IP Address" required>
                     </div>
-                </div>
-                <div class="form-column">
                     <div class="form-group">
                         <label for="caraDapat" class="left-label">Cara Dapat</label>
                         <select id="caraDapat" name="caraDapat" required>
                             <option value="" disabled selected>Pilih Cara Dapat</option>
                             <option value="beli">Beli</option>
                             <option value="sewa">Sewa</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="kondisiAset" class="left-label">Kondisi Aset</label>
-                        <select id="kondisiAset" name="kondisiAset" required>
-                            <option value="" disabled selected>Pilih Kondisi Aset</option>
-                            <option value="baik">Baik</option>
-                            <option value="rusak ringan">Rusak Ringan</option>
-                            <option value="rusak berat">Rusak Berat</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="statusPinjam" class="left-label">Status Pinjam</label>
-                        <select id="statusPinjam" name="statusPinjam" required>
-                            <option value="" disabled selected>Pilih Status Pinjam</option>
-                            <option value="tersedia">Tersedia</option>
-                            <option value="sedang diajukan">Sedang Diajukan</option>
-                            <option value="dipinjam">Dipinjam</option>
                         </select>
                     </div>
                 </div>
@@ -235,6 +217,19 @@
             }
         });
     }
+
+    function populateEditModal(aset) {
+    document.getElementById('editSerialNumber').value = aset.serial_number;
+    document.getElementById('editHostname').value = aset.hostname;
+    document.getElementById('editNamaAset').value = aset.nama_barang;
+    document.getElementById('editIpAddress').value = aset.ip_address;
+    document.getElementById('editCaraDapat').value = aset.cara_dapat;
+    document.getElementById('editKondisiAset').value = aset.kondisi_aset;
+
+    const kondisiAsetSelect = document.getElementById('editKondisiAset');
+    kondisiAsetSelect.disabled = aset.status_peminjaman === 'dipinjam' || aset.status_peminjaman === 'sedang diajukan'; // Nonaktifkan jika dipinjam
+}
+
     
     // Setup Modal Event Listeners
     addAsetButton.addEventListener('click', (event) => {
@@ -249,32 +244,26 @@
     
     // Edit Asset Handler
     document.querySelectorAll('.button-edit').forEach(button => {
-        button.addEventListener('click', async function() {
-            const serialNumber = this.getAttribute('data-id');
-            try {
-                const response = await fetch(`/admin/edit-aset/${serialNumber}`);
-                const aset = await response.json();
-                
-                // Populate form fields
-                Object.entries({
-                    'editSerialNumber': serialNumber,
-                    'editHostname': aset.hostname,
-                    'editIpAddress': aset.ip_address,
-                    'editNamaAset': this.closest('tr').querySelector('td:nth-child(3)').textContent,
-                    'editCaraDapat': aset.cara_dapat,
-                    'editKondisiAset': aset.kondisi_aset
-                }).forEach(([id, value]) => {
-                    document.getElementById(id).value = value;
-                });
-                
-                editForm.setAttribute('action', `/admin/edit-aset/${serialNumber}`);
-                toggleModal(editModal);
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Gagal mengambil data aset');
-            }
-        });
+    button.addEventListener('click', async function() {
+        const serialNumber = this.getAttribute('data-id');
+        try {
+            const response = await fetch(`/admin/edit-aset/${serialNumber}`);
+            const aset = await response.json();
+
+            aset.serial_number = serialNumber;
+            aset.nama_barang = this.closest('tr').querySelector('td:nth-child(3)').textContent;
+
+            populateEditModal(aset);
+
+            editForm.setAttribute('action', `/admin/edit-aset/${serialNumber}`);
+            toggleModal(editModal);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Gagal mengambil data aset');
+        }
     });
+});
+
     
     // Delete Asset Handler
     document.querySelectorAll('.button-delete').forEach(button => {

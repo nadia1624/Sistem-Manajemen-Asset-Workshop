@@ -842,6 +842,7 @@ th {
   left: 30px;
   top: 32px;
   z-index: 1200; 
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 
@@ -890,7 +891,20 @@ th {
   }
 
   .sidebar.active {
-    transform: translateX(0);
+    transform: translateX(0) !important;
+    z-index: 2000 !important; /* Pastikan z-index lebih tinggi dari overlay */
+  }
+
+  .sidebar .nav-link {
+    position: relative;
+    z-index: 75;
+    pointer-events: auto !important;
+  }
+
+  /* Pastikan hover efek tetap bekerja di mobile */
+  .sidebar .nav-link:hover {
+    background-color: white !important;
+    color: black !important;
   }
 
 }
@@ -925,6 +939,7 @@ th {
 
   .menu-toggle {
     display: block;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
   }
 }
 

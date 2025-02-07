@@ -27,38 +27,38 @@ const tambahKategori = async (req, res) => {
   }
 };
 
-const tampilkanKategori = async (req, res) => {
-    try {
-      const daftarKategori = await Kategori.findAll({
-        include: [{
-          model: Aset,
-          attributes: ['kondisi_aset']
-        }]
-      });
-  
-      const kategoriWithStats = daftarKategori.map(kategori => {
-        const asetCount = kategori.Asets.length;
-        const kondisiStats = {
-          baik: kategori.Asets.filter(aset => aset.kondisi_aset === 'baik').length,
-          rusak: kategori.Asets.filter(aset => ['rusak ringan', 'rusak berat'].includes(aset.kondisi_aset)).length
-        };
-        
-        return {
-          ...kategori.toJSON(),
-          asetCount,
-          kondisiStats
-        };
-      });
-  
-      res.render("admin/pengelolaanAset/listKategoriAset", {
-        req: req,
-        kategori: kategoriWithStats
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Terjadi kesalahan pada server" });
-    }
-  };
+  const tampilkanKategori = async (req, res) => {
+      try {
+        const daftarKategori = await Kategori.findAll({
+          include: [{
+            model: Aset,
+            attributes: ['kondisi_aset']
+          }]
+        });
+    
+        const kategoriWithStats = daftarKategori.map(kategori => {
+          const asetCount = kategori.Asets.length;
+          const kondisiStats = {
+            baik: kategori.Asets.filter(aset => aset.kondisi_aset === 'baik').length,
+            rusak: kategori.Asets.filter(aset => ['rusak ringan', 'rusak berat'].includes(aset.kondisi_aset)).length
+          };
+          
+          return {
+            ...kategori.toJSON(),
+            asetCount,
+            kondisiStats
+          };
+        });
+    
+        res.render("admin/pengelolaanAset/listKategoriAset", {
+          req: req,
+          kategori: kategoriWithStats
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Terjadi kesalahan pada server" });
+      }
+    };
 
 // GET: Menampilkan modal edit dengan data kategori
 const tampilkanEditKategori = async (req, res) => {

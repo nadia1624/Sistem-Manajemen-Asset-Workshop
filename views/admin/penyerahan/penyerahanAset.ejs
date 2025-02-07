@@ -25,10 +25,12 @@
 <main class="content">
     <div class="header-content">
       <h3 style="font-weight: bold;">Penyerahan Aset</h3>
-      <div class="search-bar" style="margin-right: 30px;">
+      <div class="search-and-controls">
+      <div class="search-bar">
         <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
         <i class="fas fa-search"></i>
      </div>
+    </div>
     </div>
     <div class="container-fluid px-4">
       <div class="table-wrapper">
@@ -87,7 +89,7 @@
                           <% } else if (penyerahan.status_penyerahan === "sudah diserahkan" && penyerahan.surat) { %>
                               <a href="/data/surat/<%= penyerahan.surat %>" target="_blank" 
                                  class="btn btn-action" 
-                                 style="background-color: #ffffff; padding: 6px 10px; font-size: 25px; border: 2px solid #000; padding-right: 6px; border-radius: 8px; color: #000; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: auto;">
+                                 style="background-color: #ffffff; padding: 10px 10px; font-size: 25px; border: 2px solid #000; padding-right: 6px; border-radius: 8px; color: #000; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: auto;">
                                   <i class="fa-solid fa-download" style="font-size: 15px;"></i>
                               </a>
                           <% } %>

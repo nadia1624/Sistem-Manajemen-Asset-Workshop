@@ -18,16 +18,18 @@
   background-color: #b60017;
   color: white;
   width: 230px;
-  height: calc(100vh - 16px); /* Mengurangi tinggi agar ada jarak di bawah */
+  height: calc(100vh - 16px);
   position: fixed;
-  top: 8px; /* Jarak dari atas */
-  left: 8px; /* Jarak dari kiri */
-  right: 8px; /* Jarak dari kanan */
-  bottom: 8px; /* Jarak dari bawah */
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
   overflow-y: auto;
   box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
   border-radius: 25px;
   padding: 8px;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1100;
 }
 
 .sidebar header {
@@ -67,16 +69,38 @@
 }
 
 .content {
-  margin-left: 250px;
-  /* box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);*/
-  height: calc(100vh - 16px); /* Mengurangi tinggi agar ada jarak di bawah */
+  height: calc(100vh - 16px);
   border-radius: 25px;
   position: fixed;
-  top: 8px; /* Jarak dari atas */
-  left: 0px; /* Jarak dari kiri */
-  right: 8px; /* Jarak dari kanan */
-  bottom: 8px; /* Jarak dari bawah */
-  overflow-y: auto; /* Menambahkan kemampuan scroll vertikal */
+  top: 8px;
+  left: 0;
+  right: 8px;
+  bottom: 8px;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease-in-out;
+  margin-left: 0 !important; /* Override any existing margins */
+}
+
+/* Desktop view */
+@media (min-width: 768px) {
+  .content:not(.sidebar-hidden) {
+    margin-left: 250px !important;
+  }
+}
+
+/* Reset any potential Tailwind margins */
+.content.no-margin {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Make sure the content stretches full width on mobile */
+@media (max-width: 768px) {
+  .content {
+    width: 100% !important;
+    margin-left: 0 !important;
+    left: 0 !important;
+  }
 }
 
 body,
@@ -92,6 +116,13 @@ html {
   align-items: center;
   justify-content: space-between;
   padding: 16px;
+}
+
+.header-content .search-and-controls {
+  gap: 15px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .header-content h3 {
@@ -207,21 +238,27 @@ color: #fff;
   margin: 0;
   font-size: 24px;
 }
+
 .search-bar {
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  padding: 5px 10px;
+  position: relative;
+  flex: 1;
+  width: 100%;
 }
+
 .search-bar input {
-  border: none;
-  outline: none;
-  padding: 5px;
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
 }
+
 .search-bar i {
-  color: #ccc;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
 }
 
 .tab.active {
@@ -396,7 +433,7 @@ td button i {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
+  z-index: 3000;
   justify-content: center;
   align-items: center;
 }
@@ -723,12 +760,30 @@ th {
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .header-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-content .search-and-controls {
     flex-direction: column;
     gap: 15px;
+    width: 100%;
+  }
+
+  .header-content h3 {
+    margin-left: 35px;
   }
 
   .search-bar {
-    width: 100%;
+    margin-right: 0px;
+    width: 300px;
+  }
+
+  .search-and-add {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
   }
 
   .tabButton {
@@ -745,6 +800,26 @@ th {
     max-width: 400px;
     margin: 0 auto;
   }
+
+  .button-tambah {
+    width: 100%;
+  }
+
+  .button-tambah button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-top: 16px;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 /* Make content area responsive */
@@ -753,22 +828,6 @@ th {
   transition: margin-left 0.3s;
   padding: 20px;
 }
-
-@media (max-width: 992px) {
-  .content {
-    margin-left: 0;
-  }
-
-  .sidebar {
-    transform: translateX(-100%);
-  }
-
-  .sidebar.active {
-    transform: translateX(0);
-  }
-}
-
-/* Tambahkan/Update CSS berikut */
 
 /* Menu Toggle Button */
 .menu-toggle {
@@ -780,14 +839,14 @@ th {
   cursor: pointer;
   padding: 10px;
   position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
+  left: 30px;
+  top: 32px;
+  z-index: 1200; 
 }
 
-/* Tambahkan efek blur pada sidebar saat overlay aktif */
+
+
 .sidebar-overlay.active + .sidebar {
-  filter: blur(4px);
   pointer-events: none; /* Menghindari interaksi dengan sidebar saat blur */
 }
 
@@ -810,11 +869,6 @@ th {
   opacity: 1;
 }
 
-/* Sidebar tetap di atas overlay */
-.sidebar {
-  z-index: 500;
-}
-
 .button {
   flex: 1;
   text-align: center;
@@ -828,27 +882,17 @@ th {
 }
 
 /* Responsive Styles */
-@media (max-width: 992px) {
-  .menu-toggle {
-    display: block;
-  }
-
-  .content {
-    margin-left: 0;
-    padding-top: 60px; /* Memberikan ruang untuk menu toggle */
-  }
-
+@media (max-width: 768px) {
   .sidebar {
-    transform: translateX(-100%);
+    transform: translateX(-110%); /* Hide slightly more to ensure it's fully off screen */
+    width: 100%; /* Make sidebar slightly narrower on mobile */
+    max-width: 250px; /* Maximum width for larger phones */
   }
 
   .sidebar.active {
     transform: translateX(0);
   }
 
-  .header-content {
-    padding-left: 60px; /* Memberikan ruang untuk menu toggle */
-  }
 }
 
 @media (max-width: 768px) {
@@ -878,22 +922,29 @@ th {
   .search-bar {
     width: 100%;
   }
+
+  .menu-toggle {
+    display: block;
+  }
 }
 
 /* Dark Overlay ketika sidebar active di mobile */
 .sidebar-overlay {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1050; /* Between the sidebar and regular content */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 .sidebar-overlay.active {
-  display: block;
+  opacity: 1;
+  visibility: visible;
 }
 
 /*.close-btn {
@@ -1389,6 +1440,7 @@ a i {
     font-size: 18px;
   }
 }
+
 
 .button-tambah button {
   display: flex;

@@ -4,8 +4,8 @@
 <main class="content">
     <div class="header-content">
         <h3 style="font-weight: bold;">Pengelolaan Aset</h3>
-        <div class="header-content">
-            <div class="search-bar" style="margin-right: 30px;">
+        <div class="search-and-controls">
+            <div class="search-bar">
                 <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
                 <i class="fas fa-search"></i>
             </div>
@@ -15,8 +15,8 @@
                 </button>
             </div>
         </div>
-
     </div>
+
     <div class="container-fluid px-4">
         <div class="table-wrapper">
             <div class="table-responsive">
@@ -99,7 +99,7 @@
             <input type="text" id="addDeskripsi" name="deskripsi" placeholder="Masukkan deskripsi kategori" required>
 
             <div class="form-group">
-                <label for="imageCategory" class="left-label"> Gambar</label>
+                <label for="imageCategory" class="left-label">Gambar</label>
               <input type="file" name="gambar" required>
               </div>
             <button type="submit" class="btn finish-btn">Simpan</button>

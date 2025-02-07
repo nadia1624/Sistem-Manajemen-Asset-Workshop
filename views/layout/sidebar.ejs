@@ -9,71 +9,35 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <script src="https://cdn.lordicon.com/lordicon.js"></script>
-  <script>
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Create menu toggle button if it doesn't exist
-    if (!document.querySelector('.menu-toggle')) {
-        const menuToggle = document.createElement('button');
-        menuToggle.className = 'menu-toggle';
-        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-        document.body.appendChild(menuToggle);
+  <style>
+    /* Add only the new active state styles */
+    .sidebar .nav-link.active {
+      background-color: white !important;
+      color: black !important;
     }
-
-    // Create overlay div if it doesn't exist
-    if (!document.querySelector('.sidebar-overlay')) {
-        const overlay = document.createElement('div');
-        overlay.className = 'sidebar-overlay';
-        document.body.appendChild(overlay);
+    
+    .sidebar .nav-link.active lord-icon {
+      --lord-icon-primary: #000000 !important;
+      --lord-icon-secondary: #000000 !important;
     }
-
-    const menuToggle = document.querySelector('.menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.querySelector('.sidebar-overlay');
-
-    menuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        this.classList.toggle('active');
-    });
-
-    // Close sidebar when clicking overlay
-    overlay.addEventListener('click', function() {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-        menuToggle.classList.remove('active');
-    });
-
-    // Close sidebar when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!sidebar.contains(e.target) && 
-            !menuToggle.contains(e.target) && 
-            !overlay.contains(e.target)) {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            menuToggle.classList.remove('active');
-        }
-    });
-
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 992) {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            menuToggle.classList.remove('active');
-        }
-    });
-});
-  </script>
+  </style>
 </head>
 <body style="padding: 36px; background-color: #f7f7f5;">
-<div class="sidebar flex justify-center">
 
+<!-- Toggle Button untuk Mobile -->
+<button class="menu-toggle">
+  <i class="fas fa-bars"></i>
+</button>
+
+<!-- Overlay untuk Mobile -->
+<div class="sidebar-overlay"></div>
+
+<div class="sidebar flex justify-center">
 <!-- Sidebar -->
 <div id="hs-sidebar-basic-usage" class="hs-overlay [--auto-close:lg] lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 w-64
 hs-overlay-open:translate-x-0
 -translate-x-full transition-all duration-300 transform
-fixed top-0 start-0 bottom-0 z-[60]
+fixed  start-0 bottom-0 z-[60]
 bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700 rounded-lg" role="dialog" tabindex="-1" aria-label="Sidebar" style="margin: 8px; margin-bottom: 8px;">
   <div class="relative flex flex-col h-full max-h-full">
       <!-- Header -->
@@ -83,7 +47,6 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
         <!-- Nama Web -->
         <h1 class="text-white text-xl font-semibold dark:text-white">SIMAW</h1>
       </header>
-      <!-- End Header -->
 
       <!-- Body -->
       <nav class="h-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
@@ -91,12 +54,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
           <ul class="space-y-1">
             <!-- Sidebar list items -->
             <li>
-              <a class="flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
+              <a class="nav-link flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
                        hover:bg-white hover:text-black focus:bg-white focus:text-black
                        dark:text-white dark:hover:text-black dark:hover:bg-white"
                  href="/admin/dashboard"
                  onmouseover="this.querySelector('lord-icon').setAttribute('colors', 'primary:#000000')"
-                 onmouseout="this.querySelector('lord-icon').setAttribute('colors', 'primary:#ffffff')">
+                 onmouseout="handleMouseOut(this)"
+                 data-page="dashboard">
                 <lord-icon
                   src="https://cdn.lordicon.com/cnpvyndp.json"
                   trigger="hover"
@@ -107,12 +71,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
               </a>
             </li>
             <li>
-              <a class="flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
+              <a class="nav-link flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
                        hover:bg-white hover:text-black focus:bg-white focus:text-black
                        dark:text-white dark:hover:text-black dark:hover:bg-white"
                  href="/admin/pengelolaan-aset"
                  onmouseover="this.querySelector('lord-icon').setAttribute('colors', 'primary:#000000')"
-                 onmouseout="this.querySelector('lord-icon').setAttribute('colors', 'primary:#ffffff')">
+                 onmouseout="handleMouseOut(this)"
+                 data-page="pengelolaan-aset">
                 <lord-icon
                   src="https://cdn.lordicon.com/zyzoecaw.json"
                   trigger="morph"
@@ -125,12 +90,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
             </li>
            
             <li>
-              <a class="flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
+              <a class="nav-link flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
                        hover:bg-white hover:text-black focus:bg-white focus:text-black
                        dark:text-white dark:hover:text-black dark:hover:bg-white"
                  href="/admin/permintaanAset"
                  onmouseover="this.querySelector('lord-icon').setAttribute('colors', 'primary:#000000')"
-                 onmouseout="this.querySelector('lord-icon').setAttribute('colors', 'primary:#ffffff')">
+                 onmouseout="handleMouseOut(this)"
+                 data-page="permintaanAset">
                 <lord-icon
                   src="https://cdn.lordicon.com/xtnsvhie.json"
                   trigger="hover"
@@ -142,12 +108,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
             </li>
            
             <li>
-              <a class="flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
+              <a class="nav-link flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
                        hover:bg-white hover:text-black focus:bg-white focus:text-black
                        dark:text-white dark:hover:text-black dark:hover:bg-white"
                  href="/admin/penyerahanAset"
                  onmouseover="this.querySelector('lord-icon').setAttribute('colors', 'primary:#000000')"
-                 onmouseout="this.querySelector('lord-icon').setAttribute('colors', 'primary:#ffffff')">
+                 onmouseout="handleMouseOut(this)"
+                 data-page="penyerahanAset">
                 <lord-icon
                   src="https://cdn.lordicon.com/vdjwmfqs.json"
                   trigger="hover"
@@ -159,12 +126,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
             </li>
            
             <li>
-              <a class="flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
+              <a class="nav-link flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
                        hover:bg-white hover:text-black focus:bg-white focus:text-black
                        dark:text-white dark:hover:text-black dark:hover:bg-white"
                  href="/admin/pengembalianAset"
                  onmouseover="this.querySelector('lord-icon').setAttribute('colors', 'primary:#000000')"
-                 onmouseout="this.querySelector('lord-icon').setAttribute('colors', 'primary:#ffffff')">
+                 onmouseout="handleMouseOut(this)"
+                 data-page="pengembalianAset">
                 <lord-icon
                   src="https://cdn.lordicon.com/oqdmuxru.json"
                   trigger="hover"
@@ -176,12 +144,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
             </li>
            
             <li>
-              <a class="flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
+              <a class="nav-link flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
                        hover:bg-white hover:text-black focus:bg-white focus:text-black
                        dark:text-white dark:hover:text-black dark:hover:bg-white"
                  href="/admin/daftarPengajuanCek"
                  onmouseover="this.querySelector('lord-icon').setAttribute('colors', 'primary:#000000,secondary:#000000')"
-                 onmouseout="this.querySelector('lord-icon').setAttribute('colors', 'primary:#ffffff,secondary:#ffffff')">
+                 onmouseout="handleMouseOut(this)"
+                 data-page="daftarPengajuanCek">
                 <lord-icon
                   src="https://cdn.lordicon.com/fwkrbvja.json"
                   trigger="hover"
@@ -194,12 +163,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
             </li>
            
             <li>
-              <a class="flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
+              <a class="nav-link flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
                        hover:bg-white hover:text-black focus:bg-white focus:text-black
                        dark:hover:text-black dark:hover:bg-white"
                  href="/admin/asetKaryawan"
                  onmouseover="this.querySelector('lord-icon').setAttribute('colors', 'primary:#000000')"
-                 onmouseout="this.querySelector('lord-icon').setAttribute('colors', 'primary:#ffffff')">
+                 onmouseout="handleMouseOut(this)"
+                 data-page="asetKaryawan">
                 <lord-icon
                   src="https://cdn.lordicon.com/rsbokaso.json"
                   trigger="hover"
@@ -211,12 +181,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
             </li>
            
             <li class="mb-10">
-              <a class="flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
+              <a class="nav-link flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
                        hover:bg-white hover:text-black focus:bg-white focus:text-black
                        dark:hover:text-black dark:hover:bg-white"
                  href="/admin/pemeliharaan-aset"
                  onmouseover="this.querySelector('lord-icon').setAttribute('colors', 'primary:#000000')"
-                 onmouseout="this.querySelector('lord-icon').setAttribute('colors', 'primary:#ffffff')">
+                 onmouseout="handleMouseOut(this)"
+                 data-page="pemeliharaan-aset">
                 <lord-icon
                   src="https://cdn.lordicon.com/abfverha.json"
                   trigger="hover"
@@ -233,13 +204,13 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
               </form>
             
               <!-- Link Logout -->
-              <a class="flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
+              <a class="nav-link flex items-center gap-x-3 py-2 px-2.5 text-sm text-white rounded-lg
                        hover:bg-white hover:text-black focus:bg-white focus:text-black
                        dark:hover:text-black dark:hover:bg-white"
                  href="#"
                  onclick="confirmLogout(event);"
                  onmouseover="this.querySelector('lord-icon').setAttribute('colors', 'primary:#000000,secondary:#000000')"
-                 onmouseout="this.querySelector('lord-icon').setAttribute('colors', 'primary:#ffffff,secondary:#ffffff')">
+                 onmouseout="handleMouseOut(this)">
                 <lord-icon
                   src="https://cdn.lordicon.com/gwvmctbb.json"
                   trigger="hover"
@@ -250,30 +221,75 @@ bg-[#B60017] border-e border-gray-200 dark:bg-neutral-00 dark:border-neutral-700
                 Keluar
               </a>
             </li>
-            
-
-            
-            
           </ul>
         </div>
       </nav>
-      <!-- End Body -->
   </div>
 </div>
-<!-- End Sidebar -->
 </div>
 
 <script>
-  function confirmLogout(event) {
-    // Menampilkan pop-up konfirmasi
+document.addEventListener('DOMContentLoaded', function() {
+    // Get current page path
+    const currentPath = window.location.pathname;
+    
+    // Find and activate the corresponding nav link
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+            const lordIcon = link.querySelector('lord-icon');
+            if (lordIcon) {
+                lordIcon.setAttribute('colors', 'primary:#000000,secondary:#000000');
+            }
+        }
+    });
+
+    // Menu toggle functionality (keeping your original mobile menu code)
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            menuToggle.classList.remove('active');
+        });
+    }
+});
+
+// Handle mouse out for icons
+function handleMouseOut(element) {
+    if (!element.classList.contains('active')) {
+        const lordIcon = element.querySelector('lord-icon');
+        if (lordIcon) {
+            if (element.getAttribute('href') === '/admin/daftarPengajuanCek') {
+                lordIcon.setAttribute('colors', 'primary:#ffffff,secondary:#ffffff');
+            } else {
+                lordIcon.setAttribute('colors', 'primary:#ffffff');
+            }
+        }
+    }
+}
+
+function confirmLogout(event) {
     const userConfirmed = confirm("Apakah Anda yakin ingin keluar?");
     
     if (userConfirmed) {
-      // Jika pengguna memilih OK, submit form logout
-      document.getElementById('logoutForm').submit();
+        document.getElementById('logoutForm').submit();
     } else {
-      // Jika pengguna memilih Cancel, mencegah aksi default
-      event.preventDefault();
+        event.preventDefault();
     }
-  }
+}
 </script>
+</body>
+</html>

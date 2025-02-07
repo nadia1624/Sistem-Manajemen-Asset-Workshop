@@ -50,6 +50,28 @@
           justify-content: center;
           gap: 10px;
       }
+
+    .notification {
+        position: fixed;
+        top: 10%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #4CAF50;
+        color: white;
+        padding: 25px 25px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 1000;
+    }
+    .notification.hidden {
+        display: none;
+    }
+
+
     </style>
   
     <main class="content">
@@ -74,7 +96,10 @@
                                 <tbody>
                                       <% if (listPeminjaman && listPeminjaman.length > 0) { %>
                                           <% listPeminjaman.forEach((penyerahan, index) => { %>
-                                              <tr>
+                                            <% let pengajuanData = pengajuanStatusMap[penyerahan.id] || { adaPengajuan: false, semuaSelesai: true };
+                                            let showButton = !pengajuanData.adaPengajuan || pengajuanData.semuaSelesai; 
+                                            %>
+           
                                                   <td><%= index + 1 %></td>
                                                   <td><%= penyerahan.Permintaan.Aset.nama_barang %></td>
                                                   <td>
@@ -84,9 +109,20 @@
                                                   <td><%= penyerahan.Permintaan.Aset.Kategori ? penyerahan.Permintaan.Aset.Kategori.nama_kategori : 'N/A' %></td>
                                                   <td><%= penyerahan.Permintaan.Aset.Kategori.deskripsi || 'Deskripsi tidak tersedia' %></td>
                                                   <td>
-                                                    <button class="btn btn-success" onclick="openModal('<%= penyerahan.id %>')" style="background-color:#c2ef97; font-size:12px; border:2px solid #c2ef97; border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
+                                                    <% if (showButton) { %>
+                                                        <button class="btn btn-success check-btn" 
+                                                            data-id="<%= penyerahan.id %>"
+                                                            onclick="openModal('<%= penyerahan.id %>')" 
+                                                            style="background-color:#c2ef97; font-size:12px; border:2px solid #c2ef97; 
+                                                            border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
+                                                            <i class="fa-solid fa-check"></i> Check
+                                                        </button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-secondary" disabled style="width: 90px;">Menunggu</button>
+                                                    <% } %>
+                                                    <!-- <button class="btn btn-success" onclick="openModal('<%= penyerahan.id %>')" style="background-color:#c2ef97; font-size:12px; border:2px solid #c2ef97; border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
                                                         <i class="fa-solid fa-check"></i> Check
-                                                    </button>
+                                                    </button> -->
                                                   </td>
                                                   <td>
                                                     <button class="btn btn-secondary" onclick="openReturnModal('<%= penyerahan.id %>')" style="background-color:#6dd6ce; font-size:12px; border:2px solid #6dd6ce; border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
@@ -111,7 +147,7 @@
                                                   <div class="modal-content">
                                                       <span class="close-btn" onclick="closeModal('<%= penyerahan.id %>')">&times;</span>
                                                       <h3>Ajukan Pengecekan Aset</h3>
-                                                      <form action="/karyawan/peminjamanAset/cek/<%= penyerahan.id %>" method="post">
+                                                      <form action="/karyawan/peminjamanAset/cek/<%= penyerahan.id %>" method="post" onsubmit="showNotification(event)">
                                                           <label for="keluhan_<%= penyerahan.id %>">Keluhan:</label>
                                                           <textarea id="keluhan_<%= penyerahan.id %>" name="keluhan" placeholder="Keluhan yang diajukan"></textarea>
                                                           <button type="submit" class="btn">Simpan</button>
@@ -127,7 +163,7 @@
                                                       <p>Apakah kamu yakin akan mengembalikan aset <strong><%= penyerahan.Permintaan.Aset.nama_barang %></strong>?</p>
                                                       <div class="modal-actions">
                                                           <button type="button" class="cancel-btn" onclick="closeReturnModal('<%= penyerahan.id %>')">Tidak</button>
-                                                          <form action='/karyawan/return/<%= penyerahan.id %>' method="post">
+                                                          <form action='/karyawan/return/<%= penyerahan.id %>' method="post" onsubmit="showReturnNotification(event)">
                                                               <button type="submit" class="finish-btn">Ya</button>
                                                           </form>
                                                       </div>
@@ -147,6 +183,13 @@
                 </div>
             </div>
         </div>
+        <div id="notification" class="notification hidden">
+            <p>Pengajuan cek berhasil dilakukan!</p>
+        </div>
+        <div id="returnNotification" class="notification hidden">
+            <p>Pengembalian aset berhasil dilakukan!</p>
+        </div>
+        
     </main>
   
     <script>
@@ -162,5 +205,45 @@
         function closeReturnModal(id) {
             document.getElementById(`returnModal_${id}`).style.display = "none";
         }
+
+        function showNotification(event) {
+        event.preventDefault(); // Mencegah pengiriman formulir langsung
+
+        // Menampilkan notifikasi
+        let notification = document.getElementById("notification");
+        notification.classList.remove("hidden");
+        notification.style.display = "block";
+
+        // Sembunyikan notifikasi setelah 3 detik
+        setTimeout(() => {
+            notification.classList.add("hidden");
+            notification.style.display = "none";
+        }, 30000);
+
+        // Kirim formulir setelah menampilkan notifikasi
+        setTimeout(() => {
+            event.target.submit();
+        }, 500);
+    }
+
+        function showReturnNotification(event) {
+        event.preventDefault(); // Mencegah pengiriman formulir langsung
+
+        // Menampilkan notifikasi pengembalian
+        let returnNotification = document.getElementById("returnNotification");
+        returnNotification.classList.remove("hidden");
+        returnNotification.style.display = "block";
+
+        // Sembunyikan notifikasi setelah 3 detik
+        setTimeout(() => {
+            returnNotification.classList.add("hidden");
+            returnNotification.style.display = "none";
+        }, 30000);
+
+        // Kirim formulir setelah 500ms (agar pengguna sempat melihat notifikasi)
+        setTimeout(() => {
+            event.target.submit();
+        }, 500);
+    }
     </script>
   </body>

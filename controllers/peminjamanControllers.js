@@ -33,9 +33,34 @@ const getPeminjaman = async (req, res) => {
               ]
         });
 
+        // Ambil semua pengajuan cek yang berhubungan dengan daftar penyerahan
+        const pengajuanCekList = await PengajuanCek.findAll({
+            attributes: ['id', 'status_cek', 'status_pengembalian', 'penyerahanId'],
+            where: {
+                penyerahanId: listPeminjaman.map(p => p.id) // Ambil hanya data yang terkait dengan penyerahan
+            }
+        });
+
+        // Proses data untuk memudahkan pengecekan di EJS
+        let pengajuanStatusMap = {}; 
+        pengajuanCekList.forEach(pc => {
+            // Jika sudah ada pengajuan untuk penyerahan ini, cek status pengembalian
+            if (!pengajuanStatusMap[pc.penyerahanId]) {
+                pengajuanStatusMap[pc.penyerahanId] = {
+                    adaPengajuan: true,
+                    semuaSelesai: true
+                };
+            }
+
+            // Jika ada pengajuan yang belum selesai, set semuaSelesai ke false
+            if (pc.status_pengembalian !== "sudah") {
+                pengajuanStatusMap[pc.penyerahanId].semuaSelesai = false;
+            }
+        });
+
         
 
-        return res.render('karyawan/peminjaman/peminjamanAset', { listPeminjaman, currentPath });
+        return res.render('karyawan/peminjaman/peminjamanAset', { listPeminjaman, currentPath, pengajuanStatusMap });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Terjadi kesalahan dalam mengambil data peminjaman' });

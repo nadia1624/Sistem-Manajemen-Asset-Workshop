@@ -59,60 +59,63 @@ const getPenyerahan = async (req, res) => {
 
 
 const updatePenyerahan = async (req, res) => {
-  console.log("Memulai proses penyerahan aset...");
-  const { id } = req.params;
-  const { nama_perwakilan, isDiwakilkan } = req.body; // Ambil data dari form
+ console.log("Memulai proses penyerahan aset...");
+    const { id } = req.params;
+    const { nama_perwakilan, isDiwakilkan } = req.body;
 
-  const gambarBuktiPath = req.file ? `${req.file.filename}` : null;
-  const tanggalPenyerahan = new Date();
+    console.log("File dari multer:", req.file);
+    console.log("Data dari body:", req.body);
 
-  if (!id || !gambarBuktiPath) {
-    console.error("Input tidak lengkap.");
-    return res.status(400).json({ error: "Input tidak lengkap." });
-  }
+    // Ambil gambar bukti
+    let gambarBuktiPath = req.file ? req.file.filename : null;
 
-  const transaction = await sequelize.transaction();
-  let docxFilePath, pdfFilePath;
-
-  try {
-    console.log(`[STEP 1] Validasi dan pencarian data penyerahan`);
-    const penyerahan = await Penyerahan.findByPk(id, {
-      include: [
-        {
-          model: Permintaan,
-          include: [
-            { model: User, attributes: ["nama", "unit_kerja", "jabatan"] },
-            { 
-              model: Aset, 
-              attributes: ["nama_barang", "serial_number", "status_peminjaman", "hostname"],
-              include: [{ model: Kategori, attributes: ["gambar", "nama_kategori"] }] 
-            },
-          ],
-        },
-      ],
-      transaction,
-    });
-
-    if (!penyerahan) {
-      throw new Error("Data penyerahan tidak ditemukan.");
+    if (!gambarBuktiPath && req.body.gambar_bukti) {
+        gambarBuktiPath = req.body.gambar_bukti;
     }
 
-    // Tentukan penerima berdasarkan apakah aset diwakilkan atau tidak
-      const penerima = isDiwakilkan === "true" && nama_perwakilan 
-      ? nama_perwakilan 
-      : penyerahan.Permintaan?.User?.nama;
-  
-    console.log(`[STEP 2] Memperbarui data penyerahan`);
-    await penyerahan.update(
-      {
-        penerima,
-        gambar_bukti: gambarBuktiPath,
-        status_penyerahan: "sudah diserahkan",
-        tanggal_penyerahan: tanggalPenyerahan,
-      },
-      { transaction }
-    );
+    if (!id || !gambarBuktiPath) {
+        console.error("Input tidak lengkap.");
+        return res.status(400).json({ error: "ID dan bukti gambar harus diisi." });
+    }
 
+    const transaction = await sequelize.transaction();
+  try {
+      console.log(`[STEP 1] Validasi dan pencarian data penyerahan`);
+      const penyerahan = await Penyerahan.findByPk(id, {
+          include: [
+              {
+                  model: Permintaan,
+                  include: [
+                      { model: User, attributes: ["nama", "unit_kerja", "jabatan"] },
+                      {
+                          model: Aset,
+                          attributes: ["nama_barang", "serial_number", "status_peminjaman", "hostname"],
+                          include: [{ model: Kategori, attributes: ["gambar", "nama_kategori"] }]
+                      },
+                  ],
+              },
+          ],
+          transaction,
+      });
+
+      if (!penyerahan) {
+          throw new Error("Data penyerahan tidak ditemukan.");
+      }
+
+      // Tentukan penerima berdasarkan apakah aset diwakilkan atau tidak
+      const penerima = isDiwakilkan === "true" && nama_perwakilan ? nama_perwakilan : penyerahan.Permintaan?.User?.nama;
+
+      console.log(`[STEP 2] Memperbarui data penyerahan`);
+      await penyerahan.update(
+          {
+              penerima,
+              gambar_bukti: gambarBuktiPath,
+              status_penyerahan: "sudah diserahkan",
+              tanggal_penyerahan: new Date(),
+          },
+          { transaction }
+      );
+      
     console.log(`[STEP 3] Generate surat berdasarkan template DOCX`);
     const templatePath = path.resolve(__dirname, "../public/templates/template-penyerahan.docx");
     if (!fs.existsSync(templatePath)) {
@@ -128,12 +131,13 @@ const updatePenyerahan = async (req, res) => {
       getImage: (tagValue) => fs.readFileSync(tagValue),
       getSize: (tagValue) => {
         const dimensions = sizeOf(tagValue); // Dapatkan ukuran asli gambar
-        const width = 150; // Tetapkan lebar 150px
+        const width = 250; 
         const aspectRatio = dimensions.height / dimensions.width; // Hitung rasio aspek
         const height = Math.round(width * aspectRatio); // Sesuaikan tinggi secara otomatis
         return [width, height];
       },
     };
+    
 
     // Ambil path tanda tangan
     const tandaTanganFilename = penyerahan.tanda_tangan;

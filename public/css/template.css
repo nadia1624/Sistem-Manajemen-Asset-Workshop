@@ -1842,3 +1842,70 @@ a button:disabled {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Default button style */
+.finish-btn {
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+/* Warna untuk tombol persetujuan */
+.btn-approve {
+  background-color: #4CAF50; /* Hijau */
+  color: white;
+}
+
+/* Warna untuk tombol penolakan */
+.btn-reject {
+  background-color: #f44336; /* Merah */
+  color: white;
+}
+
+.toast {
+  position: fixed;
+  top: calc(60px + 20px); /* Header 60px + margin 20px */
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  min-width: 250px;
+  max-width: 350px;
+  text-align: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s, visibility 0.5s, top 0.5s;
+}
+.toast.show {
+  opacity: 1;
+  visibility: visible;
+  top: calc(60px + 30px); /* Header 60px + margin 30px saat tampil */
+}
+.toast.hide {
+  opacity: 0;
+  visibility: hidden;
+  top: calc(60px + 20px);
+}
+@media (max-width: 600px) {
+  .toast {
+      min-width: 200px;
+      max-width: 280px;
+      font-size: 12px;
+      padding: 5px 10px;
+  }
+}
+@media (max-width: 400px) {
+  .toast {
+      min-width: 180px;
+      max-width: 250px;
+      font-size: 10px;
+      padding: 4px 8px;
+  }
+}

@@ -1,6 +1,31 @@
 <%- include("../../layout/sidebar.ejs") %>
 
 <style>
+.popup-modal {
+    overflow-y: auto;
+    padding: 50px;
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+}
+
+.popup-modal::-webkit-scrollbar {
+    display: none; 
+}
+
+.modal-content {
+    margin: 20px auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding: 20px;
+    position: relative; /* Tambahkan ini */
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none;
+}
+
 #itemCondition {
     width: 100%;
     border: 1px solid #ccc; 
@@ -9,6 +34,93 @@
     border-radius: 4px;
     background-color: #ffff; 
     box-sizing: border-box;
+}
+.image-input-container {
+    margin: 15px 0;
+}
+
+.image-capture-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.camera-container {
+    display: none;
+    margin-top: 10px;
+}
+
+#cameraFeed {
+    width: 100%;
+    max-width: 640px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transform: scaleX(-1);
+}
+
+.image-preview {
+    display: none;
+    margin-top: 10px;
+    max-width: 100%;
+}
+
+#previewImage {
+    max-width: 100%;
+    max-height: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.camera-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-capture {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-retake {
+    background-color: #f44336;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 </style>
 <main class="content">
@@ -91,48 +203,184 @@
             <label for="keteranganKondisi" class="left-label">Keterangan</label>
             <input type="text" id="keteranganKondisi" name="keterangan_kondisi" required>
 
-            <label for="imageProof" class="left-label">Bukti Gambar</label>
-            <input type="file" id="imageProof" name="buktiGambar" required>
+            <div class="image-input-container">
+                <label class="left-label">Bukti Gambar</label>
+                <div class="image-capture-buttons">
+                    <button type="button" style="background-color: white; color: black; border: 1px solid black; padding: 8px 16px; cursor: pointer;" onclick="handleFileUpload()">
+                        <i class="fas fa-upload"></i> Upload File
+                    </button>
+                    <button type="button" style="background-color: white; color: black; border: 1px solid black; padding: 8px 16px; cursor: pointer;" onclick="toggleCamera()">
+                        <i class="fas fa-camera"></i> Buka Kamera
+                    </button>
+                </div>
+                
 
-            <button type="submit" class="btn finish-btn">Selesai</button>
+                <input type="file" id="imageProof" name="buktiGambar" accept="image/*" style="display: none;" onchange="handleFileSelect(this)">
+                
+                <div class="camera-container" id="cameraContainer">
+                    <video id="cameraFeed" autoplay playsinline></video>
+                    <div class="camera-actions">
+                        <button type="button" style="background-color: #6dd6ce; color: black; border: 1px solid #35b3a9; padding: 8px; cursor: pointer;"  id="captureButton">
+                            <i class="fas fa-camera"></i> Ambil Foto
+                        </button>
+                        <button type="button" style="background-color: #6dd6ce; color: black; border: 1px solid #35b3a9; padding: 8px; cursor: pointer;"  id="retakeButton" style="display: none;">
+                            <i class="fas fa-redo"></i> Ambil Ulang
+                        </button>
+                    </div>
+                </div>
+
+                <div class="image-preview" id="imagePreviewContainer">
+                    <img id="previewImage" alt="Preview">
+                </div>
+            </div>
+
+            <button type="submit" class="btn finish-btn" >Selesai</button>
             <button type="button" class="btn cancel-btn" onclick="closeModal()">Batal</button>
+
         </form>
     </div>
-      <!-- Loading spinner -->
-        <div id="loading" class="loading-container" style="display: none;">
-            <div class="spinner"></div>
-            <p>Proses sedang berlangsung...</p>
-        </div>
+
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
 </div>
 
 <script>
-    const modal = document.getElementById("addModal");
-    const closeBtn = document.getElementById("closeBtn");
-    const returnForm = document.getElementById("returnForm");
+let stream = null;
+let capturedImage = null;
 
-    function openReturnModal(pengembalianId) {
-        modal.style.display = 'flex'; // Menampilkan modal
-        returnForm.dataset.pengembalianId = pengembalianId;
+// Modal handling
+const modal = document.getElementById("addModal");
+const closeBtn = document.getElementById("closeBtn");
+const returnForm = document.getElementById("returnForm");
+const loadingSpinner = document.getElementById("loadingSpinner");
+
+function openReturnModal(pengembalianId) {
+    modal.style.display = 'flex';
+    returnForm.dataset.pengembalianId = pengembalianId;
+    resetForm();
+}
+
+function closeModal() {
+    stopCamera();
+    resetForm();
+    modal.style.display = 'none';
+}
+
+closeBtn.onclick = closeModal;
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        closeModal();
     }
+};
 
-    closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';  // Menyembunyikan modal
-    });
+// File upload handling
+function handleFileUpload() {
+    stopCamera();
+    document.getElementById('imageProof').click();
+}
 
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
+function handleFileSelect(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            showPreview(e.target.result);
+            document.getElementById('cameraContainer').style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+        capturedImage = input.files[0];
+    }
+}
+
+// Camera handling
+async function toggleCamera() {
+    const cameraContainer = document.getElementById('cameraContainer');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+
+    if (cameraContainer.style.display === 'none' || !cameraContainer.style.display) {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            });
+            const videoElement = document.getElementById('cameraFeed');
+            videoElement.srcObject = stream;
+            cameraContainer.style.display = 'block';
+            previewContainer.style.display = 'none';
+            document.getElementById('captureButton').style.display = 'block';
+            document.getElementById('retakeButton').style.display = 'none';
+        } catch (error) {
+            console.error('Error accessing camera:', error);
+            alert('Tidak dapat mengakses kamera. Pastikan memberikan izin akses kamera.');
         }
-    };
+    } else {
+        stopCamera();
+        cameraContainer.style.display = 'none';
+    }
+}
 
-    returnForm.addEventListener('submit', async function(event) {
-    event.preventDefault(); // Mencegah submit default
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+}
+
+// Image capture handling
+document.getElementById('captureButton').onclick = function() {
+    const video = document.getElementById('cameraFeed');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext('2d');
+
+    // Membalik gambar horizontal agar hasilnya tidak cermin
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(blob => {
+        capturedImage = blob;
+        showPreview(URL.createObjectURL(blob));
+        document.getElementById('captureButton').style.display = 'none';
+        document.getElementById('retakeButton').style.display = 'block';
+        document.getElementById('cameraFeed').style.display = 'none';
+    }, 'image/jpeg', 0.8);
+};
+
+document.getElementById('retakeButton').onclick = function() {
+    document.getElementById('cameraFeed').style.display = 'block';
+    document.getElementById('imagePreviewContainer').style.display = 'none';
+    document.getElementById('captureButton').style.display = 'block';
+    document.getElementById('retakeButton').style.display = 'none';
+    capturedImage = null;
+};
+
+function showPreview(src) {
+    const previewImage = document.getElementById('previewImage');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    previewImage.src = src;
+    previewContainer.style.display = 'block';
+}
+
+// Form submission
+// Form submission
+returnForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
 
     const formData = new FormData(returnForm);
     const pengembalianId = returnForm.dataset.pengembalianId;
 
-    // Menampilkan spinner loading
-    document.getElementById("loading").style.display = "flex";
+    if (capturedImage) {
+        formData.set('buktiGambar', capturedImage, 'capture.jpg');
+    }
+
+    loadingSpinner.style.display = 'flex';
 
     try {
         const response = await fetch(`/admin/pengembalianAset/${pengembalianId}`, {
@@ -141,35 +389,44 @@
         });
 
         const data = await response.json();
-
-        // Sembunyikan loading sebelum alert tampil, dengan sedikit delay
-        document.getElementById("loading").style.display = "none";
-
-        setTimeout(() => {
-            if (response.ok) {
+        
+        // Add a small delay to ensure loading spinner is visible
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Hide loading spinner
+        loadingSpinner.style.display = 'none';
+        
+        if (response.ok) {
+            setTimeout(() => {
                 alert(data.message);
                 location.reload();
-                modal.style.display = 'none';
-            } else {
+            }, 100); 
+        } else {
+            setTimeout(() => {
                 alert(data.message);
-            }
-        }, 100); // Delay 100ms agar browser bisa menyegarkan tampilan sebelum alert
+            }, 100);
+        }
     } catch (error) {
-        // Sembunyikan loading sebelum menampilkan alert error
-        document.getElementById("loading").style.display = "none";
-
-        setTimeout(() => {
-            alert('Terjadi kesalahan, coba lagi nanti.');
-        }, 100);
+        // Add delay before hiding spinner and showing error
+        await new Promise(resolve => setTimeout(resolve, 100));
+        loadingSpinner.style.display = 'none';
+        alert('Terjadi kesalahan, coba lagi nanti.');
     }
 });
 
+// Form reset
+function resetForm() {
+    returnForm.reset();
+    stopCamera();
+    document.getElementById('imagePreviewContainer').style.display = 'none';
+    document.getElementById('cameraContainer').style.display = 'none';
+    document.getElementById('captureButton').style.display = 'block';
+    document.getElementById('retakeButton').style.display = 'none';
+    capturedImage = null;
+}
 
-    function closeModal() {
-        modal.style.display = 'none';
-    }
-
-    function filterTable() {
+// Table search functionality
+function filterTable() {
     const input = document.getElementById("search-input").value.toLowerCase();
     const rows = document.querySelectorAll(".table-compact tbody tr");
     let hasMatch = false;
@@ -184,14 +441,17 @@
         }
     });
 
-    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
     const noDataMessage = document.getElementById("no-data-message");
     if (hasMatch) {
-        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
-        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+        if (noDataMessage) {
+            noDataMessage.style.opacity = "0";
+            setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+        }
     } else {
-        noDataMessage.style.display = "block"; 
-        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+        if (noDataMessage) {
+            noDataMessage.style.display = "block";
+            setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50);
+        }
     }
 }
 </script>

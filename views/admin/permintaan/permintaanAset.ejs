@@ -1,4 +1,5 @@
-<%- include("../../layout/sidebar.ejs") %>
+<body>
+    <%- include("../../layout/sidebar.ejs") %>
 
 <main class="content">
     <div class="header-content">
@@ -11,112 +12,115 @@
         </div>
     </div>
     <div class="container-fluid px-4">
+    <div id="toastNotification" class="toast hide"></div>
         <div class="table-wrapper">
             <div class="table-responsive">
                 <div class="table-bungkus">
                     <div class="table-scroll">
                         <table class="table-compact">
                             <thead>
-                                <tr>
-                                    <th width="5%">No</th>
-                                    <th width="10%">Tanggal</th>
-                                    <th width="15%">Nama</th>
-                                    <th width="10%">Unit Kerja</th>
-                                    <th width="10%">Nama Aset</th>
-                                    <th width="15%">Gambar</th>
-                                    <th width="15%">Status</th>
-                                    <th width="20%">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <% if (listPermintaan && listPermintaan.length > 0) { %>
-                                <% listPermintaan.forEach((permintaan, index) => { %>
+                            
                                     <tr>
-                                        <td width="5%"><%= index + 1 %></td>
-                                        <td width="10%"><%= permintaan.tanggal_permintaan %></td>
-                                        <td width="15%"><%= permintaan.User.nama %></td>
-                                        <td width="10%"><%= permintaan.User.unit_kerja %></td>
-                                        <td width="10%"><%= permintaan.Aset.nama_barang %></td>
-                                        <td width="15%">
-                                            <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= permintaan.Aset.Kategori.gambar %>" />
-                                        </td>
-                                        <td width="15%">
-                                            <% if (permintaan.status_permintaan === "diterima") { %>
-                                                <div class="status-badge disetujui">Disetujui</div>
-                                            <% } else if (permintaan.status_permintaan === "ditolak") { %>
-                                                <div class="status-badge ditolak">Ditolak</div>
-                                            <% } else if (permintaan.status_permintaan === "diproses") { %>
-                                                <div class="status-badge diproses">Diproses</div>
-                                            <% } %>
-                                        </td>
-                                        <td width="20%">
-                                            <% if (permintaan.status_permintaan === "diproses") { %>
-                                                <button class="btn-setuju" onclick="showModal('setuju', '<%= permintaan.id %>')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button class="btn-tolak" onclick="showModal('tolak', '<%= permintaan.id %>')">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                                <a href="/admin/permintaanAset/<%= permintaan.id %>">
-                                                    <button class="button-info">
-                                                      <i class="fas fa-info-circle"></i>
-                                                    </button>
-                                                  </a>
-                                            <% } else { %>
-                                                <button class="btn-setuju" disabled>
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button class="btn-tolak" disabled>
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                                <a href="/admin/permintaanAset/<%= permintaan.id %>">
-                                                    <button class="button-info">
-                                                        <i class="fas fa-info-circle"></i>
-                                                    </button>
-                                                </a>
-                                            <% } %>
-                                        </td>
+                                        <th width="5%">No</th>
+                                        <th width="10%">Tanggal</th>
+                                        <th width="15%">Nama</th>
+                                        <th width="10%">Unit Kerja</th>
+                                        <th width="10%">Nama Aset</th>
+                                        <th width="15%">Alasan</th>
+                                        <th width="15%">Status</th>
+                                        <th width="20%">Aksi</th>
                                     </tr>
-                                <% }); %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="8" class="text-center">Tidak ada permintaan aset.</td>
-                                    </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                        <div id="no-data-message"id="no-data-message" class="no-data-message">
-                            Data tidak ditemukan.
-                        </div>    
+                                </thead>
+                                <tbody>
+                                <% if (listPermintaan && listPermintaan.length > 0) { %>
+                                    <% listPermintaan.forEach((permintaan, index) => { %>
+                                        <tr>
+                                            <td width="5%"><%= index + 1 %></td>
+                                            <td width="10%"><%= permintaan.tanggal_permintaan %></td>
+                                            <td width="15%"><%= permintaan.User.nama %></td>
+                                            <td width="10%"><%= permintaan.User.unit_kerja %></td>
+                                            <td width="10%"><%= permintaan.Aset.nama_barang %></td>
+                                            <td width="15%"><%= permintaan.alasan %></td>
+                                            <td width="15%">
+                                                <% if (permintaan.status_permintaan === "diterima") { %>
+                                                    <div class="status-badge disetujui">Disetujui</div>
+                                                <% } else if (permintaan.status_permintaan === "ditolak") { %>
+                                                    <div class="status-badge ditolak">Ditolak</div>
+                                                <% } else if (permintaan.status_permintaan === "diproses") { %>
+                                                    <div class="status-badge diproses">Diproses</div>
+                                                <% } %>
+                                            </td>
+                                            <td width="20%">
+                                                <% if (permintaan.status_permintaan === "diproses") { %>
+                                                    <button class="btn-setuju" onclick="showModal('setuju', '<%= permintaan.id %>')">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn-tolak" onclick="showModal('tolak', '<%= permintaan.id %>')">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <a href="/admin/permintaanAset/<%= permintaan.id %>">
+                                                        <button class="button-info">
+                                                          <i class="fas fa-info-circle"></i>
+                                                        </button>
+                                                      </a>
+                                                <% } else { %>
+                                                    <button class="btn-setuju" disabled>
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn-tolak" disabled>
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <a href="/admin/permintaanAset/<%= permintaan.id %>">
+                                                        <button class="button-info">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </button>
+                                                    </a>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="8" class="text-center">Tidak ada permintaan aset.</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                            <div id="no-data-message"id="no-data-message" class="no-data-message">
+                                Data tidak ditemukan.
+                            </div>    
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
-
-<!-- Modal -->
-<div id="addModal" class="popup-modal">
-    <div class="modal-content">
-        <span id="close" class="close-btn">&times;</span>
-        <h3 id="modalTitle"></h3>
-        <p id="modalContent"></p>
-        <div class="flex justify-center space-x-4">
-            <button type="button" class="btn cancel-btn">Tidak</button>
-            <button type="submit" class="btn finish-btn">Ya</button>
+    </main>
+    
+    <!-- Modal -->
+    <div id="addModal" class="popup-modal">
+        <div class="modal-content">
+            <span id="close" class="close-btn">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <p id="modalContent"></p>
+            <div class="flex justify-center space-x-4">
+                <button type="button" class="btn cancel-btn">Tidak</button>
+                <button type="submit" class="btn finish-btn">Ya</button>
+            </div>
         </div>
     </div>
-</div>
+</body>
+</html>
 
 <script>
-    const modal = document.getElementById("addModal");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalContent = document.getElementById("modalContent");
-    const cancelBtn = modal.querySelector(".cancel-btn");
-    const finishBtn = modal.querySelector(".finish-btn");
-    const closeBtn = document.getElementById("close");
 
-    function showModal(type, permintaanId) {
+const modal = document.getElementById("addModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalContent = document.getElementById("modalContent");
+const cancelBtn = modal.querySelector(".cancel-btn");
+const finishBtn = modal.querySelector(".finish-btn");
+const closeBtn = document.getElementById("close");
+
+function showModal(type, permintaanId) {
     if (type === "setuju") {
         modalTitle.textContent = "Setujui Permintaan";
         modalContent.textContent = "Apakah Anda yakin ingin menyetujui permintaan ini?";
@@ -127,15 +131,16 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ status: "diterima" }),
                 });
+                modal.style.display = "none";
                 if (response.ok) {
-                    alert("Permintaan berhasil disetujui!");
-                    location.reload();
+                    showToast("Permintaan berhasil disetujui!", true);
+                    setTimeout(() => window.location.reload(), 2500);
                 } else {
-                    alert("Gagal menyetujui permintaan.");
+                    showToast("Gagal menyetujui permintaan.", false);
                 }
             } catch (error) {
                 console.error(error);
-                alert("Terjadi kesalahan.");
+                showToast("Terjadi kesalahan.", false);
             }
         };
     } else if (type === "tolak") {
@@ -148,23 +153,38 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ status: "ditolak" }),
                 });
+                modal.style.display = "none";
                 if (response.ok) {
-                    alert("Permintaan berhasil ditolak!");
-                    location.reload();
+                    showToast("Permintaan berhasil ditolak!", true);
+                    setTimeout(() => window.location.reload(), 2500);
                 } else {
                     const error = await response.json();
-                    alert(`Gagal menolak permintaan: ${error.message}`);
+                    showToast(`Gagal menolak permintaan: ${error.message}`, false);
                 }
             } catch (error) {
                 console.error(error);
-                alert("Terjadi kesalahan.");
+                showToast("Terjadi kesalahan.", false);
             }
         };
     }
     modal.style.display = "flex";
 }
+// Fungsi untuk menampilkan notifikasi toast
+function showToast(message, isSuccess = true) {
+    const toast = document.getElementById("toastNotification");
+    toast.textContent = message;
+    toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
 
-    
+    toast.classList.remove('show', 'hide');
+    void toast.offsetWidth; // Reset animasi
+
+    toast.classList.add('show');
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.classList.add('hide');
+    }, 2500);
+}
     closeBtn.addEventListener("click", function () {
         modal.style.display = "none";
     });

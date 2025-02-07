@@ -87,7 +87,7 @@
                                                 </span>
                                             </td>                                                                                
                                             <td width="25%">
-                                                <% if(pengajuanCek.status_cek !== 'sudah diperbaiki') { %>
+                                                <% if(pengajuanCek.status_pengembalian !== 'sudah' ) { %>
                                                 <button class="button-edit" data-id="<%= pengajuanCek.id %>" style="margin-right: 10px;">
                                                     <i class="fa-regular fa-pen-to-square"></i>
                                                 </button>
@@ -96,15 +96,22 @@
                                                         <i class="fa-regular fa-pen-to-square"></i>
                                                     </button>
                                                 <% } %>
+                                                
                                                 <a href="detailPengajuanCek/<%= pengajuanCek.id %>">
                                                     <button class="button-info" style="margin-right: 10px;">
                                                         <i class="fa-solid fa-circle-info"></i>
                                                     </button>
                                                 </a>
                                                 <% if(pengajuanCek.status_pengembalian !== 'sudah') { %>
+                                                    <% if(pengajuanCek.status_cek === 'sudah diperbaiki' || pengajuanCek.status_cek === 'tidak dapat diperbaiki') { %>
                                                     <button class="btn finishButton" data-id="<%= pengajuanCek.id %>">
                                                         <i class="fas fa-check"></i> Selesai
                                                     </button>
+                                                    <% } else { %>
+                                                        <button class="btn finishButton" data-id="<%= pengajuanCek.id %>" style="background-color: rgb(168, 168, 168); cursor: not-allowed;" disabled>
+                                                            <i class="fas fa-check"></i> Selesai
+                                                        </button>
+                                                    <% } %>
                                                 <% } else { %>
                                                     <button class="btn finishButton" data-id="<%= pengajuanCek.id %>" style="background-color: rgb(168, 168, 168); cursor: not-allowed;" disabled>
                                                         <i class="fas fa-check"></i> Selesai

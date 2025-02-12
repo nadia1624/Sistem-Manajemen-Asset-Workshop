@@ -42,8 +42,9 @@ const getReturnKaryawan = async (req, res) => {
     })  
 
     console.log(vendorSubmissions)
+    const  title = "Pengembalian Aset Karyawan Vendor"
 
-    res.render('admin/pengembalianVendor/asetKaryawan', { vendorSubmissions: vendorSubmissions  });
+    res.render('admin/pengembalianVendor/asetKaryawan', { vendorSubmissions: vendorSubmissions, title  });
 
     
   } catch (error) {
@@ -97,8 +98,9 @@ const getDetailAsetKaryawanVendor = async (req, res) => {
           return res.status(404).render('errorPage', { message: 'Detail aset karyawan vendor tidak ditemukan.' });
       }
 
+      const  title = "Pengembalian Aset Karyawan Vendor"
       // Render halaman detail aset karyawan vendor
-      res.render('admin/pengembalianVendor/detailAsetKaryawan', { detailAset });
+      res.render('admin/pengembalianVendor/detailAsetKaryawan', { detailAset, title });
 
   } catch (error) {
       console.error('Error saat mengambil detail aset karyawan vendor:', error);

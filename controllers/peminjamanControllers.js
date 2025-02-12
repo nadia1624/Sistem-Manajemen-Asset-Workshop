@@ -58,9 +58,11 @@ const getPeminjaman = async (req, res) => {
             }
         });
 
+        const title = "Peminjaman Aset"
+
         
 
-        return res.render('karyawan/peminjaman/peminjamanAset', { listPeminjaman, currentPath, pengajuanStatusMap });
+        return res.render('karyawan/peminjaman/peminjamanAset', { listPeminjaman, currentPath, pengajuanStatusMap,title });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Terjadi kesalahan dalam mengambil data peminjaman' });
@@ -137,8 +139,10 @@ const getAllDataLaporancek = async (req, res) => {
         //         : '-', // Handle if date is null
         // }));
 
+        const title = "Laporan Pengecekan Aset"
+
         // Render view dengan data yang sudah diformat
-        res.render('karyawan/peminjaman/laporanCek', { laporanCekList, currentPath: req.path });
+        res.render('karyawan/peminjaman/laporanCek', { laporanCekList, currentPath: req.path , title});
     } catch (error) {
         // Log and handle errors
         console.error('Error fetching laporan cek:', error);

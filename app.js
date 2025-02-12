@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');  
 const route = require('./routes/index')
 const profileMiddleware = require('./middleware/profilMiddleware')
+const favicon = require('serve-favicon');
 // const User = require('./models/user')
 // const Kategori = require('./models/kategori')
 // const Aset = require('./models/aset')
@@ -30,7 +31,7 @@ app.use(cookieParser());
 app.use(route)
 
 
-  
+app.use(favicon(path.join(__dirname, 'public', 'image', 'logo.png')));
 // Middleware untuk melayani file statis dari folder "public"
 app.use(express.static(path.join(__dirname, 'public')));
 

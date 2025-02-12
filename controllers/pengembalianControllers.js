@@ -76,7 +76,9 @@ const getPengembalian = async (req, res) => {
             order: [['tanggal_dikembalikan', 'DESC']]
         });
 
-        return res.render('admin/pengembalian/pengembalianAset', { pengembalianList });
+        const  title = "Pengembalian Aset"
+
+        return res.render('admin/pengembalian/pengembalianAset', { pengembalianList, title });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data pengembalian' });
@@ -102,10 +104,11 @@ const riwayatPengembalian = async (req, res) => {
             ],
             order: [['tanggal_dikembalikan', 'DESC']]
         });
+        const  title = "Pengembalian Aset"
 
         const filteredRiwayatList = riwayatList.filter(item => item.gambar_bukti !== null);
 
-        return res.render('admin/pengembalian/riwayatPengembalian', { riwayatList: filteredRiwayatList });
+        return res.render('admin/pengembalian/riwayatPengembalian', { riwayatList: filteredRiwayatList, title });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data pengembalian' });
@@ -391,7 +394,9 @@ const getRiwayatKaryawan = async (req, res) => {
             };
         });
 
-        return res.render('karyawan/riwayat/riwayatKaryawan', { result, currentPath });
+        const  title = "Riwayat Pengembalian Aset"
+
+        return res.render('karyawan/riwayat/riwayatKaryawan', { result, currentPath, title });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: 'Terjadi kesalahan pada server.' });

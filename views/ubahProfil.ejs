@@ -50,7 +50,7 @@
     <div class="profile-container">
         <div class="profile-section">
             <div class="profile-pic">
-                <img id="profileImage" src="<%= user.gambar ? '/uploads/' + user.gambar : '/image/logo.png' %>" alt="Profile picture"/>
+                <img id="profileImage" src="<%= user.gambar ? '/uploads/' + user.gambar : '/image/user.webp' %>" alt="Profile picture"/>
                 <form id="uploadForm" action="/karyawan/uploadProfilePicture" method="POST" enctype="multipart/form-data">
                     <input type="file" name="profilePicture" id="profilePicture" style="display: none;" accept="image/*">
                     <a href="#" onclick="document.getElementById('profilePicture').click(); return false;">Ganti Foto</a>

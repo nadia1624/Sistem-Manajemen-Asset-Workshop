@@ -143,6 +143,7 @@ const getUserProfile = async (req, res) => {
       const userId = req.userId
       const successMessage = req.query.successMessage;
       const errorMessage = req.query.errorMessage;
+      const title = "Profile"
       
       const user = await User.findByPk(userId, {
           attributes: ['nama', 'nip', 'email', 'unit_kerja', 'jabatan', 'gambar', 'no_hp']
@@ -156,7 +157,8 @@ const getUserProfile = async (req, res) => {
           currentPath: req.path, 
           user: user ,
           successMessage: successMessage, 
-          errorMessage: errorMessage
+          errorMessage: errorMessage,
+          title
       });
   } catch (error) {
       console.error(error);
@@ -203,6 +205,7 @@ try {
 const getUbahProfile= async (req, res) => {
 try {
   const userId = req.userId;
+  const title = "Change Profile"
 
   const user = await User.findByPk(userId);
 
@@ -212,7 +215,8 @@ try {
 
   res.render('ubahProfil', {
     currentPath: req.path,
-    user
+    user,
+    title
   });
 } catch (error) {
   console.error(error);
@@ -303,6 +307,7 @@ try {
 const getUbahPasswordPage = async (req, res) => {
 try {
     const userId = req.userId;
+    const title = "Change Password"
     
     const user = await User.findByPk(userId, {
         attributes: ['nama', 'gambar', 'nip', 'email', 'unit_kerja', 'jabatan', 'no_hp']
@@ -316,7 +321,8 @@ try {
         currentPath: req.path,
         user: user,
         successMessage: req.query.success,
-        errorMessage: req.query.error
+        errorMessage: req.query.error,
+        title
     });
 } catch (error) {
     console.error(error);

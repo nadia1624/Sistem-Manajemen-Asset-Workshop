@@ -82,6 +82,8 @@ const getPermintaanAsetKaryawan = async (req, res) => {
       return res.render('karyawan/permintaan/permintaanAset', { listPermintaan, currentPath });
     }
 
+    const  title = "Permintaan Aset"
+
     res.render('karyawan/permintaan/permintaanAset', {
       listPermintaan: listPermintaan.map((p) => ({
         ...p.dataValues,
@@ -93,6 +95,7 @@ const getPermintaanAsetKaryawan = async (req, res) => {
         }),
       })),
       currentPath,
+      title
     });
   } catch (error) {
     console.error("Error saat mengambil permintaan aset:", error);
@@ -157,6 +160,8 @@ const getPermintaanAsetAdmin = async (req, res) => {
       return res.render('admin/permintaan/permintaanAset', { listPermintaan });
     }
 
+    const  title = "Permintaan Aset"
+
     // Render halaman permintaan aset admin
     res.render('admin/permintaan/permintaanAset', {
       listPermintaan: listPermintaan.map((p) => ({
@@ -167,6 +172,7 @@ const getPermintaanAsetAdmin = async (req, res) => {
           year: "numeric",
         }),
       })),
+      title
     });
   } catch (error) {
     console.error("Error saat mengambil permintaan aset:", error);
@@ -198,6 +204,8 @@ const getDetailPermintaanAset = async (req, res) => {
       return res.status(404).render('errorPage', { message: 'Permintaan tidak ditemukan.' });
     }
 
+    const  title = "Permintaan Aset"
+
     // Render halaman detail permintaan
     res.render('admin/permintaan/detailPermintaan', {
       permintaan: {
@@ -206,8 +214,9 @@ const getDetailPermintaanAset = async (req, res) => {
           day: "2-digit",
           month: "long",
           year: "numeric",
-        }),
-      }
+        })
+      },
+      title
     });
   } catch (error) {
     console.error("Error saat mengambil detail permintaan:", error);

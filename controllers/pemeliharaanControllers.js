@@ -112,6 +112,8 @@ const listPemeliharaan = async (req, res) => {
             order: [['createdAt', 'DESC']] 
         });
 
+        const title = "Pemeliharaan Aset"
+
         res.render("admin/pemeliharaan/pemeliharaanAset", {
             kategoriList,
             listPemeliharaan: updatedPemeliharaan.map(p => ({
@@ -122,6 +124,7 @@ const listPemeliharaan = async (req, res) => {
                     year: 'numeric',
                 }),
             })),
+            title
         });
     } catch (error) {
         console.error('Error during listPemeliharaan:', error);
@@ -152,8 +155,10 @@ const detailPemeliharaan = async (req,res) => {
                 id : pemeliharaanId
             }
         })
+
+         const title = "Pemeliharaan Aset"
         
-        res.render('admin/pemeliharaan/detailPemeliharaan', {detailPemeliharaan, pemeliharaanId, status_pemeliharaan : pemeliharaan.status_pemeliharaan  })
+        res.render('admin/pemeliharaan/detailPemeliharaan', {detailPemeliharaan, pemeliharaanId, status_pemeliharaan : pemeliharaan.status_pemeliharaan, title  })
         
     } catch (error) {
         console.error('Error during detailPemeliharaan:', error);

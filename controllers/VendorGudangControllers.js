@@ -72,8 +72,9 @@ const getReturnGudang = async (req, res) => {
           }],
           order: [['created_at', 'DESC']]
       });
+      const  title = "Pengembalian Aset Gudang Vendor"
 
-      res.render('admin/pengembalianVendor/asetGudang', { returnGudang });
+      res.render('admin/pengembalianVendor/asetGudang', { returnGudang, title });
   } catch (error) {
       console.error("Error fetching data:", error);
       res.status(500).send("Error fetching data");
@@ -124,8 +125,9 @@ const getRiwayatPengembalianVendor = async (req, res) => {
         ],
         order: [['created_at', 'DESC']]
       });
+      const  title = "Pengembalian Aset Gudang Vendor"
   
-      res.render('admin/pengembalianVendor/riwayatVendor', { pengembalian });
+      res.render('admin/pengembalianVendor/riwayatVendor', { pengembalian, title });
     } catch (error) {
       console.error("Error fetching riwayat pengembalian:", error);
       res.status(500).send("Terjadi kesalahan dalam mengambil data.");
@@ -157,6 +159,7 @@ const getDetailVendorGudang = async (req, res) => {
       if (!pengembalian) {
           return res.status(404).json({ message: "Data pengembalian tidak ditemukan" });
       }
+      const  title = "Pengembalian Aset Gudang Vendor"
 
       res.render('admin/pengembalianVendor/detailAsetGudang', {
           title: "Detail Aset Gudang",
@@ -168,7 +171,8 @@ const getDetailVendorGudang = async (req, res) => {
           kondisi_aset: pengembalian.Aset?.kondisi_aset || '-',
           nama_kategori: pengembalian.Aset?.Kategori?.nama_kategori || '-',
           deskripsi: pengembalian.Aset?.Kategori?.deskripsi || '-',
-          gambar: pengembalian.Aset?.Kategori?.gambar || 'https://placehold.co/150x150'
+          gambar: pengembalian.Aset?.Kategori?.gambar || 'https://placehold.co/150x150',
+          title
       });
 
   } catch (error) {
@@ -225,6 +229,7 @@ const getDetailRiwayatVendor = async (req, res) => {
       if (!pengembalian) {
         return res.status(404).json({ message: "Data pengembalian tidak ditemukan" });
       }
+      const  title = "Pengembalian Aset Gudang Vendor"
 
       // Render the detail page without the unnecessary fields
       res.render('admin/pengembalianVendor/detailAsetRiwayat', {
@@ -247,7 +252,8 @@ const getDetailRiwayatVendor = async (req, res) => {
         aset_pengajuan_kondisi_aset: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.kondisi_aset || '-',
         aset_pengajuan_nama_kategori: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.Kategori?.nama_kategori || '-',
         aset_pengajuan_deskripsi: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.Kategori?.deskripsi || '-',
-        aset_pengajuan_gambar: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.Kategori?.gambar || 'https://placehold.co/150x150'
+        aset_pengajuan_gambar: pengembalian.PengajuanCek?.Penyerahan?.Permintaan?.Aset?.Kategori?.gambar || 'https://placehold.co/150x150',
+        title
       });
   
     } catch (error) {

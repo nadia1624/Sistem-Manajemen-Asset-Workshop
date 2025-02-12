@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const { Aset, Kategori } = require("../models");
+const { title } = require("process");
 
 const tambahKategori = async (req, res) => {
   try {
@@ -49,10 +50,13 @@ const tambahKategori = async (req, res) => {
             kondisiStats
           };
         });
+
+        const  title = "Pengelolaan Aset"
     
         res.render("admin/pengelolaanAset/listKategoriAset", {
           req: req,
-          kategori: kategoriWithStats
+          kategori: kategoriWithStats,
+          title
         });
       } catch (error) {
         console.error(error);
@@ -175,11 +179,13 @@ const tampilkanAsetBerdasarkanKategori = async (req, res) => {
     const aset = await Aset.findAll({
       where: { kategoriId: id }, // Ambil aset berdasarkan kategoriId
     });
+    const  title = "Pengelolaan Aset"
 
     res.render("admin/pengelolaanAset/listAset", {
       req: req,
       kategori: kategori,
       aset: aset, // Kirim data aset ke EJS
+      title
     });
   } catch (error) {
     console.error(error);
@@ -312,10 +318,13 @@ const tampilkanDetailAset = async (req, res) => {
             return res.status(404).json({ message: "Aset tidak ditemukan!" });
         }
 
+        const  title = "Pengelolaan Aset"
+
         res.render("admin/pengelolaanAset/detailAset", {
             req: req,
             aset: aset,
-            kategori: aset.Kategori
+            kategori: aset.Kategori,
+            title
         });
     } catch (error) {
         console.error(error);
@@ -358,10 +367,12 @@ const tampilkanDaftarAsetKaryawan = async (req, res) => {
       };
     }));
 
+    const title = "Daftar Aset"
     res.render('karyawan/daftarAset/daftar-aset', {
       assets: formattedKategoris,
       req: req,
-      currentPath: req.path
+      currentPath: req.path,
+      title
     });
   } catch (error) {
     console.error(error);
@@ -388,6 +399,8 @@ const tampilkanDetailAsetKaryawan = async (req, res) => {
     if (!kategori) {
       return res.status(404).json({ message: 'Kategori tidak ditemukan' });
     }
+
+    const title = "Daftar Aset"
  
     res.render('karyawan/daftarAset/detail-aset', {
       kategori: {
@@ -399,7 +412,8 @@ const tampilkanDetailAsetKaryawan = async (req, res) => {
         serial_number: kategori.Asets[0].serial_number
       },
       currentPath: req.path,
-      req
+      req,
+      title
     });
   } catch (error) {
     console.error(error);

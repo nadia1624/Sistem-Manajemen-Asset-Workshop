@@ -38,6 +38,7 @@ const getPenyerahan = async (req, res) => {
         ["tanggal_penyerahan", "DESC"], // Urutkan berdasarkan tanggal penyerahan secara menurun (DESC)
       ]
     });
+    const  title = "Penyerahan Aset"
 
 
     res.render('admin/penyerahan/penyerahanAset', {
@@ -50,6 +51,7 @@ const getPenyerahan = async (req, res) => {
             year: "numeric",
           }),
         })),
+        title
       });
   } catch (error) {
     console.error('Error mengambil data penyerahan:', error);

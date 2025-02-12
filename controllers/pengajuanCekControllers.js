@@ -30,10 +30,9 @@ const getPengajuanCek = async (req, res) => {
             ],
             order: [['tanggal_pengecekan', 'DESC']] // Urutkan berdasarkan tanggal pengecekan terbaru
         });
+        const  title = "Pengajuan Cek Aset"
 
-        
-
-        return res.render('admin/pengajuanCek/daftarPengajuanCek', { pengajuanCekList }); // Render halaman admin untuk pengajuan cek
+        return res.render('admin/pengajuanCek/daftarPengajuanCek', { pengajuanCekList, title }); // Render halaman admin untuk pengajuan cek
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data pengajuan cek' });
@@ -81,9 +80,10 @@ const getDetailPengajuanCek = async (req, res) => {
         if (!detailPengajuanCek) {
             return res.status(404).render('errorPage', { message: 'Pengajuan cek tidak ditemukan.' });
         }
+        const  title = "Pengajuan Cek Aset"
   
         // Render halaman detail pengajuan
-        res.render('admin/pengajuanCek/detailPengajuanCek', {detailPengajuanCek})
+        res.render('admin/pengajuanCek/detailPengajuanCek', {detailPengajuanCek, title})
         
     } catch (error) {
         console.error('Error saat mengambil detail pengajuan cek:', error);

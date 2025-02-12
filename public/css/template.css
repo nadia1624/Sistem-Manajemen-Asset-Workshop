@@ -1970,3 +1970,159 @@ a button:disabled {
 .overlay.show {
   display: flex;
 }
+
+.button-downloads {
+  /* Fixed dimensions */
+  width: 40px;
+  height: 40px;
+
+  /* Base styles */
+  background-color: #A2E180; /* Warna biru yang sesuai dengan gambar */
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* Perfect centering using flexbox */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Remove default padding/margin */
+  padding: 0;
+  margin: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  /* Box shadow for depth */
+  box-shadow: 0 2px 4px rgba(72, 255, 0, 0.216);
+}
+
+/* Hover state */
+.button-downloads:hover {
+  background-color: #A2E180;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 255, 51, 0.3);
+}
+
+/* Active/Pressed state */
+.button-downloads:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(21, 255, 0, 0.2);
+}
+
+/* Icon styles */
+.button-downloads i {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Icon animation on hover */
+.button-downloads:hover i {
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .button-downloads {
+    width: 40px;
+    height: 40px;
+  }
+
+  .button-downloads i {
+    font-size: 18px;
+  }
+}
+
+/* jsjjs */
+.button-download-non {
+  /* Fixed dimensions */
+  width: 40px;
+  height: 40px;
+
+  /* Base styles */
+  background-color: gray; /* Warna biru yang sesuai dengan gambar */
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* Perfect centering using flexbox */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Remove default padding/margin */
+  padding: 0;
+  margin: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+}
+
+/* Hover state */
+.button-download-non:hover {
+  background-color: gray;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 18, 4, 0.3);
+}
+
+/* Active/Pressed state */
+.button-download-non:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(3, 34, 0, 0.2);
+}
+
+/* Icon styles */
+.button-download-non i {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Icon animation on hover */
+.button-download-non:hover i {
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .button-download-non {
+    width: 40px;
+    height: 40px;
+  }
+
+  .button-download-non i {
+    font-size: 18px;
+  }
+}
+
+.modal-content textarea {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 14px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.modal-content textarea::placeholder {
+  color: #aaa;
+}

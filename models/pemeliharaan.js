@@ -26,6 +26,10 @@ const Pemeliharaan = db.define(
         kategoriId : {
             type : Sequelize.INTEGER, 
             allowNull : false
+        },
+        surat : {
+            type : Sequelize.STRING,
+            allowNull : true
         }
     }, 
     {

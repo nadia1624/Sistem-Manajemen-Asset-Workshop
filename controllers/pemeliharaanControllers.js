@@ -1,6 +1,14 @@
 const { where } = require('sequelize');
 const { Pemeliharaan, DetailPemeliharaan, Kategori, Aset,Penyerahan, sequelize } = require('../models');
 const { Op } = require('sequelize');
+const libre = require('libreoffice-convert');
+const fs = require("fs");
+const path = require('path');
+const PizZip = require('pizzip');
+const Docxtemplater = require('docxtemplater');
+const { getImageXml } = require("docxtemplater-image-module/js/templates");
+const ImageModule = require('docxtemplater-image-module-free'); 
+const sizeOf = require("image-size");
 
 const createPemeliharaan = async (req, res) => {
     const transaction = await sequelize.transaction(); // Mulai transaksi
@@ -66,6 +74,7 @@ const listPemeliharaan = async (req, res) => {
                 model: Kategori,
                 attributes: ['nama_kategori'],
             },
+            order: [['createdAt', 'DESC']] 
         });
 
         // Mendapatkan tanggal hari ini
@@ -99,6 +108,8 @@ const listPemeliharaan = async (req, res) => {
                 model: Kategori,
                 attributes: ['nama_kategori'],
             },
+            
+            order: [['createdAt', 'DESC']] 
         });
 
         res.render("admin/pemeliharaan/pemeliharaanAset", {
@@ -178,6 +189,131 @@ const updateStatus = async (req, res) => {
             { status_pemeliharaan : 'sudah terlaksana'},
             { where : { id : pemeliharaanId }}
         )
+
+        const pemeliharaan = await Pemeliharaan.findOne({
+            where : {
+                id : pemeliharaanId
+            },
+            include : {
+                model : Kategori,
+                atribut : ['nama_kategori']
+            }
+        })
+
+        const detailPemeliharaan = await DetailPemeliharaan.findAll({
+            where : {
+                pemeliharaanId : pemeliharaanId
+            },
+            include : {
+                model : Aset,
+                atribut : ['serial_number','nama_barang', 'kondisi_aset'],
+                include : {
+                    model : Kategori,
+                    atribut : ['nama_kategori','gambar', 'deskripsi']
+                }
+            }
+        })
+
+        const templatePath = path.resolve(__dirname,'../public/templates/template_pemeliharaan.docx')
+        if(!fs.existsSync(templatePath)){
+            return res.status(404).json({messege: 'Template surat pemeliharaan tidak ditemukan'})
+        }
+        const imageOpts = {
+            centered: false,
+            getImage: (tagValue) => fs.readFileSync(tagValue),
+            getSize: (tagValue) => {
+              const dimensions = sizeOf(tagValue); // Dapatkan ukuran asli gambar
+              const width = 100; // Tetapkan lebar 150px
+              const aspectRatio = dimensions.height / dimensions.width; // Hitung rasio aspek
+              const height = Math.round(width * aspectRatio); // Sesuaikan tinggi secara otomatis
+              return [width, height];
+            },
+          };
+
+          const content = fs.readFileSync(templatePath);
+          const zip = new PizZip(content);
+          const doc = new Docxtemplater(zip, {
+              paragraphLoop: true,
+              linebreaks: true,
+              modules: [new ImageModule(imageOpts)],
+          });
+
+          const gambarAsetFilename = pemeliharaan.Kategori.gambar;
+          const gambarAsetPath = gambarAsetFilename
+          ? path.resolve(__dirname,`../public/uploads/${gambarAsetFilename}`)
+          : '';
+
+          const formatDate = (date) => {
+        const months = [
+                 "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                 "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+    
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+    
+            return `${day} ${month} ${year}`;
+            };
+        
+            const templateData = {
+                jadwal: formatDate(pemeliharaan.jadwal),
+                kategori: pemeliharaan.Kategori.nama_kategori,
+                jenis_pemeliharaan: pemeliharaan.jenis_pemeliharaan,
+                status_pemeliharaan: pemeliharaan.status_pemeliharaan,
+                detailPemeliharaan: detailPemeliharaan.map((item,index) => ({
+                    no : index+1,
+                    serial_number: item.Aset.serial_number,
+                    nama_barang: item.Aset.nama_barang,
+                    kondisi_aset: item.Aset.kondisi_aset,
+                    keterangan: item.keterangan,
+                    gambar: gambarAsetPath
+                }))
+            };
+
+            console.log(templateData)
+
+            Object.keys(templateData).forEach(key => {
+                if (Array.isArray(templateData[key]) && !templateData[key].length) {
+                    templateData[key] = [];  // If it's an empty array, ensure it's correctly set
+                }
+                if (templateData[key] === undefined || templateData[key] === null) {
+                    templateData[key] = '';  // If undefined or null, replace with empty string
+                }
+            });
+    
+            // Render the template with the processed data
+            await doc.renderAsync(templateData);       
+            
+           const suratDir = path.resolve(__dirname, "../public/data/surat");
+            if (!fs.existsSync(suratDir)) {
+                fs.mkdirSync(suratDir, { recursive: true });
+                }
+            
+
+            const timestamp = Date.now();
+            const docxFilePath = path.join(suratDir, `pemeliharaan-${timestamp}.docx`);
+            const pdfFilePath = docxFilePath.replace(".docx", ".pdf");
+            
+            
+            fs.writeFileSync(docxFilePath, doc.getZip().generate({ type: "nodebuffer" }));
+            
+                    // Convert to PDF
+                    await new Promise((resolve, reject) => {
+                        libre.convert(fs.readFileSync(docxFilePath), ".pdf", undefined, (err, result) => {
+                            if (err) {
+                                return reject(new Error("Gagal mengonversi DOCX ke PDF"));
+                            }
+                            fs.writeFileSync(pdfFilePath, result);
+                            resolve();
+                        });
+                    });
+
+                    fs.unlinkSync(docxFilePath);
+
+                    await pemeliharaan.update({ surat: path.basename(pdfFilePath) });
+            
+
         res.redirect('/admin/pemeliharaan-aset')
     } catch (error) {
         console.error('Error during updateStatusPemeliharaan:', error);

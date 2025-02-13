@@ -387,10 +387,16 @@ const tampilkanDaftarAsetKaryawan = async (req, res) => {
         }
       });
 
+      const formattedDescription = kategori.deskripsi
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .join('\n');
+
       return {
         id: kategori.id,
         title: kategori.nama_kategori,
-        description: kategori.deskripsi,
+        description: formattedDescription,
         image: `/uploads/${kategori.gambar}`,
         stock: stockCount,
         serial_number: kategori.Asets[0].serial_number

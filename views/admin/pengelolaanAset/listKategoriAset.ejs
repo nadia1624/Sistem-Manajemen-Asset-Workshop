@@ -161,6 +161,18 @@
     <img id="overlayImage" class="overlay-img">
   </div>
 
+<!-- Modal untuk Warning -->
+<div id="warningModal" class="popup-modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeWarningBtn">&times;</span>
+        <h3>Peringatan</h3>
+        <p id="warningMessage">Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia.</p>
+        <div class="flex justify-center space-x-4">
+            <button type="button" class="btn cancel-btn" id="confirmWarningBtn">OK</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // Modal Elements
     const addModal = document.getElementById("addModal");
@@ -175,6 +187,35 @@
     const closeDeleteBtn = document.getElementById("closeDeleteModal");
     const editButtons = document.querySelectorAll('.button-edit');
     const deleteButtons = document.querySelectorAll('.button-delete');
+
+    // Ambil elemen modal warning
+    const warningModal = document.getElementById("warningModal");
+    const closeWarningBtn = document.getElementById("closeWarningBtn");
+    const confirmWarningBtn = document.getElementById("confirmWarningBtn");
+    const warningMessage = document.getElementById("warningMessage");
+
+    // Fungsi untuk menampilkan modal warning
+    function showWarningModal(message) {
+        warningMessage.textContent = message;
+        warningModal.style.display = 'flex';
+    }
+
+    // Tutup modal warning
+    closeWarningBtn.addEventListener('click', () => {
+        warningModal.style.display = 'none';
+    });
+
+    confirmWarningBtn.addEventListener('click', () => {
+        warningModal.style.display = 'none';
+    });
+
+    // Global click handler untuk menutup modal warning
+    window.addEventListener('click', (event) => {
+        if (event.target === warningModal) {
+            warningModal.style.display = 'none';
+        }
+    });
+
     
     let kategoriIdToDelete;
     
@@ -218,21 +259,25 @@
     });
     
     document.querySelector('#deleteModal .finish-btn').addEventListener('click', async function() {
-        try {
-            const response = await fetch(`/admin/hapus-kategori/${kategoriIdToDelete}`, {
-                method: 'DELETE'
-            });
-    
-            if (response.ok) {
-                window.location.href = '/admin/pengelolaan-aset';
-            } else {
-                throw new Error('Gagal menghapus kategori');
-            }
-        } catch (error) {
-            console.error('Error:', error);
+    try {
+        const response = await fetch(`/admin/hapus-kategori/${kategoriIdToDelete}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            window.location.href = '/admin/pengelolaan-aset';
+        } else {
+            // Tampilkan pesan warning di modal
+            showWarningModal(data.message || 'Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia.');
         }
-        deleteModal.style.display = 'none';
-    });
+    } catch (error) {
+        console.error('Error:', error);
+        showWarningModal('Terjadi kesalahan saat menghapus kategori');
+    }
+    deleteModal.style.display = 'none';
+});
     
     document.querySelector('#deleteModal .cancel-btn').addEventListener('click', () => {
         deleteModal.style.display = 'none';

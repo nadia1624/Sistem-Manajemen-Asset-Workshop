@@ -30,7 +30,8 @@
   
   <script>
     // Initialize asset data from server
-    const assets = JSON.parse('<%- JSON.stringify(assets) %>');
+    // const assets = JSON.parse('<%- JSON.stringify(assets) %>');
+    const assets = JSON.parse(decodeURIComponent('<%- encodeURIComponent(JSON.stringify(assets)) %>'));
 
     // DOM Elements
     const elements = {

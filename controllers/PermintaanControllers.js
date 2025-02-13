@@ -49,6 +49,8 @@ const createPermintaanAset = async (req, res) => {
 const getPermintaanAsetKaryawan = async (req, res) => {
   const userId = req.userId; // Pastikan `userId` tersedia setelah verifikasi token
   const currentPath = req.path;
+  
+    const  title = "Permintaan Aset"
 
   try {
     const listPermintaan = await Permintaan.findAll({
@@ -79,10 +81,9 @@ const getPermintaanAsetKaryawan = async (req, res) => {
     });
 
     if (listPermintaan.length === 0) {
-      return res.render('karyawan/permintaan/permintaanAset', { listPermintaan, currentPath });
+      return res.render('karyawan/permintaan/permintaanAset', { listPermintaan, currentPath, title });
     }
 
-    const  title = "Permintaan Aset"
 
     res.render('karyawan/permintaan/permintaanAset', {
       listPermintaan: listPermintaan.map((p) => ({
@@ -139,6 +140,7 @@ const deletePermintaanAset = async (req, res) => {
 // Controller untuk melihat permintaan aset admin
 const getPermintaanAsetAdmin = async (req, res) => {
   try {
+    const  title = "Permintaan Aset"
     // Ambil semua permintaan aset dengan status selain 'dicancel'
     const listPermintaan = await Permintaan.findAll({
       include: [
@@ -157,10 +159,9 @@ const getPermintaanAsetAdmin = async (req, res) => {
     });
 
     if (listPermintaan.length === 0) {
-      return res.render('admin/permintaan/permintaanAset', { listPermintaan });
+      return res.render('admin/permintaan/permintaanAset', { listPermintaan,title });
     }
 
-    const  title = "Permintaan Aset"
 
     // Render halaman permintaan aset admin
     res.render('admin/permintaan/permintaanAset', {

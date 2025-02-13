@@ -103,7 +103,7 @@
                                                   <td><%= index + 1 %></td>
                                                   <td><%= penyerahan.Permintaan.Aset.nama_barang %></td>
                                                   <td>
-                                                      <img class="img-fluid" onclick="openOverlay(this.src)" alt="Gambar Aset: <%= penyerahan.Permintaan.Aset.nama_barang %>"
+                                                      <img class="img-fluid" alt="Gambar Aset: <%= penyerahan.Permintaan.Aset.nama_barang %>"
                                                           src="/public/uploads/<%= penyerahan.Permintaan.Aset.Kategori.gambar || '/path/to/default-image.jpg' %>" />
                                                   </td>
                                                   <td><%= penyerahan.Permintaan.Aset.Kategori ? penyerahan.Permintaan.Aset.Kategori.nama_kategori : 'N/A' %></td>
@@ -125,10 +125,23 @@
                                                     </button> -->
                                                   </td>
                                                   <td>
-                                                    <button class="btn btn-secondary" onclick="openReturnModal('<%= penyerahan.id %>')" style="background-color:#6dd6ce; font-size:12px; border:2px solid #6dd6ce; border-radius:8px; color:#000; cursor:pointer; padding:6px 12px; font-weight:bold; width:90px;">
+                                                    <button class="btn btn-secondary" 
+                                                            onclick="openReturnModal('<%= penyerahan.id %>')" 
+                                                            <%= penyerahan.status_penyerahan === 'telah dikembalikan' ? 'disabled' : '' %>
+                                                            style="
+                                                                background-color:<%= penyerahan.status_penyerahan === 'telah dikembalikan' ? '#cccccc' : '#6dd6ce' %>; 
+                                                                font-size:12px; 
+                                                                border:2px solid <%= penyerahan.status_penyerahan === 'telah dikembalikan' ? '#cccccc' : '#6dd6ce' %>; 
+                                                                border-radius:8px; 
+                                                                color:#000; 
+                                                                cursor:<%= penyerahan.status_penyerahan === 'telah dikembalikan' ? 'not-allowed' : 'pointer' %>; 
+                                                                padding:6px 12px; 
+                                                                font-weight:bold; 
+                                                                width:90px;"
+                                                    >
                                                         <i class="fa-solid fa-arrow-rotate-left"></i> Return
                                                     </button>
-                                                  </td>
+                                                </td>
                                                   <td>
                                                     <% if (penyerahan.status_penyerahan === "belum diserahkan") { %>
                                                       <button class="btn-action" style="background-color:#FFFFFF; border:2px solid #000000; border-radius:6px; padding:6px 10px; align-items:center; justify-content:center; width:35px;">
@@ -189,13 +202,9 @@
         <div id="returnNotification" class="notification hidden">
             <p>Pengembalian aset berhasil dilakukan!</p>
         </div>
-          <!-- Overlay untuk menampilkan gambar -->
-<div id="overlay" class="overlay" onclick="closeOverlay()">
-    <img id="overlayImage" class="overlay-img">
-  </div>
+        
     </main>
-</body>
-
+  
     <script>
         function openModal(id) {
             document.getElementById(`checkModal_${id}`).style.display = "flex";
@@ -230,33 +239,58 @@
         }, 500);
     }
 
-        function showReturnNotification(event) {
-        event.preventDefault(); // Mencegah pengiriman formulir langsung
+    function showReturnNotification(event) {
+    event.preventDefault();
 
-        // Menampilkan notifikasi pengembalian
-        let returnNotification = document.getElementById("returnNotification");
-        returnNotification.classList.remove("hidden");
-        returnNotification.style.display = "block";
+    const form = event.target;
+    
+    fetch(form.action, {
+        method: 'POST'
+    })
+    .then(response => {
+        if (response.ok) {
+            // Ambil ID dari URL form
+            const id = form.action.split('/').pop();
+            
+            // Disable button
+            const button = document.querySelector(`button[onclick="openReturnModal('${id}')"]`);
+            if (button) {
+                button.disabled = true;
+                button.style.backgroundColor = '#cccccc';
+                button.style.borderColor = '#cccccc';
+                button.style.cursor = 'not-allowed';
+            }
+            
+            // Tampilkan notifikasi
+            let returnNotification = document.getElementById("returnNotification");
+            returnNotification.classList.remove("hidden");
+            returnNotification.style.display = "block";
 
-        // Sembunyikan notifikasi setelah 3 detik
-        setTimeout(() => {
-            returnNotification.classList.add("hidden");
-            returnNotification.style.display = "none";
-        }, 30000);
+            // Sembunyikan notifikasi dan reload halaman
+            setTimeout(() => {
+                returnNotification.classList.add("hidden");
+                returnNotification.style.display = "none";
+                window.location.reload(); // Reload untuk memperbarui status
+            }, 3000);
 
-        // Kirim formulir setelah 500ms (agar pengguna sempat melihat notifikasi)
-        setTimeout(() => {
-            event.target.submit();
-        }, 500);
+            // Tutup modal
+            closeReturnModal(id);
+        } else {
+            throw new Error('Failed to return asset');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengembalikan aset');
+    });
+}
+
+function openReturnModal(id) {
+    const button = document.querySelector(`button[onclick="openReturnModal('${id}')"]`);
+    if (button && button.disabled) {
+        return; // Jangan buka modal jika button disabled
     }
-
-    function openOverlay(imageSrc) {
-    document.getElementById('overlayImage').src = imageSrc;
-    document.getElementById('overlay').classList.add('show');
-  }
-
-  function closeOverlay() {
-    document.getElementById('overlay').classList.remove('show');
-  }
+    document.getElementById(`returnModal_${id}`).style.display = "flex";
+}
     </script>
- 
+  </body>

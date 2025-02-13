@@ -43,7 +43,8 @@ const returnAset = async (req, res) => {
 
         await Penyerahan.update(
             { 
-                penyerahanId: null 
+                penyerahanId: null,
+                status_penyerahan: 'telah dikembalikan'  
             },
             { where: { id: idpenyerahan } }
         );

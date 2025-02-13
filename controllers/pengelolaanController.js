@@ -146,6 +146,20 @@ const hapusKategori = async (req, res) => {
       return res.status(404).json({ message: "Kategori tidak ditemukan" });
     }
 
+    // Cek apakah ada aset yang status peminjamannya bukan "tersedia"
+    const asetTidakTersedia = await Aset.findOne({
+      where: { 
+        kategoriId: id,
+        status_peminjaman: { [Op.ne]: 'tersedia' } // Op.ne = not equal
+      }
+    });
+
+    if (asetTidakTersedia) {
+      return res.status(400).json({ 
+        message: "Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia." 
+      });
+    }
+
     // Hapus semua aset yang terkait dengan kategori
     await Aset.destroy({
       where: { kategoriId: id },
@@ -163,7 +177,7 @@ const hapusKategori = async (req, res) => {
     res.json({ message: "Kategori berhasil dihapus" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Gagal menghapus kategori" });
+    res.status(500).json({ message: "Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia." });
   }
 };
 
@@ -204,6 +218,18 @@ const tambahAset = async (req, res) => {
       kategoriId,
     } = req.body;
 
+    // Cek apakah serial number sudah ada di database
+    const existingAset = await Aset.findOne({ where: { serial_number: serialNumber } });
+
+    if (existingAset) {
+      return res.status(400).json({
+        success: false,
+        message: `Tidak dapat menambah aset karena aset dengan serial number ${serialNumber} sudah ada.`,
+        isSerialExist: true // Flag khusus untuk menandai error serial number exist
+      });
+    }
+
+    // Jika tidak ada, buat aset baru
     await Aset.create({
       serial_number: serialNumber,
       hostname,
@@ -215,15 +241,19 @@ const tambahAset = async (req, res) => {
       kategoriId,
     });
 
-    res.redirect(`/admin/list-aset/${kategoriId}`);
+    res.status(200).json({
+      success: true,
+      redirectUrl: `/admin/list-aset/${kategoriId}`
+    });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     });
   }
 };
+
 
 
 const tampilkanEditAset = async (req, res) => {

@@ -33,6 +33,7 @@
     </div>
     </div>
     <div class="container-fluid px-4">
+      <div id="toastNotification" class="toast hide"></div>
       <div class="table-wrapper">
         <div class="table-responsive">
           <div class="table-bungkus">
@@ -407,22 +408,18 @@ penyerahanForm.onsubmit = async function (event) {
         // Hide loading spinner before alerting
         document.getElementById("loading").style.display = "none";
 
-        if (response.ok) {
-            setTimeout(() => {
-                alert(result.message);
-                location.reload();
-            }, 100); // Tambahkan sedikit delay agar UI lebih smooth
-        } else {
-            setTimeout(() => {
-                alert(`Error: ${result.error}`);
-            }, 100);
-        }
-    } catch (error) {
-        console.error("Error occurred:", error);
-        document.getElementById("loading").style.display = "none";
-        setTimeout(() => {
-            alert("Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
-        }, 100);
+    if (response.ok) {
+              showToast(result.message, true);
+              setTimeout(() => window.location.reload(), 1000);
+          } else {
+              showToast(`Error: ${result.error}`, false);
+          }
+} catch (error) {
+    console.error("Error occurred:", error);
+    document.getElementById("loading").style.display = "none";
+    setTimeout(() => {
+        showToast("Terjadi kesalahan saat mengirim data. Silakan coba lagi.", false);
+    }, 1000);
     } finally {
         modal.style.display = "none";
     }
@@ -520,4 +517,20 @@ function openOverlay(imageSrc) {
     document.getElementById('overlay').classList.remove('show');
   }
 
+ // Fungsi untuk menampilkan notifikasi toast
+ function showToast(message, isSuccess = true) {
+      const toast = document.getElementById("toastNotification");
+      toast.textContent = message;
+      toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
+  
+      toast.classList.remove('show', 'hide');
+      void toast.offsetWidth; // Reset animasi
+  
+      toast.classList.add('show');
+  
+      setTimeout(() => {
+          toast.classList.remove('show');
+          toast.classList.add('hide');
+      }, 2500);
+  }
 </script>

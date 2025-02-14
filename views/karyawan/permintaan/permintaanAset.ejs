@@ -288,7 +288,7 @@
   
           if (response.ok) {
               showToast(result.message || 'Tanda tangan berhasil diupload.');
-              setTimeout(() => window.location.reload(), 3000);
+              setTimeout(() => window.location.reload(), 1000);
           } else {
               showToast(result.message || 'Gagal mengupload tanda tangan.', false);
           }

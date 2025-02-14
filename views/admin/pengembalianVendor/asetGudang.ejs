@@ -72,6 +72,7 @@
     </div>
     </div>
     <div class="container-fluid px-4">
+        <div id="toastNotification" class="toast hide"></div>
         <div class="tabButton">
             <a href="asetKaryawan" class="button inactive">Aset Karyawan</a>
             <a href="asetGudang" class="button active">Aset Gudang</a>
@@ -190,6 +191,9 @@
     </div>
 </div>
 
+</body>
+</html>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("addModal");
@@ -273,37 +277,26 @@ document.querySelectorAll('.button-return').forEach(button => {
             const data = await response.json();
 
             if (response.ok) {
-                alert("Aset berhasil dikembalikan!");
+                showToast("Aset berhasil dikembalikan!");
                 modal.style.display = 'none';
-
-                // Simpan status return ke localStorage
                 localStorage.setItem(`asset-returned-${selectedItemId}`, 'true');
 
-                // Temukan baris yang sesuai dan hapus dengan animasi fade out
                 const returnButton = document.querySelector(`.button-return[data-id='${selectedItemId}']`);
                 const tableRow = returnButton.closest('tr');
-                
-                // Tambahkan CSS transition untuk efek fade out
                 tableRow.style.transition = 'opacity 0.5s ease';
                 tableRow.style.opacity = '0';
-                
-                // Hapus baris setelah animasi selesai
                 setTimeout(() => {
                     tableRow.remove();
-                    
-                    // Update nomor urut pada tabel
-                    const allRows = document.querySelectorAll('.table-compact tbody tr');
-                    allRows.forEach((row, index) => {
+                    document.querySelectorAll('.table-compact tbody tr').forEach((row, index) => {
                         row.querySelector('td:first-child').textContent = index + 1;
                     });
                 }, 500);
-
             } else {
-                alert("Gagal mengembalikan aset: " + (data.message || "Unknown error"));
+                showToast("Gagal mengembalikan aset: " + (data.message || "Unknown error"), false);
             }
         } catch (error) {
             console.error("Error during return action:", error);
-            alert("Terjadi kesalahan dalam mengembalikan aset");
+            showToast("Terjadi kesalahan dalam mengembalikan aset", false);
         }
     });
 });
@@ -335,16 +328,16 @@ document.querySelectorAll('.button-return').forEach(button => {
             const data = await response.json();
 
             if (response.ok) {
-                alert("Status berhasil diperbarui!");
-                modal.style.display = 'none';
-                location.reload(); 
-            } else {
-                alert("Gagal memperbarui status: " + (data.message || "Unknown error"));
-            }
-        } catch (error) {
-            console.error("Error updating status:", error);
-            alert("Terjadi kesalahan dalam memperbarui status: " + error.message);
+            showToast("Status berhasil diperbarui!");
+            modal.style.display = 'none';
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showToast("Gagal memperbarui status" , false);
         }
+    } catch (error) {
+        console.error("Error updating status:", error);
+        showToast("Terjadi kesalahan dalam memperbarui status: " + error.message, false);
+    }
     });
 });
 
@@ -373,7 +366,22 @@ function filterTable() {
         setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
     }
 }
+
+  // Fungsi untuk menampilkan notifikasi toast
+  function showToast(message, isSuccess = true) {
+      const toast = document.getElementById("toastNotification");
+      toast.textContent = message;
+      toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
+  
+      toast.classList.remove('show', 'hide');
+      void toast.offsetWidth; // Reset animasi
+  
+      toast.classList.add('show');
+  
+      setTimeout(() => {
+          toast.classList.remove('show');
+          toast.classList.add('hide');
+      }, 2500);
+  }
 </script>
 
-</body>
-</html>

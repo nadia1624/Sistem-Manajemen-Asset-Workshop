@@ -18,6 +18,7 @@
     </div>
 
     <div class="container-fluid px-4">
+        <div id="toastNotification" class="toast hide"></div>
         <div class="table-wrapper">
             <div class="table-responsive">
                 <div class="table-bungkus">
@@ -91,7 +92,7 @@
     <div class="modal-content">
         <span class="close-btn" id="closeAddBtn">&times;</span>
         <h3>Tambah Data Kategori</h3>
-        <form action="/admin/tambah-kategori" method="POST" enctype="multipart/form-data">
+        <form id="addForm" action="/admin/tambah-kategori" method="POST" enctype="multipart/form-data">
             <label for="addNamaKategori" class="left-label">Nama Kategori</label>
             <input type="text" id="addNamaKategori" name="namaKategori" placeholder="Masukkan nama kategori" required>
 
@@ -173,6 +174,9 @@
     </div>
 </div>
 
+</body>
+</html>
+
 <script>
     // Modal Elements
     const addModal = document.getElementById("addModal");
@@ -216,7 +220,6 @@
         }
     });
 
-    
     let kategoriIdToDelete;
     
     // Add Category Modal Functions
@@ -258,27 +261,6 @@
         });
     });
     
-    document.querySelector('#deleteModal .finish-btn').addEventListener('click', async function() {
-    try {
-        const response = await fetch(`/admin/hapus-kategori/${kategoriIdToDelete}`, {
-            method: 'DELETE'
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            window.location.href = '/admin/pengelolaan-aset';
-        } else {
-            // Tampilkan pesan warning di modal
-            showWarningModal(data.message || 'Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showWarningModal('Terjadi kesalahan saat menghapus kategori');
-    }
-    deleteModal.style.display = 'none';
-});
-    
     document.querySelector('#deleteModal .cancel-btn').addEventListener('click', () => {
         deleteModal.style.display = 'none';
     });
@@ -301,55 +283,117 @@
     });
     
     // Form Submit Handlers
-    document.getElementById('addForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        
-        try {
-            const response = await fetch('/admin/tambah-kategori', {
-                method: 'POST',
-                body: new FormData(this)
+    document.addEventListener('DOMContentLoaded', function() {
+        const addForm = document.querySelector('form[action="/admin/tambah-kategori"]');
+        if (addForm) {
+            addForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                
+                try {
+                    const response = await fetch('/admin/tambah-kategori', {
+                        method: 'POST',
+                        body: new FormData(this)
+                    });
+                    
+                    // Handle non-JSON responses
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.indexOf("application/json") !== -1) {
+                        const data = await response.json();
+                        if (response.ok) {
+                            showToast('Kategori berhasil ditambahkan!');
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            showToast(data.message || 'Gagal menambahkan kategori', 'error');
+                        }
+                    } else {
+                        // If response is redirect or HTML
+                        if (response.ok) {
+                            showToast('Kategori berhasil ditambahkan.');
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            showToast('Gagal menambahkan kategori', 'error');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Terjadi kesalahan saat menambah kategori', 'error');
+                }
+                
+                addModal.style.display = 'none';
             });
-            
-            const data = await response.json();
-            
-            if (data.message) {
-                alert(data.message);
-            }
-            
-            if (response.ok) {
-                window.location.reload();
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menambah kategori');
+        }
+
+        const editForm = document.getElementById('editForm');
+        if (editForm) {
+            editForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const id = document.getElementById('editKategoriId').value;
+                
+                try {
+                    const response = await fetch(`/admin/edit-kategori/${id}`, {
+                        method: 'POST',
+                        body: new FormData(this)
+                    });
+
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.indexOf("application/json") !== -1) {
+                        const data = await response.json();
+                        if (response.ok) {
+                            showToast('Kategori berhasil diupdate.');
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            showToast(data.message || 'Gagal mengupdate kategori', 'error');
+                        }
+                    } else {
+                        if (response.ok) {
+                            showToast('Kategori berhasil diupdate!');
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            showToast('Gagal mengupdate kategori', 'error');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Terjadi kesalahan saat mengupdate kategori', 'error');
+                }
+
+                editModal.style.display = 'none';
+            });
         }
         
-        addModal.style.display = 'none';
-    });
-    
-    editForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const id = document.getElementById('editKategoriId').value;
-        
-        try {
-            const response = await fetch(`/admin/edit-kategori/${id}`, {
-                method: 'POST',
-                body: new FormData(this)
+        const deleteBtn = document.querySelector('#deleteModal .finish-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', async function() {
+                try {
+                    const response = await fetch(`/admin/hapus-kategori/${kategoriIdToDelete}`, {
+                        method: 'DELETE'
+                    });
+
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.indexOf("application/json") !== -1) {
+                        const data = await response.json();
+                        if (response.ok) {
+                            showToast('Kategori berhasil dihapus!');
+                            setTimeout(() => window.location.href = '/admin/pengelolaan-aset', 1500);
+                        } else {
+                            showWarningModal(data.message || 'Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia.');
+                        }
+                    } else {
+                        if (response.ok) {
+                            showToast('Kategori berhasil dihapus!');
+                            setTimeout(() => window.location.href = '/admin/pengelolaan-aset', 1500);
+                        } else {
+                            showToast('Gagal menghapus kategori', 'error');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Terjadi kesalahan saat menghapus kategori', 'error');
+                }
+                deleteModal.style.display = 'none';
             });
-    
-            if (response.ok) {
-                alert('Kategori berhasil diupdate!');
-                window.location.reload();
-            } else {
-                const data = await response.json();
-                alert(data.message || 'Gagal mengupdate kategori');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat mengupdate kategori');
         }
-    
-        editModal.style.display = 'none';
+
     });
 
     function filterTable() {
@@ -377,6 +421,22 @@
         setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
     }
 }
+
+function showToast(message, isSuccess = true) {
+      const toast = document.getElementById("toastNotification");
+      toast.textContent = message;
+      toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
+  
+      toast.classList.remove('show', 'hide');
+      void toast.offsetWidth; // Reset animasi
+  
+      toast.classList.add('show');
+  
+      setTimeout(() => {
+          toast.classList.remove('show');
+          toast.classList.add('hide');
+      }, 2500);
+  }
    
 function openOverlay(imageSrc) {
     document.getElementById('overlayImage').src = imageSrc;

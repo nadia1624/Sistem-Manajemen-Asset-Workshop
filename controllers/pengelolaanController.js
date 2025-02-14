@@ -146,7 +146,26 @@ const hapusKategori = async (req, res) => {
       return res.status(404).json({ message: "Kategori tidak ditemukan" });
     }
 
-    // Cek apakah ada aset yang status peminjamannya bukan "tersedia"
+    // Cek apakah ada aset yang terkait dengan kategori
+    const jumlahAset = await Aset.count({
+      where: { kategoriId: id }
+    });
+
+    // Jika kategori tidak memiliki aset, langsung hapus
+    if (jumlahAset === 0) {
+      // Hapus file gambar jika ada
+      if (kategori.gambar) {
+        const imagePath = path.join(__dirname, "../uploads/", kategori.gambar);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+
+      await kategori.destroy();
+      return res.json({ message: "Kategori berhasil dihapus" });
+    }
+
+    // Jika kategori memiliki aset, cek status_peminjaman
     const asetTidakTersedia = await Aset.findOne({
       where: { 
         kategoriId: id,
@@ -160,7 +179,7 @@ const hapusKategori = async (req, res) => {
       });
     }
 
-    // Hapus semua aset yang terkait dengan kategori
+    // Jika semua aset tersedia, hapus semua aset terkait
     await Aset.destroy({
       where: { kategoriId: id },
     });

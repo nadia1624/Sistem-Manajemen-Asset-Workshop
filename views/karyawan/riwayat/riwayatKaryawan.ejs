@@ -6,7 +6,7 @@
         th:nth-child(2), td:nth-child(2) { width: 15%; }
         th:nth-child(3), td:nth-child(3) { width: 10%; }
         th:nth-child(4), td:nth-child(4) { width: 17%; }
-        th:nth-child(5), td:nth-child(5) { width: 10%; }
+        th:nth-child(5), td:nth-child(5) { width: 20%; }
         th:nth-child(6), td:nth-child(6) { width: 15%; }
     </style>
     
@@ -33,15 +33,15 @@
                                 <tbody>
                                     <% result.forEach((item, index) => { %>
                                     <tr>
-                                        <td><%= index + 1 %></td> <!-- No -->
-                                        <td><%= item.nama_barang %></td> <!-- Nama Barang -->
-                                        <td><%= item.kategori %></td> <!-- Kategori -->
-                                        <td><%= item.deskripsi %></td> <!-- Deskripsi -->
+                                        <td><%= index + 1 %></td> 
+                                        <td><%= item.nama_barang %></td> 
+                                        <td><%= item.kategori %></td> 
+                                        <td><%= item.deskripsi %></td>
                                         <td>
                                             <img class="img-fluid" onclick="openOverlay(this.src)" alt="Gambar Aset" src="/public/uploads/<%= item.gambar_bukti %>" />
-                                        </td> <!-- Gambar -->
-                                        <td><%= item.tanggal_peminjaman %></td> <!-- Tanggal Peminjaman -->
-                                        <td><%= item.tanggal_pengembalian %></td> <!-- Tanggal Pengembalian -->
+                                        </td> 
+                                        <td><%= item.tanggal_peminjaman %></td> 
+                                        <td><%= item.tanggal_pengembalian %></td> 
                                         <td>
                                             <a href="/data/surat/<%= item.suratPenyerahan %>" target="_blank" 
                                                 class="btn btn-action" 

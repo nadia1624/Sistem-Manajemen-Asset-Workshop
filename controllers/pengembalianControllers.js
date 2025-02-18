@@ -361,7 +361,10 @@ const getRiwayatKaryawan = async (req, res) => {
         });
 
         // Format the dates to show only day, month, and year
-        const result = assets.map(asset => {
+        const result = assets
+            .filter(asset => asset.gambar_bukti) 
+            .map(asset => {
+
             const tanggalPeminjaman = new Date(asset.Penyerahan.Permintaan.tanggal_permintaan);
             const tanggalPengembalian = new Date(asset.tanggal_dikembalikan);
 

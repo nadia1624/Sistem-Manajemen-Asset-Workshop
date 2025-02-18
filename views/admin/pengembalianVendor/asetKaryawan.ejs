@@ -41,6 +41,7 @@
     </div>
     </div>
     <div class="container-fluid px-4">
+        <div id="toastNotification" class="toast"></div>
         <div class="tabButton">
             <a href="asetKaryawan" class="button active">Aset Karyawan</a>
             <a href="asetGudang" class="button inactive">Aset Gudang</a>
@@ -89,9 +90,15 @@
                                                             <i class="fa-solid fa-circle-info"></i>
                                                         </button>
                                                     </a>
+                                                    <% if(submission.status_admin === 'selesai') { %>
                                                     <button class="finishButton btn" data-id="<%= submission.id %>">
                                                         <i class="fas fa-check"></i> Return
                                                     </button>
+                                                    <% } else { %>
+                                                        <button class="finishButton btn" data-id="<%= submission.id %>" style="margin-right: 10px; background-color: gray; cursor: not-allowed;border: gray;" disabled>
+                                                            <i class="fas fa-check"></i> Return
+                                                        </button>
+                                                    <% } %>
                                                 </td>
                                             </tr>
                                         <% }); %>
@@ -176,148 +183,138 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+            // Fungsi untuk menampilkan notifikasi toast
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById("toastNotification");
+            toast.textContent = message;
+            toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
 
+            toast.classList.remove('show', 'hide');
+            void toast.offsetWidth; // Reset animasi
 
-    // Handle form submission
-    editAssetForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
+            toast.classList.add('show');
 
-        console.log(currentSubmissionId)
-        
-        if (!currentSubmissionId) {
-            alert("Error: No submission selected");
-            return;
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+            }, 2500);
         }
 
-        const status = document.getElementById("status_admin").value;
-        
-        try {
-            const response = await fetch(`/admin/updatestatus/${currentSubmissionId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Add any authentication headers if needed
-                },
-                body: JSON.stringify({
-                    status_admin: status
-                })
-            });
+        // Handle form submission
+        editAssetForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
 
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Status berhasil diperbarui!");
-                // Refresh the page to show updated status
-                window.location.reload();
-            } else {
-                alert(data.message || "Terjadi kesalahan saat memperbarui status");
+            if (!currentSubmissionId) {
+                showToast("Error: No submission selected", false);
+                return;
             }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Terjadi kesalahan saat memperbarui status");
-        }
 
-        modal.style.display = 'none';
-    });
+            const status = document.getElementById("status_admin").value;
+            
+            try {
+                const response = await fetch(`/admin/updatestatus/${currentSubmissionId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        status_admin: status
+                    })
+                });
 
-    // Close modal handlers
-    closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
+                const data = await response.json();
+                modal.style.display = "none";
+                if (response.ok) {
+                    showToast("Status berhasil diperbarui!");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(data.message || "Terjadi kesalahan saat memperbarui status", false);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("Terjadi kesalahan saat memperbarui status", false);
+            }
 
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    };
-
-    document.querySelectorAll('.cancel-btn').forEach(button => {
-        button.addEventListener('click', function() {
             modal.style.display = 'none';
         });
-    });
 
+        // Close modal handlers
+        closeBtn.addEventListener('click', () => modal.style.display = 'none');
+        window.onclick = (event) => { if (event.target == modal) modal.style.display = 'none'; };
+        document.querySelectorAll('.cancel-btn').forEach(button => {
+            button.addEventListener('click', () => modal.style.display = 'none');
+        });
 
-    const updateStatus = document.getElementById("updateStatus")
-    let selectedPengajuanId = null;
-    
-    const finishButtons = document.querySelectorAll(".finishButton"); 
-    // Handle finish button
-    finishButtons.forEach(button => {
-        button.addEventListener("click", function () {
+        const updateStatus = document.getElementById("updateStatus");
+        let selectedPengajuanId = null;
+
+        const finishButtons = document.querySelectorAll(".finishButton");
+        finishButtons.forEach(button => {
+            button.addEventListener("click", function () {
                 selectedPengajuanId = this.getAttribute("data-id");
                 modal.style.display = "flex";
                 finishMessage.style.display = "block";
                 editForm.style.display = "none";
             });
         });
-    updateStatus.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    if (!selectedPengajuanId) {
-        alert("Terjadi kesalahan, coba lagi.");
-        return;
-    }
-    
-    try {
-        const response = await fetch(`/admin/updatepengembalianKaryawan/${selectedPengajuanId}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
+
+        updateStatus.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            if (!selectedPengajuanId) {
+                showToast("Terjadi kesalahan, coba lagi.", false);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/admin/updatepengembalianKaryawan/${selectedPengajuanId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
+
+                const result = await response.json();
+                modal.style.display = "none";
+                if (response.ok) {
+                    showToast(result.message);
+                    setTimeout(() => window.location.href = '/admin/asetKaryawan', 1000);
+                } else {
+                    showToast("Gagal mengupdate : " + (result.message || "Unknown error"), false);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("Terjadi kesalahan dalam memperbarui pengembalian", false);
             }
         });
+        });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        function filterTable() {
+            const input = document.getElementById("search-input").value.toLowerCase();
+            const rows = document.querySelectorAll(".table-compact tbody tr");
+            let hasMatch = false;
+
+            rows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                if (rowText.includes(input)) {
+                    row.style.display = "";
+                    hasMatch = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
+            const noDataMessage = document.getElementById("no-data-message");
+            if (hasMatch) {
+                noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+                setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
+            } else {
+                noDataMessage.style.display = "block"; 
+                setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+            }
         }
-
-        const result = await response.json();
-        alert(result.message);
-        window.location.href = '/admin/asetKaryawan';  // Gunakan href untuk navigasi
         
-    } catch (error) {
-        const response = await fetch(`/admin/updatepengembalianKaryawan/${selectedPengajuanId}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
-            }
-        });
-        console.error("Error:", error);
-        const result = await response.json();
-        alert(result.message);
-    }
-});
-
-});
-
-function filterTable() {
-    const input = document.getElementById("search-input").value.toLowerCase();
-    const rows = document.querySelectorAll(".table-compact tbody tr");
-    let hasMatch = false;
-
-    rows.forEach(row => {
-        const rowText = row.textContent.toLowerCase();
-        if (rowText.includes(input)) {
-            row.style.display = "";
-            hasMatch = true;
-        } else {
-            row.style.display = "none";
-        }
-    });
-
-    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
-    const noDataMessage = document.getElementById("no-data-message");
-    if (hasMatch) {
-        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
-        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
-    } else {
-        noDataMessage.style.display = "block"; 
-        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
-    }
-}
-   
 </script>
-
 </body>
 </html>

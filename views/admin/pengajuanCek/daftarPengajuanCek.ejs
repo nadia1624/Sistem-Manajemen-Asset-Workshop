@@ -43,6 +43,7 @@
     </div>
 
     <div class="container-fluid px-4">
+        <div id="toastNotification" class="toast"></div>
         <div class="table-wrapper">
             <div class="table-responsive">
                 <div class="table-bungkus">
@@ -87,7 +88,7 @@
                                                 </span>
                                             </td>                                                                                
                                             <td width="25%">
-                                                <% if(pengajuanCek.status_pengembalian !== 'sudah' ) { %>
+                                                <% if(pengajuanCek.status_pengembalian !== 'sudah' && pengajuanCek.status_cek !== 'diajukan ke vendor') { %>
                                                 <button class="button-edit" data-id="<%= pengajuanCek.id %>" style="margin-right: 10px;">
                                                     <i class="fa-regular fa-pen-to-square"></i>
                                                 </button>
@@ -114,7 +115,7 @@
                                                     <% } %>
                                                 <% } else { %>
                                                     <button class="btn finishButton" data-id="<%= pengajuanCek.id %>" style="background-color: rgb(168, 168, 168); cursor: not-allowed;" disabled>
-                                                        <i class="fas fa-check"></i> Selesai
+                                                        <i class="fas fa-check"></i> Return
                                                     </button>
                                                 <% } %>
                                             </td>
@@ -146,7 +147,7 @@
 
         <!-- Form untuk Edit -->
         <div id="editForm" style="position: relative; border-radius: 10px; background: white;">
-            <h3 style="margin-bottom: 1px;">Ubah Status Pengajuan</h3>
+            <h3 style="margin-bottom: 1px;">Edit Status Pengajuan</h3>
             <form id="editAssetForm">
                 <div class="form-group">
                     <label for="status" style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px;">Status</label>
@@ -161,7 +162,7 @@
                 </div>
                 <div style="display: flex; justify-content: center; margin-top: 5px;">
                     <button type="button" class="btn cancel-btn" style="padding: 5px 10px; ">Batal</button>
-                    <button type="submit" class="btn finish-btn" style="padding: 5px 10px; ">Selesai</button>
+                    <button type="submit" class="btn finish-btn" style="padding: 5px 10px; ">Simpan</button>
                 </div>
             </form>
         </div>
@@ -223,10 +224,6 @@
             });
         });
 
-        
-
-
-
         // Close Modal
         cancelButtons.forEach(button => {
             button.addEventListener("click", function () {
@@ -244,18 +241,18 @@
             }
         };
 
-        // Submit Form to Update Status
+        // Event listener untuk form edit
         editAssetForm.addEventListener("submit", async function (event) {
             event.preventDefault();
 
             if (!selectedPengajuanId) {
-                alert("Terjadi kesalahan, coba lagi.");
+                showToast("Terjadi kesalahan, coba lagi.", false);
                 return;
             }
 
             const selectedStatus = statusSelect.value;
             if (!selectedStatus) {
-                alert("Silakan pilih status terlebih dahulu.");
+                showToast("Silakan pilih status terlebih dahulu.", false);
                 return;
             }
 
@@ -264,85 +261,110 @@
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${localStorage.getItem("token")}` // Pastikan token dikirim
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
                     },
                     body: JSON.stringify({ status: selectedStatus })
                 });
 
                 const result = await response.json();
+                modal.style.display = "none"; // Tutup modal terlebih dahulu
+
                 if (response.ok) {
-                    alert(result.message);
-                    window.location.reload();  // Refresh halaman setelah update
+                    showToast(result.message, true);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2500);
                 } else {
-                    alert("Gagal memperbarui status: " + result.message);
+                    showToast("Gagal memperbarui status: " + result.message, false);
                 }
             } catch (error) {
                 console.error("Error:", error);
-                alert("Terjadi kesalahan saat memperbarui status.");
+                modal.style.display = "none"; // Tutup modal jika ada error jaringan
+                showToast("Terjadi kesalahan saat memperbarui status.", false);
             }
         });
 
+        // Event listener untuk update status pengembaliam
         updateStatus.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    if (!selectedPengajuanId) {
-        alert("Terjadi kesalahan, coba lagi.");
-        return;
-    }
-    
-    try {
-        const response = await fetch(`/admin/updateStatusPengembalian/${selectedPengajuanId}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            event.preventDefault();
+            if (!selectedPengajuanId) {
+                showToast("Terjadi kesalahan, coba lagi.", false);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/admin/updateStatusPengembalian/${selectedPengajuanId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                modal.style.display = "none"; // Tutup modal terlebih dahulu
+                showToast(result.message, true);
+                setTimeout(() => {
+                    window.location.href = '/admin/daftarPengajuanCek';
+                }, 2500);
+                
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("Terjadi kesalahan saat memperbarui status.", false);
+            }
+        });
+            });
+
+        // Fungsi untuk menampilkan toast notification
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById("toastNotification");
+            if (!toast) return;
+            
+            toast.textContent = message;
+            toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336";
+            toast.style.display = "block";
+            
+            toast.classList.remove('show', 'hide');
+            void toast.offsetWidth;
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+            }, 2500);
+        }
+
+        function filterTable() {
+        const input = document.getElementById("search-input").value.toLowerCase();
+        const rows = document.querySelectorAll(".table-compact tbody tr");
+        let hasMatch = false;
+
+        rows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            if (rowText.includes(input)) {
+                row.style.display = "";
+                hasMatch = true;
+            } else {
+                row.style.display = "none";
             }
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        alert(result.message);
-        window.location.href = '/admin/daftarPengajuanCek';  // Gunakan href untuk navigasi
-        
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Terjadi kesalahan saat memperbarui status.");
-    }
-});
-    
-    });
-
-    function filterTable() {
-    const input = document.getElementById("search-input").value.toLowerCase();
-    const rows = document.querySelectorAll(".table-compact tbody tr");
-    let hasMatch = false;
-
-    rows.forEach(row => {
-        const rowText = row.textContent.toLowerCase();
-        if (rowText.includes(input)) {
-            row.style.display = "";
-            hasMatch = true;
+        // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
+        const noDataMessage = document.getElementById("no-data-message");
+        if (hasMatch) {
+            noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+            setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
         } else {
-            row.style.display = "none";
+            noDataMessage.style.display = "block"; 
+            setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
         }
-    });
-
-    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
-    const noDataMessage = document.getElementById("no-data-message");
-    if (hasMatch) {
-        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
-        setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
-    } else {
-        noDataMessage.style.display = "block"; 
-        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
     }
-}
    
-
-
 </script>
-
 </body>
 </html>

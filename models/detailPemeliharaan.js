@@ -23,6 +23,16 @@ const DetailPemeliharaan = db.define(
             type : Sequelize.STRING,
             primaryKey : true,
             allowNull : false
+        },
+        status_pemeliharaan : {
+            type : Sequelize.ENUM,
+            values : ["Sudah Dilakukan", "Belum Dilakukan"],
+            allowNull : false
+        },
+        lokasi_aset : {
+            type : Sequelize.ENUM,
+            values : ["Di Workshop", "Dipinjam"],
+            allowNull : false
         }
     }, 
     {

@@ -29,11 +29,7 @@ const createPemeliharaan = async (req, res) => {
 
         // 2. Ambil semua aset dari kategori yang dipilih
         const assets = await Aset.findAll({
-            where: { kategoriId, 
-                status_peminjaman : {
-                    [Op.ne]: "dipinjam" 
-                }
-             },
+            where: { kategoriId },
             transaction,
         });
 
@@ -47,6 +43,8 @@ const createPemeliharaan = async (req, res) => {
             serial_number: asset.serial_number,
             status_aset: asset.kondisi_aset,
             keterangan: `Pemeliharaan untuk aset ${asset.nama_barang}`,
+            status_pemeliharaan : "Belum Dilakukan",
+            lokasi_aset: asset.status_peminjaman === "tersedia" ? "Di Workshop" : "Dipinjam"
         }));
 
         // 4. Insert data ke DetailPemeliharaan
@@ -185,146 +183,162 @@ const deletePemeliharaan = async (req,res) => {
         res.status(500).json({messege: 'Delete Pemeliharaan Eror', error: error.messege})
     }
 }
-
 const updateStatus = async (req, res) => {
     try {
         const pemeliharaanId = req.params.id;
+        const detail = await DetailPemeliharaan.findAll({
+            where: {
+                pemeliharaanId: pemeliharaanId
+            }
+        });
         
+        const semuaSudahDilakukan = detail.every(
+            (item) => item.status_pemeliharaan === "Sudah Dilakukan"
+        );
+        
+        if (!semuaSudahDilakukan) {
+            return res.status(400).json({ message: 'Detail pemeliharaan belum selesai!' });
+            // return res.redirect('/admin/pemeliharaan-aset')
+                }
+            
         await Pemeliharaan.update(
             { status_pemeliharaan : 'sudah terlaksana'},
             { where : { id : pemeliharaanId }}
-        )
+            )
 
         const pemeliharaan = await Pemeliharaan.findOne({
-            where : {
-                id : pemeliharaanId
-            },
-            include : {
-                model : Kategori,
-                atribut : ['nama_kategori']
-            }
-        })
-
-        const detailPemeliharaan = await DetailPemeliharaan.findAll({
-            where : {
-                pemeliharaanId : pemeliharaanId
-            },
-            include : {
-                model : Aset,
-                atribut : ['serial_number','nama_barang', 'kondisi_aset'],
+            where : { id : pemeliharaanId
+                },
                 include : {
                     model : Kategori,
-                    atribut : ['nama_kategori','gambar', 'deskripsi']
+                    atribut : ['nama_kategori']
                 }
+            })
+
+            const detailPemeliharaan = await DetailPemeliharaan.findAll({
+                where : {
+                    pemeliharaanId : pemeliharaanId
+                },
+                include : {
+                    model : Aset,
+                    atribut : ['serial_number','nama_barang', 'kondisi_aset'],
+                    include : {
+                        model : Kategori,
+                        atribut : ['nama_kategori','gambar', 'deskripsi']
+                    }
+                }
+            })
+
+            const templatePath = path.resolve(__dirname,'../public/templates/template_pemeliharaan.docx')
+            if(!fs.existsSync(templatePath)){
+                return res.status(404).json({messege: 'Template surat pemeliharaan tidak ditemukan'})
             }
-        })
-
-        const templatePath = path.resolve(__dirname,'../public/templates/template_pemeliharaan.docx')
-        if(!fs.existsSync(templatePath)){
-            return res.status(404).json({messege: 'Template surat pemeliharaan tidak ditemukan'})
-        }
-        const imageOpts = {
-            centered: false,
-            getImage: (tagValue) => fs.readFileSync(tagValue),
-            getSize: (tagValue) => {
-              const dimensions = sizeOf(tagValue); // Dapatkan ukuran asli gambar
-              const width = 100; // Tetapkan lebar 150px
-              const aspectRatio = dimensions.height / dimensions.width; // Hitung rasio aspek
-              const height = Math.round(width * aspectRatio); // Sesuaikan tinggi secara otomatis
-              return [width, height];
-            },
-          };
-
-          const content = fs.readFileSync(templatePath);
-          const zip = new PizZip(content);
-          const doc = new Docxtemplater(zip, {
-              paragraphLoop: true,
-              linebreaks: true,
-              modules: [new ImageModule(imageOpts)],
-          });
-
-          const gambarAsetFilename = pemeliharaan.Kategori.gambar;
-          const gambarAsetPath = gambarAsetFilename
-          ? path.resolve(__dirname,`../public/uploads/${gambarAsetFilename}`)
-          : '';
-
-          const formatDate = (date) => {
-        const months = [
-                 "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                 "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-            ];
-    
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = months[date.getMonth()];
-            const year = date.getFullYear();
-    
-            return `${day} ${month} ${year}`;
-            };
-        
-            const templateData = {
-                jadwal: formatDate(pemeliharaan.jadwal),
-                kategori: pemeliharaan.Kategori.nama_kategori,
-                jenis_pemeliharaan: pemeliharaan.jenis_pemeliharaan,
-                status_pemeliharaan: pemeliharaan.status_pemeliharaan,
-                detailPemeliharaan: detailPemeliharaan.map((item,index) => ({
-                    no : index+1,
-                    serial_number: item.Aset.serial_number,
-                    nama_barang: item.Aset.nama_barang,
-                    kondisi_aset: item.Aset.kondisi_aset,
-                    keterangan: item.keterangan,
-                    gambar: gambarAsetPath
-                }))
+            const imageOpts = {
+                centered: false,
+                getImage: (tagValue) => fs.readFileSync(tagValue),
+                getSize: (tagValue) => {
+                const dimensions = sizeOf(tagValue); // Dapatkan ukuran asli gambar
+                const width = 100; // Tetapkan lebar 150px
+                const aspectRatio = dimensions.height / dimensions.width; // Hitung rasio aspek
+                const height = Math.round(width * aspectRatio); // Sesuaikan tinggi secara otomatis
+                return [width, height];
+                },
             };
 
-            console.log(templateData)
-
-            Object.keys(templateData).forEach(key => {
-                if (Array.isArray(templateData[key]) && !templateData[key].length) {
-                    templateData[key] = [];  // If it's an empty array, ensure it's correctly set
-                }
-                if (templateData[key] === undefined || templateData[key] === null) {
-                    templateData[key] = '';  // If undefined or null, replace with empty string
-                }
+            const content = fs.readFileSync(templatePath);
+            const zip = new PizZip(content);
+            const doc = new Docxtemplater(zip, {
+                paragraphLoop: true,
+                linebreaks: true,
+                modules: [new ImageModule(imageOpts)],
             });
-    
-            // Render the template with the processed data
-            await doc.renderAsync(templateData);       
-            
-           const suratDir = path.resolve(__dirname, "../public/data/surat");
-            if (!fs.existsSync(suratDir)) {
-                fs.mkdirSync(suratDir, { recursive: true });
-                }
-            
 
-            const timestamp = Date.now();
-            const docxFilePath = path.join(suratDir, `pemeliharaan-${timestamp}.docx`);
-            const pdfFilePath = docxFilePath.replace(".docx", ".pdf");
+            const gambarAsetFilename = pemeliharaan.Kategori.gambar;
+            const gambarAsetPath = gambarAsetFilename
+            ? path.resolve(__dirname,`../public/uploads/${gambarAsetFilename}`)
+            : '';
+
+            const formatDate = (date) => {
+            const months = [
+                    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+                ];
+        
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = months[date.getMonth()];
+                const year = date.getFullYear();
+        
+                return `${day} ${month} ${year}`;
+                };
+
+                const tanggal = new Date(Date.now());
             
-            
-            fs.writeFileSync(docxFilePath, doc.getZip().generate({ type: "nodebuffer" }));
-            
-                    // Convert to PDF
-                    await new Promise((resolve, reject) => {
-                        libre.convert(fs.readFileSync(docxFilePath), ".pdf", undefined, (err, result) => {
-                            if (err) {
-                                return reject(new Error("Gagal mengonversi DOCX ke PDF"));
-                            }
-                            fs.writeFileSync(pdfFilePath, result);
-                            resolve();
+                const templateData = {
+                    jadwal: formatDate(pemeliharaan.jadwal),
+                    tanggal : formatDate(tanggal),
+                    kategori: pemeliharaan.Kategori.nama_kategori,
+                    jenis_pemeliharaan: pemeliharaan.jenis_pemeliharaan,
+                    status_pemeliharaan: pemeliharaan.status_pemeliharaan,
+                    detailPemeliharaan: detailPemeliharaan.map((item,index) => ({
+                        no : index+1,
+                        serial_number: item.Aset.serial_number,
+                        nama_barang: item.Aset.nama_barang,
+                        kondisi_aset: item.Aset.kondisi_aset,
+                        keterangan: item.keterangan,
+                        gambar: gambarAsetPath
+                    }))
+                };
+
+                console.log(templateData)
+
+                Object.keys(templateData).forEach(key => {
+                    if (Array.isArray(templateData[key]) && !templateData[key].length) {
+                        templateData[key] = [];  // If it's an empty array, ensure it's correctly set
+                    }
+                    if (templateData[key] === undefined || templateData[key] === null) {
+                        templateData[key] = '';  // If undefined or null, replace with empty string
+                    }
+                });
+        
+                // Render the template with the processed data
+                await doc.renderAsync(templateData);       
+                
+            const suratDir = path.resolve(__dirname, "../public/data/surat");
+                if (!fs.existsSync(suratDir)) {
+                    fs.mkdirSync(suratDir, { recursive: true });
+                    }
+                
+
+                const timestamp = Date.now();
+                const docxFilePath = path.join(suratDir, `pemeliharaan-${timestamp}.docx`);
+                const pdfFilePath = docxFilePath.replace(".docx", ".pdf");
+                
+                
+                fs.writeFileSync(docxFilePath, doc.getZip().generate({ type: "nodebuffer" }));
+                
+                        // Convert to PDF
+                        await new Promise((resolve, reject) => {
+                            libre.convert(fs.readFileSync(docxFilePath), ".pdf", undefined, (err, result) => {
+                                if (err) {
+                                    return reject(new Error("Gagal mengonversi DOCX ke PDF"));
+                                }
+                                fs.writeFileSync(pdfFilePath, result);
+                                resolve();
+                            });
                         });
-                    });
 
-                    fs.unlinkSync(docxFilePath);
+                        fs.unlinkSync(docxFilePath);
 
-                    await pemeliharaan.update({ surat: path.basename(pdfFilePath) });
-            
-
-        res.redirect('/admin/pemeliharaan-aset')
-    } catch (error) {
-        console.error('Error during updateStatusPemeliharaan:', error);
-        res.status(500).json({messege: 'Update Status Pemeliharaan Eror', error: error.messege})
+                        await pemeliharaan.update({ surat: path.basename(pdfFilePath) });
+                
+            return res.status(200).json({
+                message: 'Pemeliharaan berhasil diselesaikan!'
+             });
+        } catch (error) {
+            console.error('Error during updateStatusPemeliharaan:', error);
+            res.status(500).json({messege: 'Update Status Pemeliharaan Eror', error: error.messege})
+        }
     }
-}
 const updateKondisiAset = async (req, res) => {
     try {
         const { id, serial_number } = req.params; // Mengambil parameter
@@ -335,7 +349,9 @@ const updateKondisiAset = async (req, res) => {
 
         // Perbarui data di tabel DetailPemeliharaan
         const detailUpdateResult = await DetailPemeliharaan.update(
-            { status_aset: kondisi_aset, keterangan },
+            { status_aset: kondisi_aset,
+                keterangan,
+            status_pemeliharaan : "Sudah Dilakukan" },
             { where: { pemeliharaanId: id, serial_number } }
         );
 
@@ -369,11 +385,6 @@ const updateKondisiAset = async (req, res) => {
 
         res.redirect(`/admin/pemeliharaan-aset/detail/${id}`)
 
-        // Jika semua pembaruan berhasil
-        // return res.status(200).json({
-        //     success: true,
-        //     message: "Kondisi Aset berhasil diperbarui di semua tabel.",
-        // });
     } catch (error) {
         console.error("Error during updateKondisiAset:", error);
 

@@ -44,6 +44,7 @@
                     <th width="13%">Nama</th>
                     <th width="13%">Unit Kerja</th>
                     <th width="14%">Nama Aset</th>
+                    <th width="14%">Serial Number</th>
                     <th width="13%">Nama Penerima</th>
                     <th width="15%">Bukti Penyerahan</th>
                     <th width="15%">Status</th>
@@ -58,6 +59,7 @@
                         <td width="13%"><%= penyerahan.Permintaan.User.nama %></td>
                         <td width="13%"><%= penyerahan.Permintaan.User.unit_kerja %></td>
                         <td width="14%"><%= penyerahan.Permintaan.Aset.nama_barang %></td>
+                        <td width="14%"><%= penyerahan.Permintaan.Aset.serial_number %></td>
                         <td width="13%">
                           <% if (penyerahan.penerima) { %>
                             <%= penyerahan.penerima %>

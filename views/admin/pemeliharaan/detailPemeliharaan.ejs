@@ -43,13 +43,15 @@
                                     <th width="15%">Serial Number</th>
                                     <th width="15%">Nama Aset</th>
                                     <th width="15%">Kondisi Aset</th>
+                                    <th width="15%">Status Aset</th>
+                                    <th width="15%">Status Pemeliharaan</th>
                                     <th width="15%">Keterangan</th>
                                     <th width="15%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% detailPemeliharaan.forEach((detail, index) => { %>
-                                <tr>
+                                <tr data-pemeliharaan-id="<%= pemeliharaanId %>">
                                     <td width="15%"><%= index+1 %></td>
                                     <td width="20%">
                                         <img class="img-fluid" alt="Gambar Aset" src="/public/uploads/<%= detail.Aset.Kategori.gambar %>" />
@@ -57,6 +59,8 @@
                                     <td width="15%"><%= detail.Aset.serial_number%></td>
                                     <td width="15%"><%= detail.Aset.nama_barang %></td>
                                     <td width="15%"><%= detail.status_aset.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></td>
+                                    <td width="15%"><%= detail.lokasi_aset %></td>
+                                    <td width="15%"><%= detail.status_pemeliharaan %></td>
                                     <td width="15%"><%= detail.keterangan %></td>
                                     <td width="15%">
                                         <% if (status_pemeliharaan == 'belum terlaksana') { %>
@@ -107,7 +111,7 @@
             </select>
 
             <label for="keterangan" class="left-label">Keterangan</label>
-            <input type="text" id="keterangan<%= index+1 %>" name="keterangan" placeholder="Masukkan Keterangan" required>
+            <input type="text" id="keterangan<%= index+1 %>" name="keterangan" value="<%= detail.keterangan %>" placeholder="Masukkan Keterangan" required>
             
             <button type="submit" class="btn finish-btn">Simpan</button>
         </form>
@@ -130,6 +134,8 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     // Menangani klik pada tombol "Selesai"
     const selesaiButton = document.querySelector('.button-selesai');
@@ -151,10 +157,82 @@
         modal.style.display = 'none';
     });
 
-    finishBtn.addEventListener('click', function() {
+    // finishBtn.addEventListener('click', function() {
+    //     modal.style.display = 'none';
+    //     alert("Pemeliharaan aset selesai!");
+        
+    // });
+
+    finishBtn.addEventListener('click', async function (event) {
+    event.preventDefault(); // Tambahkan ini untuk mencegah redirect ke halaman JSON
+    try {
+        const pemeliharaanId = '<%= pemeliharaanId %>';
+        const response = await fetch(`/admin/pemeliharaan-aset/detail/${pemeliharaanId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         modal.style.display = 'none';
-        alert("Pemeliharaan aset selesai!");
-    });
+
+        if (response.ok) {
+            const data = await response.json();
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message,
+                confirmButtonColor: "#44c400"
+            }).then(() => {
+                window.location.href = '/admin/pemeliharaan-aset';
+            });
+        } else {
+            const errorData = await response.json();
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: errorData.message,
+                confirmButtonColor: "#44c400"
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Terjadi Kesalahan!',
+            text: 'Terjadi kesalahan saat menyelesaikan pemeliharaan.'
+        });
+    }
+});
+
+
+//     finishBtn.addEventListener('click', async function() {
+//     try {
+//         console.log('Button clicked');
+//         const pemeliharaanId = '<%= pemeliharaanId %>';
+//         console.log(`Pemeliharaan ID: ${pemeliharaanId}`);
+//         const response = await fetch(`/admin/pemeliharaan-aset/detail/${pemeliharaanId}`, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             }
+//         });
+//         console.log(response)
+
+//         if (response.ok) {
+//             const data = await response.json();
+//             alert(data.message); // Menampilkan pesan sukses
+//             modal.style.display = 'none';
+//             window.location.href = '/admin/pemeliharaan-aset';
+//         } else {
+//             const errorData = await response.json();
+//             alert(errorData.message); // Menampilkan pesan error jika detail belum selesai
+//             window.location.href = `/admin/pemeliharaan-aset/detail/${pemeliharaanId}`;
+//         }
+//     } catch (error) {
+//         console.error('Error:', error);
+//         alert('Terjadi kesalahan saat menyelesaikan pemeliharaan.');
+//     }
+// });
 
     window.onclick = function(event) {
         if (event.target == modal) {
@@ -198,6 +276,7 @@
             }
         });
     }
+
 </script>
 
 </body>

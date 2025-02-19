@@ -24,6 +24,7 @@
 
     </div>
     <div class="container-fluid px-4">
+        <div id="toastNotification" class="toast hide"></div>
         <div class="table-wrapper">
             <div class="table-responsive">
                 <div class="table-bungkus">
@@ -330,14 +331,17 @@
             const result = await response.json();
             
             if (result.success) {
+            showToast("Aset berhasil dihapus!", true, 4000);
+            setTimeout(() => {
                 window.location.reload();
-            } else {
-                throw new Error(result.message || 'Gagal menghapus aset');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert(error.message || 'Terjadi kesalahan saat menghapus aset');
+            }, 1000);
+        } else {
+            throw new Error(result.message || 'Gagal menghapus aset');
         }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(error.message || "Terjadi kesalahan saat menghapus aset.", false, 2000);
+    }
         
         toggleModal(deleteModal, 'none');
     });
@@ -379,7 +383,23 @@
     }
 }
    
-    
+      // Fungsi untuk menampilkan notifikasi toast
+  function showToast(message, isSuccess = true) {
+      const toast = document.getElementById("toastNotification");
+      toast.textContent = message;
+      toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
+  
+      toast.classList.remove('show', 'hide');
+      void toast.offsetWidth; // Reset animasi
+  
+      toast.classList.add('show');
+  
+      setTimeout(() => {
+          toast.classList.remove('show');
+          toast.classList.add('hide');
+      }, 2500);
+  }
+
 </script>
 
 </body>

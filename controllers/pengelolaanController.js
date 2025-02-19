@@ -330,27 +330,37 @@ const editAset = async (req, res) => {
 
 
 const hapusAset = async (req, res) => {
-    try {
-        const { serialNumber } = req.params;
-        const aset = await Aset.findByPk(serialNumber);
-        
-        if (!aset) {
-            return res.status(404).json({ message: 'Aset tidak ditemukan' });
-        }
+  try {
+      const { serialNumber } = req.params;
+      const aset = await Aset.findByPk(serialNumber);
 
-        const kategoriId = aset.kategoriId;
-        await aset.destroy();
-        
-        return res.json({ 
-            success: true, 
-            message: 'Aset berhasil dihapus',
-            redirectUrl: `/admin/list-aset/${kategoriId}`
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Gagal menghapus aset' });
-    }
+      if (!aset) {
+          return res.status(404).json({ success: false, message: 'Aset tidak ditemukan' });
+      }
+
+      // Periksa status peminjaman sebelum dihapus
+      if (aset.status_peminjaman !== 'tersedia') {
+          return res.json({ 
+              success: false, 
+              message: 'Aset tidak dapat dihapus karena sedang dipinjam atau tidak tersedia.', 
+              status_peminjaman: aset.status_peminjaman 
+          });
+      }
+
+      const kategoriId = aset.kategoriId;
+      await aset.destroy();
+
+      return res.json({ 
+          success: true, 
+          message: 'Aset berhasil dihapus',
+          redirectUrl: `/admin/list-aset/${kategoriId}`
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Gagal menghapus aset' });
+  }
 };
+
 
 const tampilkanDetailAset = async (req, res) => {
     try {

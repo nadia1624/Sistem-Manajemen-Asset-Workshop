@@ -339,14 +339,14 @@
                     if (contentType && contentType.indexOf("application/json") !== -1) {
                         const data = await response.json();
                         if (response.ok) {
-                            showToast('Kategori berhasil diupdate.');
+                            showToast('Kategori berhasil diperbarui!');
                             setTimeout(() => window.location.reload(), 1500);
                         } else {
                             showToast(data.message || 'Gagal mengupdate kategori', 'error');
                         }
                     } else {
                         if (response.ok) {
-                            showToast('Kategori berhasil diupdate!');
+                            showToast('Kategori berhasil diperbarui!');
                             setTimeout(() => window.location.reload(), 1500);
                         } else {
                             showToast('Gagal mengupdate kategori', 'error');
@@ -365,31 +365,49 @@
         if (deleteBtn) {
             deleteBtn.addEventListener('click', async function() {
                 try {
+                    // Disable button to prevent double submission
+                    deleteBtn.disabled = true;
+                    
                     const response = await fetch(`/admin/hapus-kategori/${kategoriIdToDelete}`, {
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
                     });
 
-                    const contentType = response.headers.get("content-type");
-                    if (contentType && contentType.indexOf("application/json") !== -1) {
-                        const data = await response.json();
-                        if (response.ok) {
-                            showToast('Kategori berhasil dihapus!');
-                            setTimeout(() => window.location.href = '/admin/pengelolaan-aset', 1500);
-                        } else {
-                            showWarningModal(data.message || 'Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia.');
-                        }
+                    const data = await response.json();
+
+                    // Handle response based on success status
+                    if (data.success) {
+                        showToast(data.message || 'Kategori berhasil dihapus!', 'success');
+                        setTimeout(() => window.location.href = '/admin/pengelolaan-aset', 1500);
                     } else {
-                        if (response.ok) {
-                            showToast('Kategori berhasil dihapus!');
-                            setTimeout(() => window.location.href = '/admin/pengelolaan-aset', 1500);
-                        } else {
+                        // Show warning modal for business logic errors (400)
+                        if (response.status === 400) {
+                            showWarningModal(data.message, {
+                                title: 'Penghapusan Ditolak',
+                                detailText: data.asetTidakTersedia 
+                                    ? `Terdapat ${data.asetTidakTersedia} aset yang tidak tersedia.`
+                                    : undefined
+                            });
+                        } 
+                        // Show error toast for server errors (500)
+                        else if (response.status === 500) {
+                            showToast(data.message || 'Terjadi kesalahan server', 'error');
+                        }
+                        // Show error toast for not found (404)
+                        else if (response.status === 404) {
+                            showToast(data.message || 'Kategori tidak ditemukan', 'error');
+                        }
+                        // Generic error for other status codes
+                        else {
                             showToast('Gagal menghapus kategori', 'error');
                         }
                     }
                 } catch (error) {
                     console.error('Error:', error);
                     showToast('Terjadi kesalahan saat menghapus kategori', 'error');
-                }
+                } 
                 deleteModal.style.display = 'none';
             });
         }

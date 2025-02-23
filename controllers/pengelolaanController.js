@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const { Aset, Kategori } = require("../models");
 const { title } = require("process");
+const { Op } = require("sequelize");
 
 const tambahKategori = async (req, res) => {
   try {
@@ -146,7 +147,7 @@ const hapusKategori = async (req, res) => {
       return res.status(404).json({ message: "Kategori tidak ditemukan" });
     }
 
-    // Cek apakah ada aset yang terkait dengan kategori
+    // Cek jumlah aset dalam kategori
     const jumlahAset = await Aset.count({
       where: { kategoriId: id }
     });
@@ -162,29 +163,35 @@ const hapusKategori = async (req, res) => {
       }
 
       await kategori.destroy();
-      return res.json({ message: "Kategori berhasil dihapus" });
-    }
-
-    // Jika kategori memiliki aset, cek status_peminjaman
-    const asetTidakTersedia = await Aset.findOne({
-      where: { 
-        kategoriId: id,
-        status_peminjaman: { [Op.ne]: 'tersedia' } // Op.ne = not equal
-      }
-    });
-
-    if (asetTidakTersedia) {
-      return res.status(400).json({ 
-        message: "Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia." 
+      return res.json({ 
+        success: true,
+        message: "Kategori berhasil dihapus karena tidak memiliki aset" 
       });
     }
 
-    // Jika semua aset tersedia, hapus semua aset terkait
-    await Aset.destroy({
-      where: { kategoriId: id },
+    // Jika kategori memiliki aset, cek status peminjaman
+    const asetDenganStatusLain = await Aset.count({
+      where: { 
+        kategoriId: id,
+        status_peminjaman: { [Op.ne]: 'tersedia' }
+      }
     });
 
-    // Hapus file gambar jika ada
+    // Jika ada aset dengan status selain 'tersedia', tolak penghapusan
+    if (asetDenganStatusLain > 0) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Kategori tidak dapat dihapus karena terdapat aset yang status peminjamannya bukan 'tersedia'",
+        asetTidakTersedia: asetDenganStatusLain
+      });
+    }
+
+    // Jika semua aset tersedia, hapus semua aset
+    await Aset.destroy({
+      where: { kategoriId: id }
+    });
+
+    // Hapus file gambar kategori jika ada
     if (kategori.gambar) {
       const imagePath = path.join(__dirname, "../uploads/", kategori.gambar);
       if (fs.existsSync(imagePath)) {
@@ -192,11 +199,21 @@ const hapusKategori = async (req, res) => {
       }
     }
 
+    // Hapus kategori
     await kategori.destroy();
-    res.json({ message: "Kategori berhasil dihapus" });
+    
+    return res.json({ 
+      success: true,
+      message: "Kategori dan semua aset berhasil dihapus"
+    });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia." });
+    console.error('Error saat menghapus kategori:', error);
+    return res.status(500).json({ 
+      success: false,
+      message: "Terjadi kesalahan saat menghapus kategori",
+      error: error.message 
+    });
   }
 };
 
@@ -262,6 +279,7 @@ const tambahAset = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      message: 'Aset berhasil ditambah!',
       redirectUrl: `/admin/list-aset/${kategoriId}`
     });
   } catch (error) {
@@ -321,11 +339,15 @@ const editAset = async (req, res) => {
           status_peminjaman: statusPinjam || aset.status_peminjaman,
       });
 
-      res.redirect(`/admin/list-aset/${aset.kategoriId}`);
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Gagal mengupdate aset' });
-  }
+      res.json({ 
+        success: true, 
+        message: 'Aset berhasil diperbarui!', 
+        redirectUrl: `/admin/list-aset/${aset.kategoriId}`
+      });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Gagal mengupdate aset' });
+    }
 };
 
 

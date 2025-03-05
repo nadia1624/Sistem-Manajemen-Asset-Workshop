@@ -24,6 +24,7 @@
 
     </div>
     <div class="container-fluid px-4">
+        <div id="toastNotification" class="toast hide"></div>
         <div class="table-wrapper">
             <div class="table-responsive">
                 <div class="table-bungkus">
@@ -188,6 +189,18 @@
     </div>
 </div>
 
+<!-- Modal untuk Warning -->
+<div id="warningModal" class="popup-modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeWarningBtn">&times;</span>
+        <h3>Peringatan</h3>
+        <p id="warningMessage">Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia.</p>
+        <div class="flex justify-center space-x-4">
+            <button type="button" class="btn cancel-btn" id="confirmWarningBtn">OK</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // Modal Elements
     const addModal = document.getElementById("addModal");
@@ -195,6 +208,34 @@
     const deleteModal = document.getElementById("deleteModal");
     const addForm = document.getElementById("addForm");
     const editForm = document.getElementById("editForm");
+
+    // Ambil elemen modal warning
+    const warningModal = document.getElementById("warningModal");
+    const closeWarningBtn = document.getElementById("closeWarningBtn");
+    const confirmWarningBtn = document.getElementById("confirmWarningBtn");
+    const warningMessage = document.getElementById("warningMessage");
+
+    // Fungsi untuk menampilkan modal warning
+    function showWarningModal(message) {
+        warningMessage.textContent = message;
+        warningModal.style.display = 'flex';
+    }
+
+    // Tutup modal warning
+    closeWarningBtn.addEventListener('click', () => {
+        warningModal.style.display = 'none';
+    });
+
+    confirmWarningBtn.addEventListener('click', () => {
+        warningModal.style.display = 'none';
+    });
+
+    // Global click handler untuk menutup modal warning
+    window.addEventListener('click', (event) => {
+        if (event.target === warningModal) {
+            warningModal.style.display = 'none';
+        }
+    });
     
     // Button Elements
     const addAsetButton = document.querySelector('.button-tambah');
@@ -275,72 +316,90 @@
     });
     
     // Form Submit Handlers
-    async function handleFormSubmit(endpoint, formData, successCallback) {
-        try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(Object.fromEntries(formData))
-            });
+    //JANGAN LUPA UBAH SHOW TOAST DI ADD DAN EDIT MODAL
+// Add Form Submit Handler
+addForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    try {
+        const formData = new FormData(this);
+        const response = await fetch('/admin/tambah-aset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.fromEntries(formData))
+        });
 
-            const data = await response.json();
-            
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else if (response.ok) {
-                successCallback();
-            } else {
-                toggleModal(addModal, 'none'); // Tutup addModal
-            }
-        } catch (error) {
-            console.error('Error:', error);
+        const data = await response.json();
+
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else if (response.ok) {
+            showToast('Aset berhasil ditambahkan!');
             toggleModal(addModal, 'none');
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showToast(data.message || "Terjadi kesalahan!", false, 4000);
         }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast("Gagal menghubungi server!", false, 4000);
     }
+});
 
-    addForm.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        await handleFormSubmit(
-            '/admin/tambah-aset',
-            new FormData(this),
-            () => window.location.reload()
-        );
-        toggleModal(addModal, 'none');
-    });
-    
-    editForm.addEventListener('submit', async function(event) {
-        event.preventDefault();
+// Edit Form Submit Handler
+editForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    try {
         const serialNumber = document.getElementById('editSerialNumber').value;
-        await handleFormSubmit(
-            `/admin/edit-aset/${serialNumber}`,
-            new FormData(this),
-            () => window.location.reload()
-        );
-        toggleModal(editModal, 'none');
-    });
+        const formData = new FormData(this);
+        const response = await fetch(`/admin/edit-aset/${serialNumber}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.fromEntries(formData))
+        });
+
+        const data = await response.json();
+
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else if (response.ok) {
+            showToast('Aset berhasil diperbarui!');
+            toggleModal(editModal, 'none');
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showToast(data.message || "Terjadi kesalahan!", false, 4000);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast("Gagal menghubungi server!", false, 4000);
+    }
+});
     
     // Delete Confirmation Handler
-    deleteModal.querySelector('.finish-btn').addEventListener('click', async function() {
-        const serialNumber = document.getElementById('deleteSerialNumber').textContent;
-        try {
-            const response = await fetch(`/admin/hapus-aset/${serialNumber}`, {
-                method: 'DELETE'
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
+deleteModal.querySelector('.finish-btn').addEventListener('click', async function() {
+    const serialNumber = document.getElementById('deleteSerialNumber').textContent;
+    try {
+        const response = await fetch(`/admin/hapus-aset/${serialNumber}`, {
+            method: 'DELETE' // Ubah ke GET untuk melakukan pengecekan sebelum DELETE
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showToast("Aset berhasil dihapus!", true, 4000);
+            setTimeout(() => {
                 window.location.reload();
-            } else {
-                throw new Error(result.message || 'Gagal menghapus aset');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert(error.message || 'Terjadi kesalahan saat menghapus aset');
+            }, 1000);
+        } else {
+            // Jika aset tidak bisa dihapus, tampilkan warning modal
+            showWarningModal(result.message);
         }
-        
-        toggleModal(deleteModal, 'none');
-    });
+    } catch (error) {
+        console.error('Error:', error);
+        alert(error.message || 'Terjadi kesalahan saat menghapus aset');
+    }
+
+    toggleModal(deleteModal, 'none');
+});
     
     // Cancel delete
     deleteModal.querySelector('.cancel-btn').addEventListener('click', () => {
@@ -379,7 +438,23 @@
     }
 }
    
-    
+      // Fungsi untuk menampilkan notifikasi toast
+  function showToast(message, isSuccess = true) {
+      const toast = document.getElementById("toastNotification");
+      toast.textContent = message;
+      toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
+  
+      toast.classList.remove('show', 'hide');
+      void toast.offsetWidth; // Reset animasi
+  
+      toast.classList.add('show');
+  
+      setTimeout(() => {
+          toast.classList.remove('show');
+          toast.classList.add('hide');
+      }, 2500);
+  }
+
 </script>
 
 </body>

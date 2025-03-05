@@ -32,7 +32,7 @@
 
 <main class="content">
     <div class="header-content">
-        <h3 style="font-weight: bold;">Pengembalian Aset Vendor</h3>
+        <h3 style="font-weight: bold;">Penukaran Aset ke Vendor</h3>
         <div class="search-and-controls">
         <div class="search-bar">
             <input id="search-input" placeholder="Search..." type="text" onkeyup="filterTable()"/>
@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         });
 
-        function filterTable() {
+             function filterTable() {
             const input = document.getElementById("search-input").value.toLowerCase();
             const rows = document.querySelectorAll(".table-compact tbody tr");
             let hasMatch = false;
@@ -313,7 +313,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 noDataMessage.style.display = "block"; 
                 setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
             }
+
         }
+
+        
         
 </script>
 </body>

@@ -159,7 +159,7 @@
                                               <div id="checkModal_<%= penyerahan.id %>" class="modal">
                                                   <div class="modal-content">
                                                       <span class="close-btn" onclick="closeModal('<%= penyerahan.id %>')">&times;</span>
-                                                      <h3>Ajukan Pengecekan Aset</h3>
+                                                      <h3>Ajukan Perbaikan Aset</h3>
                                                       <form action="/karyawan/peminjamanAset/cek/<%= penyerahan.id %>" method="post" onsubmit="showNotification(event)">
                                                           <label for="keluhan_<%= penyerahan.id %>">Keluhan:</label>
                                                           <textarea id="keluhan_<%= penyerahan.id %>" name="keluhan" placeholder="Keluhan yang diajukan"></textarea>

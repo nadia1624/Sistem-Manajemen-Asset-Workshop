@@ -18,18 +18,20 @@
                 <div class="container2">
                     <div class="content-section">
                         <h3>Detail Aset</h3>
-                        <div class="details-with-image">
-                            <div class="details">
-                                <p><strong>Serial Number</strong> : <%= permintaan.Aset.serial_number || 'Tidak Tersedia' %></p>
-                                <p><strong>Nama Barang</strong>    : <%= permintaan.Aset.nama_barang %></p>
-                                <p><strong>Kategori</strong>       : <%= permintaan.Aset.Kategori.nama_kategori %></p>
-                                <p><strong>Deskripsi</strong>      : <%= permintaan.Aset.Kategori.deskripsi || 'Tidak ada deskripsi.' %></p>
-                            </div>
-                            <img 
+                        <img 
                                 alt="Gambar Aset" 
                                 height="auto" width="250" 
                                 src="/public/uploads/<%= permintaan.Aset.Kategori.gambar || 'https://placehold.co/200x150' %>" 
                             />
+                        <div class="details-with-image">
+                            <div class="details">
+                                <p><strong>Serial Number</strong> : <%= permintaan.Aset.serial_number || 'Tidak Tersedia' %></p>
+                                <p><strong>Nama Barang</strong> : <%= permintaan.Aset.nama_barang %></p>
+                                <p><strong>Kategori</strong> : <%= permintaan.Aset.Kategori.nama_kategori %></p>
+                                <p><strong>Deskripsi</strong> : <pre><%= permintaan.Aset.Kategori.deskripsi || 'Tidak ada deskripsi.' %></pre></p>
+
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -42,9 +44,9 @@
                         <h3>Detail Peminjam</h3>
                         <div class="details">
                             <p><strong>Tanggal Permintaan</strong> : <%= permintaan.tanggal_permintaan %></p>
-                            <p><strong>Nama Karyawan</strong>      : <%= permintaan.User.nama %></p>
-                            <p><strong>Unit Kerja</strong>         : <%= permintaan.User.unit_kerja %></p>
-                            <p><strong>Alasan</strong>             : <%= permintaan.alasan %></p>
+                            <p><strong>Nama Karyawan</strong> : <%= permintaan.User.nama %></p>
+                            <p><strong>Unit Kerja</strong> : <%= permintaan.User.unit_kerja %></p>
+                            <p><strong>Alasan</strong> : <%= permintaan.alasan %></p>
                             <p><strong>Status Permintaan</strong>  : 
                                 <% if (permintaan.status_permintaan === "diterima") { %>
                                     Disetujui
@@ -78,6 +80,7 @@
     height: calc(100vh - 60px); /* 60px adalah tinggi header */
     padding-top: 20px; /* Jaga jarak agar konten tidak terlalu rapat */
 }
+
 
 /* Menyesuaikan tinggi container agar tidak terlalu panjang */
 .container-fluid {
@@ -116,14 +119,17 @@
         flex-direction: column;
     }
 
-    /* Styling for labels and values to align ":" */
-    .details p{
-        display: flex;
-        align-items: center;
-        margin: 0;
-        font-size: 16px;
-        font-weight: normal;
-    }
+    
+
+    .details p {
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    font-size: 16px;
+    font-weight: normal;
+    white-space: pre-wrap; /* Menjaga spasi dan baris baru */
+    word-wrap: break-word; /* Membungkus kata jika terlalu panjang */
+}
 
     /* Ensure ":" is aligned */
     .details p strong {

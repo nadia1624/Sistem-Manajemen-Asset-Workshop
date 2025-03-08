@@ -126,6 +126,9 @@ function showModal(type, permintaanId) {
     if (type === "setuju") {
         modalTitle.textContent = "Setujui Permintaan";
         modalContent.textContent = "Apakah Anda yakin ingin menyetujui permintaan ini?";
+        finishBtn.style.backgroundColor = "#C2EF97"; // Hijau
+        cancelBtn.style.backgroundColor = "#CACACA"; 
+        cancelBtn.style.color = "#000"; 
         finishBtn.onclick = async function () {
             try {
                 const response = await fetch(`/admin/permintaanAset/${permintaanId}/status`, {
@@ -148,6 +151,9 @@ function showModal(type, permintaanId) {
     } else if (type === "tolak") {
         modalTitle.textContent = "Tolak Permintaan";
         modalContent.textContent = "Apakah Anda yakin ingin menolak permintaan ini?";
+        finishBtn.style.backgroundColor = "#CACACA";
+        cancelBtn.style.backgroundColor = "#B60017"; 
+        cancelBtn.style.color = "#fff"; 
         finishBtn.onclick = async function () {
             try {
                 const response = await fetch(`/admin/permintaanAset/${permintaanId}/status`, {

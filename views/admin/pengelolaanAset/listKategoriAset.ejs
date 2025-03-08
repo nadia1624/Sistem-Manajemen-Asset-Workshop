@@ -55,9 +55,6 @@
                                                 Rusak: <%= item.kondisiStats.rusak %>
                                             </td>
                                             <td width="20%">
-                                                <button class="button-delete">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
                                                 <button class="button-edit" data-id="<%= item.id %>">
                                                     <i class="fa-regular fa-pen-to-square"></i>
                                                 </button>
@@ -66,6 +63,9 @@
                                                         <i class="fa-solid fa-arrow-right"></i>
                                                     </button>
                                                 </a>
+                                                <button class="button-delete" style="margin: 10px;">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     <% }); %>
@@ -152,8 +152,8 @@
         <p>PENTING!!!</p>
         <p>Semua data aset akan terhapus</p>
         <div class="flex justify-center space-x-4">
-            <button type="button" class="btn cancel-btn">Tidak</button>
-            <button type="button" class="btn finish-btn" style="background-color: #B60017; color: #fff;">Ya</button>
+            <button type="button" class="btn cancel-btn"style="background-color: #B60017; color: #fff;">Tidak</button>
+            <button type="button" class="btn finish-btn" style="background-color: #CACACA; color: #000;">Ya</button>
         </div>
     </div>
 </div>

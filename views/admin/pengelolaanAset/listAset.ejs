@@ -52,9 +52,6 @@
                                             <td width="15%"><%= item.kondisi_aset %></td>
                                             <td width="15%"><%= item.status_peminjaman %></td>
                                             <td width="25%">
-                                                <button class="button-delete" data-id="<%= item.serial_number %>">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
                                                 <button class="button-edit" data-id="<%= item.serial_number %>">
                                                     <i class="fa-regular fa-pen-to-square"></i>
                                                 </button>
@@ -63,6 +60,9 @@
                                                         <i class="fa-solid fa-circle-info"></i>
                                                     </button>
                                                 </a>
+                                                <button class="button-delete" style="margin: 10px;" data-id="<%= item.serial_number %>">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     <% }); %>
@@ -183,8 +183,8 @@
         <h3>Konfirmasi Hapus Data</h3>
         <p>Apakah kamu yakin ingin menghapus data <span id="deleteSerialNumber"></span> ini?</p>
         <div class="flex justify-center space-x-4">
-            <button type="button" class="btn cancel-btn">Tidak</button>
-            <button type="button" style="background-color: #B60017; color: #fff;" class="btn finish-btn">Ya</button>
+            <button type="button" style="background-color: #B60017; color: #fff;"class="btn cancel-btn">Tidak</button>
+            <button type="button"  style="background-color: #CACACA; color: #000;" class="btn finish-btn">Ya</button>
         </div>
     </div>
 </div>

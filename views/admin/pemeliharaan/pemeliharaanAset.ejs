@@ -64,9 +64,6 @@
                                         </span>
                                         </td>
                                         <td width="15%">
-                                            <button class="button-delete" data-modal-id="deleteModal<%= index + 1 %>">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
                                             <a href="pemeliharaan-aset/detail/<%= pemeliharaan.id %>">
                                                 <button class="button-arrow">
                                                     <i class="fa-solid fa-arrow-right"></i>
@@ -83,6 +80,9 @@
                                                     <i class="fa-solid fa-download"></i>
                                                    </button>
                                                    <% } %>
+                                            <button class="button-delete" data-modal-id="deleteModal<%= index + 1 %>">
+                                                    <i class="fa-solid fa-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
 
@@ -111,9 +111,9 @@
         <h3>Konfirmasi Hapus Data</h3>
         <p>Apakah kamu yakin ingin menghapus data ini? Data yang telah dihapus tidak dapat dikembalikan.</p>
         <div class="flex justify-center space-x-4">
-            <button type="button" class="btn cancel-btn">Tidak</button>
+            <button type="button" style="background-color: #B60017; color: #fff;" class="btn cancel-btn">Tidak</button>
             <form action="/admin/pemeliharaan-aset/delete/<%= pemeliharaan.id %>" method="post">
-                <button type="submit" style="background-color: #B60017; color: #fff;" class="btn finish-btn">Ya</button>
+                <button type="submit" style="background-color: #CACACA; color: #000;" class="btn finish-btn">Ya</button>
             </form>
         </div>
     </div>

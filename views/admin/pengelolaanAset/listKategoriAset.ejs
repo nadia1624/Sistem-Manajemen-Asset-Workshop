@@ -55,9 +55,6 @@
                                                 Rusak: <%= item.kondisiStats.rusak %>
                                             </td>
                                             <td width="20%">
-                                                <button class="button-delete">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
                                                 <button class="button-edit" data-id="<%= item.id %>">
                                                     <i class="fa-regular fa-pen-to-square"></i>
                                                 </button>
@@ -66,6 +63,9 @@
                                                         <i class="fa-solid fa-arrow-right"></i>
                                                     </button>
                                                 </a>
+                                                <button class="button-delete" style="margin: 10px;">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     <% }); %>

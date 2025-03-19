@@ -167,7 +167,9 @@ const hapusKategori = async (req, res) => {
     if (asetDenganStatusLain > 0) {
       return res.status(400).json({ 
         success: false,
+
         message: "Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia.",
+        
         asetTidakTersedia: asetDenganStatusLain
       });
     }

@@ -2126,3 +2126,22 @@ a button:disabled {
 .modal-content textarea::placeholder {
   color: #aaa;
 }
+
+/* Pastikan SweetAlert memiliki z-index yang tinggi */
+.swal2-container {
+  z-index: 99999 !important;
+}
+
+/* Pastikan overlay SweetAlert memiliki z-index yang sesuai */
+.swal2-overlay {
+  z-index: 99998 !important;
+}
+
+/* Jika menggunakan customClass */
+.custom-swal-popup {
+  z-index: 99999 !important;
+}
+
+.custom-swal-container {
+  z-index: 99999 !important;
+}

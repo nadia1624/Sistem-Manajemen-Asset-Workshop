@@ -134,6 +134,12 @@
     </div>
 </div>
 
+  <!-- Loading spinner -->
+  <div id="loading" class="loading-container" style="display: none;">
+    <div class="spinner"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
@@ -165,6 +171,8 @@
 
     finishBtn.addEventListener('click', async function (event) {
     event.preventDefault(); // Tambahkan ini untuk mencegah redirect ke halaman JSON
+        // Tampilkan loading
+        document.getElementById("loading").style.display = "flex";
     try {
         const pemeliharaanId = '<%= pemeliharaanId %>';
         const response = await fetch(`/admin/pemeliharaan-aset/detail/${pemeliharaanId}`, {
@@ -174,14 +182,19 @@
             }
         });
         modal.style.display = 'none';
-
+        document.getElementById("loading").style.display = "none";
         if (response.ok) {
+        
             const data = await response.json();
             Swal.fire({
                 icon: 'success',
                 title: 'Berhasil!',
                 text: data.message,
-                confirmButtonColor: "#44c400"
+                confirmButtonColor: "#44c400",
+                customClass: {
+                    popup: 'custom-swal-popup', // Kelas untuk popup
+                    container: 'custom-swal-container' // Kelas untuk container
+    }
             }).then(() => {
                 window.location.href = '/admin/pemeliharaan-aset';
             });
@@ -196,6 +209,7 @@
         }
     } catch (error) {
         console.error('Error:', error);
+        document.getElementById("loading").style.display = "none";
         Swal.fire({
             icon: 'error',
             title: 'Terjadi Kesalahan!',

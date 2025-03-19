@@ -89,7 +89,7 @@
         <span class="close-btn" id="closeAddBtn">&times;</span>
         <h3>Tambah Data Aset</h3>
         <form id="addForm" class="grid-form" action="/admin/tambah-aset" method="POST">
-            <input type="hidden" name="kategoriId" value="<%= kategori.id %>"> <!-- Menyimpan ID kategori -->
+            <input type="hidden" name="kategoriId" value="<%= kategori.id %>">
             <div class="form-grid">
                 <div class="form-column">
                     <div class="form-group">
@@ -183,8 +183,8 @@
         <h3>Konfirmasi Hapus Data</h3>
         <p>Apakah kamu yakin ingin menghapus data <span id="deleteSerialNumber"></span> ini?</p>
         <div class="flex justify-center space-x-4">
-            <button type="button" style="background-color: #B60017; color: #fff;"class="btn cancel-btn">Tidak</button>
-            <button type="button"  style="background-color: #CACACA; color: #000;" class="btn finish-btn">Ya</button>
+            <button type="button" class="btn cancel-btn" style="background-color: #B60017; color: #fff;">Tidak</button>
+            <button type="button" class="btn finish-btn" style="background-color: #cacaca; color: #000000;">Ya</button>
         </div>
     </div>
 </div>
@@ -202,20 +202,17 @@
 </div>
 
 <script>
-    // Modal Elements
     const addModal = document.getElementById("addModal");
     const editModal = document.getElementById("editModal");
     const deleteModal = document.getElementById("deleteModal");
     const addForm = document.getElementById("addForm");
     const editForm = document.getElementById("editForm");
 
-    // Ambil elemen modal warning
     const warningModal = document.getElementById("warningModal");
     const closeWarningBtn = document.getElementById("closeWarningBtn");
     const confirmWarningBtn = document.getElementById("confirmWarningBtn");
     const warningMessage = document.getElementById("warningMessage");
 
-    // Fungsi untuk menampilkan modal warning
     function showWarningModal(message) {
         warningMessage.textContent = message;
         warningModal.style.display = 'flex';
@@ -230,14 +227,12 @@
         warningModal.style.display = 'none';
     });
 
-    // Global click handler untuk menutup modal warning
     window.addEventListener('click', (event) => {
         if (event.target === warningModal) {
             warningModal.style.display = 'none';
         }
     });
     
-    // Button Elements
     const addAsetButton = document.querySelector('.button-tambah');
     const closeButtons = {
         add: document.getElementById("closeAddBtn"),
@@ -245,7 +240,6 @@
         delete: document.getElementById("closeDeleteModal")
     };
     
-    // Modal Toggle Functions
     function toggleModal(modal, display = 'flex') {
         modal.style.display = display;
     }
@@ -268,10 +262,9 @@
         document.getElementById('editKondisiAset').value = aset.kondisi_aset;
 
         const kondisiAsetSelect = document.getElementById('editKondisiAset');
-        kondisiAsetSelect.disabled = aset.status_peminjaman === 'dipinjam' || aset.status_peminjaman === 'sedang diajukan'; // Nonaktifkan jika dipinjam
+        kondisiAsetSelect.disabled = aset.status_peminjaman === 'dipinjam' || aset.status_peminjaman === 'sedang diajukan';
     }
 
-    // Setup Modal Event Listeners
     addAsetButton.addEventListener('click', (event) => {
         event.preventDefault();
         toggleModal(addModal);
@@ -282,30 +275,39 @@
         setupModalClosing(modal, btn);
     });
     
-    // Edit Asset Handler
-    document.querySelectorAll('.button-edit').forEach(button => {
+document.querySelectorAll('.button-edit').forEach(button => {
     button.addEventListener('click', async function() {
         const serialNumber = this.getAttribute('data-id');
         try {
             const response = await fetch(`/admin/edit-aset/${serialNumber}`);
+            
+            // Check if the response is OK
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
             const aset = await response.json();
-
-            aset.serial_number = serialNumber;
-            aset.nama_barang = this.closest('tr').querySelector('td:nth-child(3)').textContent;
+            
+            if (!aset || !aset.serial_number) {
+                aset.serial_number = serialNumber;
+            }
+            
+            if (!aset.nama_barang) {
+                aset.nama_barang = this.closest('tr').querySelector('td:nth-child(3)').textContent.trim();
+            }
 
             populateEditModal(aset);
 
+            editForm.setAttribute('data-original-serial', serialNumber);
             editForm.setAttribute('action', `/admin/edit-aset/${serialNumber}`);
             toggleModal(editModal);
         } catch (error) {
-            console.error('Error:', error);
-            alert('Gagal mengambil data aset');
+            console.error('Error fetching asset data:', error);
+            showToast('Gagal mengambil data aset: ' + error.message, false, 4000);
         }
     });
 });
 
-    
-    // Delete Asset Handler
     document.querySelectorAll('.button-delete').forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
@@ -315,9 +317,7 @@
         });
     });
     
-    // Form Submit Handlers
-    //JANGAN LUPA UBAH SHOW TOAST DI ADD DAN EDIT MODAL
-// Add Form Submit Handler
+// Form Submit Handlers
 addForm.addEventListener('submit', async function(event) {
     event.preventDefault();
     try {
@@ -348,38 +348,86 @@ addForm.addEventListener('submit', async function(event) {
 // Edit Form Submit Handler
 editForm.addEventListener('submit', async function(event) {
     event.preventDefault();
+    
+    const originalSerialNumber = this.getAttribute('data-original-serial');
+    const newSerialNumber = document.getElementById('editSerialNumber').value;
+
+    const existingSerialNumbers = [];
+    document.querySelectorAll('.table-compact tbody tr').forEach(row => {
+        const serialCell = row.querySelector('td:nth-child(2)');
+        if (serialCell) {
+            existingSerialNumbers.push(serialCell.textContent.trim());
+        }
+    });
+    
+    if (newSerialNumber !== originalSerialNumber && existingSerialNumbers.includes(newSerialNumber)) {
+        toggleModal(editModal, 'none');
+        
+        setTimeout(() => {
+            showToast('Serial number tidak dapat diedit karena sudah dimiliki oleh aset lain', false, 4000);
+        }, 300);
+        
+        return; 
+    }
+    
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.textContent = 'Menyimpan...';
+    submitButton.disabled = true;
+    
     try {
-        const serialNumber = document.getElementById('editSerialNumber').value;
         const formData = new FormData(this);
-        const response = await fetch(`/admin/edit-aset/${serialNumber}`, {
+        const requestBody = Object.fromEntries(formData);
+        
+        console.log('Sending data:', requestBody);
+        
+        const response = await fetch(`/admin/edit-aset/${originalSerialNumber}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(Object.fromEntries(formData))
+            body: JSON.stringify(requestBody)
         });
-
+        
+        console.log('Response status:', response.status);
         const data = await response.json();
+        console.log('Response data:', data);
 
-        if (response.redirected) {
-            window.location.href = response.url;
-        } else if (response.ok) {
-            showToast('Aset berhasil diperbarui!');
-            toggleModal(editModal, 'none');
-            setTimeout(() => window.location.reload(), 1500);
+        toggleModal(editModal, 'none');
+        
+        if (response.ok) {
+            setTimeout(() => {
+                showToast(data.message || 'Aset berhasil diperbarui!');
+                
+                setTimeout(() => {
+                    if (data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        window.location.reload();
+                    }
+                }, 1500);
+            }, 300);
         } else {
-            showToast(data.message || "Terjadi kesalahan!", false, 4000);
+            setTimeout(() => {
+                showToast(data.message || "Terjadi kesalahan pada server!", false, 4000);
+            }, 300);
         }
     } catch (error) {
-        console.error('Error:', error);
-        showToast("Gagal menghubungi server!", false, 4000);
+        console.error('Error during fetch operation:', error);
+        toggleModal(editModal, 'none');
+        
+        setTimeout(() => {
+            showToast("Gagal menghubungi server! Detail: " + error.message, false, 4000);
+        }, 300);
+    } finally {
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
     }
 });
     
-    // Delete Confirmation Handler
 deleteModal.querySelector('.finish-btn').addEventListener('click', async function() {
     const serialNumber = document.getElementById('deleteSerialNumber').textContent;
     try {
         const response = await fetch(`/admin/hapus-aset/${serialNumber}`, {
-            method: 'DELETE' // Ubah ke GET untuk melakukan pengecekan sebelum DELETE
+            method: 'DELETE'
         });
 
         const result = await response.json();
@@ -390,7 +438,6 @@ deleteModal.querySelector('.finish-btn').addEventListener('click', async functio
                 window.location.reload();
             }, 1000);
         } else {
-            // Jika aset tidak bisa dihapus, tampilkan warning modal
             showWarningModal(result.message);
         }
     } catch (error) {
@@ -401,7 +448,6 @@ deleteModal.querySelector('.finish-btn').addEventListener('click', async functio
     toggleModal(deleteModal, 'none');
 });
     
-    // Cancel delete
     deleteModal.querySelector('.cancel-btn').addEventListener('click', () => {
         toggleModal(deleteModal, 'none');
     });
@@ -427,25 +473,23 @@ deleteModal.querySelector('.finish-btn').addEventListener('click', async functio
         }
     });
 
-    // Tampilkan atau sembunyikan pesan "Data tidak ditemukan" dengan animasi halus
     const noDataMessage = document.getElementById("no-data-message");
     if (hasMatch) {
-        noDataMessage.style.opacity = "0"; // Mulai animasi fade-out
+        noDataMessage.style.opacity = "0";
         setTimeout(() => { noDataMessage.style.display = "none"; }, 300);
     } else {
         noDataMessage.style.display = "block"; 
-        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50); // Mulai animasi fade-in
+        setTimeout(() => { noDataMessage.style.opacity = "1"; }, 50);
     }
 }
    
-      // Fungsi untuk menampilkan notifikasi toast
   function showToast(message, isSuccess = true) {
       const toast = document.getElementById("toastNotification");
       toast.textContent = message;
-      toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Hijau untuk sukses, merah untuk error
+      toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336";
   
       toast.classList.remove('show', 'hide');
-      void toast.offsetWidth; // Reset animasi
+      void toast.offsetWidth;
   
       toast.classList.add('show');
   

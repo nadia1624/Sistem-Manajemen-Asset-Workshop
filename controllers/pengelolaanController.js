@@ -8,10 +8,8 @@ const tambahKategori = async (req, res) => {
   try {
     const { namaKategori, deskripsi } = req.body;
 
-    // Menangani gambar yang telah diunggah
     const gambar = req.file ? `${req.file.filename}` : null;
 
-    // Validasi input
     if (!namaKategori || !deskripsi || !gambar) {
       return res.status(400).json({ message: "Semua data harus diisi!" });
     }
@@ -65,12 +63,10 @@ const tambahKategori = async (req, res) => {
       }
     };
 
-// GET: Menampilkan modal edit dengan data kategori
 const tampilkanEditKategori = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Temukan kategori berdasarkan ID
     const kategori = await Kategori.findByPk(id);
 
     if (!kategori) {
@@ -78,7 +74,7 @@ const tampilkanEditKategori = async (req, res) => {
     }
 
     res.render("admin/pengelolaanAset/editKategoriAset", {
-      kategori, // Mengirim data ke EJS
+      kategori, 
     });
   } catch (error) {
     console.error(error);
@@ -86,12 +82,11 @@ const tampilkanEditKategori = async (req, res) => {
   }
 };
 
-// POST: Memproses perubahan data kategori
 const editKategori = async (req, res) => {
   try {
-    const { id } = req.params; // Ambil ID dari parameter URL
-    const { namaKategori, deskripsi } = req.body; // Ambil data dari body
-    const gambar = req.file ? req.file.filename : null; // Ambil gambar jika ada
+    const { id } = req.params;
+    const { namaKategori, deskripsi } = req.body;
+    const gambar = req.file ? req.file.filename : null;
 
     console.log("Data yang diterima untuk edit kategori:", {
       id,
@@ -100,24 +95,20 @@ const editKategori = async (req, res) => {
       gambar,
     });
 
-    // Validasi input
     if (!namaKategori || !deskripsi) {
       return res
         .status(400)
         .json({ message: "Nama kategori dan deskripsi harus diisi!" });
     }
 
-    // Cari kategori di database
     const kategori = await Kategori.findByPk(id);
     if (!kategori) {
       return res.status(404).json({ message: "Kategori tidak ditemukan!" });
     }
 
-    // Perbarui data kategori
     kategori.nama_kategori = namaKategori;
     kategori.deskripsi = deskripsi;
 
-    // Proses gambar
     if (gambar) {
       const oldImagePath = path.join(__dirname, "../uploads/", kategori.gambar);
       if (kategori.gambar && fs.existsSync(oldImagePath)) {
@@ -147,14 +138,11 @@ const hapusKategori = async (req, res) => {
       return res.status(404).json({ message: "Kategori tidak ditemukan" });
     }
 
-    // Cek jumlah aset dalam kategori
     const jumlahAset = await Aset.count({
       where: { kategoriId: id }
     });
 
-    // Jika kategori tidak memiliki aset, langsung hapus
     if (jumlahAset === 0) {
-      // Hapus file gambar jika ada
       if (kategori.gambar) {
         const imagePath = path.join(__dirname, "../uploads/", kategori.gambar);
         if (fs.existsSync(imagePath)) {
@@ -169,7 +157,6 @@ const hapusKategori = async (req, res) => {
       });
     }
 
-    // Jika kategori memiliki aset, cek status peminjaman
     const asetDenganStatusLain = await Aset.count({
       where: { 
         kategoriId: id,
@@ -177,21 +164,20 @@ const hapusKategori = async (req, res) => {
       }
     });
 
-    // Jika ada aset dengan status selain 'tersedia', tolak penghapusan
     if (asetDenganStatusLain > 0) {
       return res.status(400).json({ 
         success: false,
-        message: "Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau diajukan",
+
+        message: "Kategori tidak dapat dihapus karena terdapat aset yang sedang dipinjam atau tidak tersedia.",
+        
         asetTidakTersedia: asetDenganStatusLain
       });
     }
 
-    // Jika semua aset tersedia, hapus semua aset
     await Aset.destroy({
       where: { kategoriId: id }
     });
 
-    // Hapus file gambar kategori jika ada
     if (kategori.gambar) {
       const imagePath = path.join(__dirname, "../uploads/", kategori.gambar);
       if (fs.existsSync(imagePath)) {
@@ -199,7 +185,6 @@ const hapusKategori = async (req, res) => {
       }
     }
 
-    // Hapus kategori
     await kategori.destroy();
     
     return res.json({ 
@@ -219,22 +204,22 @@ const hapusKategori = async (req, res) => {
 
 const tampilkanAsetBerdasarkanKategori = async (req, res) => {
   try {
-    const { id } = req.params; // Ambil ID kategori dari parameter URL
-    const kategori = await Kategori.findByPk(id); // Temukan kategori berdasarkan ID
+    const { id } = req.params; 
+    const kategori = await Kategori.findByPk(id); 
 
     if (!kategori) {
       return res.status(404).json({ message: "Kategori tidak ditemukan!" });
     }
 
     const aset = await Aset.findAll({
-      where: { kategoriId: id }, // Ambil aset berdasarkan kategoriId
+      where: { kategoriId: id },
     });
     const  title = "Pengelolaan Aset"
 
     res.render("admin/pengelolaanAset/listAset", {
       req: req,
       kategori: kategori,
-      aset: aset, // Kirim data aset ke EJS
+      aset: aset,
       title
     });
   } catch (error) {
@@ -254,18 +239,16 @@ const tambahAset = async (req, res) => {
       kategoriId,
     } = req.body;
 
-    // Cek apakah serial number sudah ada di database
     const existingAset = await Aset.findOne({ where: { serial_number: serialNumber } });
 
     if (existingAset) {
       return res.status(400).json({
         success: false,
         message: `Tidak dapat menambah aset karena aset dengan serial number ${serialNumber} sudah ada.`,
-        isSerialExist: true // Flag khusus untuk menandai error serial number exist
+        isSerialExist: true 
       });
     }
 
-    // Jika tidak ada, buat aset baru
     await Aset.create({
       serial_number: serialNumber,
       hostname,
@@ -290,8 +273,6 @@ const tambahAset = async (req, res) => {
     });
   }
 };
-
-
 
 const tampilkanEditAset = async (req, res) => {
     try {
@@ -320,15 +301,28 @@ const tampilkanEditAset = async (req, res) => {
 
 const editAset = async (req, res) => {
   try {
-      const { serialNumber } = req.params;
-      const { hostname, namaAset, ipAddress, caraDapat, kondisiAset, statusPinjam } = req.body;
+    const { serialNumber } = req.params;
+    const { serialNumber: newSerialNumber, hostname, namaAset, ipAddress, caraDapat, kondisiAset, statusPinjam } = req.body;
 
-      const aset = await Aset.findByPk(serialNumber);
-      if (!aset) {
-          return res.status(404).json({ message: 'Aset tidak ditemukan' });
+    const aset = await Aset.findByPk(serialNumber);
+    if (!aset) {
+      return res.status(404).json({ success: false, message: 'Aset tidak ditemukan' });
+    }
+
+    if (serialNumber !== newSerialNumber) {
+      const existingAset = await Aset.findByPk(newSerialNumber);
+      if (existingAset) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Serial number tidak dapat diedit karena sudah dimiliki oleh aset lain'
+        });
       }
 
-      await aset.update({
+      try {
+        const kategoriId = aset.kategoriId;
+
+        const newAset = await Aset.create({
+          serial_number: newSerialNumber,
           hostname,
           nama_barang: namaAset,
           ip_address: ipAddress,
@@ -337,17 +331,48 @@ const editAset = async (req, res) => {
             ? aset.kondisi_aset 
             : kondisiAset,
           status_peminjaman: statusPinjam || aset.status_peminjaman,
-      });
+          kategoriId: kategoriId,
+        });
 
-      res.json({ 
+        await aset.destroy();
+        
+        return res.json({ 
+          success: true, 
+          message: 'Aset berhasil diperbarui!', 
+          redirectUrl: `/admin/list-aset/${kategoriId}`
+        });
+      } catch (error) {
+        console.error("Error updating asset with new serial number:", error);
+        return res.status(500).json({ 
+          success: false, 
+          message: 'Gagal mengupdate aset: ' + (error.message || 'Error tidak diketahui')
+        });
+      }
+    } else {
+      await aset.update({
+        hostname,
+        nama_barang: namaAset,
+        ip_address: ipAddress,
+        cara_dapat: caraDapat,
+        kondisi_aset: (aset.status_peminjaman === 'dipinjam' || aset.status_peminjaman === 'sedang diajukan') 
+          ? aset.kondisi_aset 
+          : kondisiAset,
+        status_peminjaman: statusPinjam || aset.status_peminjaman,
+      });
+      
+      return res.json({ 
         success: true, 
         message: 'Aset berhasil diperbarui!', 
         redirectUrl: `/admin/list-aset/${aset.kategoriId}`
       });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Gagal mengupdate aset' });
     }
+  } catch (error) {
+    console.error("General error in editAset:", error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Gagal mengupdate aset: ' + (error.message || 'Error tidak diketahui')
+    });
+  }
 };
 
 
@@ -360,7 +385,6 @@ const hapusAset = async (req, res) => {
           return res.status(404).json({ success: false, message: 'Aset tidak ditemukan' });
       }
 
-      // Periksa status peminjaman sebelum dihapus
       if (aset.status_peminjaman !== 'tersedia') {
           return res.json({ 
               success: false, 
@@ -382,7 +406,6 @@ const hapusAset = async (req, res) => {
       res.status(500).json({ success: false, message: 'Gagal menghapus aset' });
   }
 };
-
 
 const tampilkanDetailAset = async (req, res) => {
     try {
@@ -422,7 +445,7 @@ const tampilkanDaftarAsetKaryawan = async (req, res) => {
           kondisi_aset: 'baik',
           status_peminjaman: 'tersedia'
         },
-        required: true, // Changed to false to get all categories
+        required: true,
         attributes: ['serial_number']
       }],
       attributes: ['id', 'nama_kategori', 'deskripsi', 'gambar'],

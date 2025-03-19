@@ -5,7 +5,6 @@
   <main class="px-4 md:px-8 lg:px-16 pt-6 pb-4">
       <div class="w-full max-w-6xl mx-auto">
           <div class="bg-white rounded-2xl border border-gray-200 p-6 relative">
-              <!-- Back Button -->
               <div class="absolute left-6 top-6">
                   <a href="/karyawan/daftar-aset">
                       <button class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
@@ -70,19 +69,16 @@
           const modalTitle = document.getElementById("modalTitle");
           const serialInput = document.getElementById("serialNumberInput");
 
-          // Fungsi menampilkan modal
           function showModal(title, serial) {
               modalTitle.textContent = `Permintaan untuk ${title}`;
               serialInput.value = serial;
               modal.style.display = "flex";
           }
 
-          // Fungsi menyembunyikan modal
           function hideModal() {
               modal.style.display = "none";
           }
 
-          // Event listener untuk tombol "Ajukan Pinjaman"
           document.querySelector(".request-btn").addEventListener("click", (e) => {
               const button = e.target.closest(".request-btn");
               const title = button.dataset.title;
@@ -90,7 +86,6 @@
               showModal(title, serial);
           });
 
-          // Event listener untuk tombol di modal
           document.getElementById("close").addEventListener("click", hideModal);
           document.querySelector(".cancel-btn").addEventListener("click", hideModal);
       });

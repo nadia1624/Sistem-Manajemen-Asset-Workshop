@@ -29,11 +29,8 @@
 
   
   <script>
-    // Initialize asset data from server
-    // const assets = JSON.parse('<%- JSON.stringify(assets) %>');
     const assets = JSON.parse(decodeURIComponent('<%- encodeURIComponent(JSON.stringify(assets)) %>'));
 
-    // DOM Elements
     const elements = {
       cardContainer: document.getElementById('cardContainer'),
       modal: document.getElementById('addModal'),
@@ -45,7 +42,6 @@
       requestForm: document.getElementById('requestForm')
     };
 
-    // Card Template Function
     function createCard(item) {
       const isOutOfStock = item.stock === 0;
 
@@ -105,7 +101,6 @@
       `;
     }
 
-    // Modal Functions
     const modalController = {
       show(title, serialNumber) {
         elements.modalTitle.textContent = `Permintaan untuk ${title}`;
@@ -118,7 +113,6 @@
       }
     };
 
-    // Event Handlers
     function handleCardClick(event, id) {
       const requestBtn = event.target.closest('.request-btn');
       if (requestBtn) {
@@ -155,7 +149,6 @@
       }
     }
 
-    // Setup Request Buttons
     function setupRequestButtons() {
       document.querySelectorAll('.request-btn').forEach(button => {
         button.addEventListener('click', (event) => {
@@ -165,17 +158,14 @@
       });
     }
 
-    // Initialize Page
     document.addEventListener('DOMContentLoaded', () => {
-      // Render initial cards
+
       elements.cardContainer.innerHTML = assets.map(createCard).join('');
-      
-      // Setup event listeners
+
       elements.modalClose.addEventListener('click', modalController.hide);
       elements.cancelBtn.addEventListener('click', modalController.hide);
       elements.requestForm.addEventListener('submit', handleRequestSubmit);
-      
-      // Setup request buttons
+
       setupRequestButtons();
     });
 
@@ -207,7 +197,7 @@ function hideModal() {
 document.querySelector('.finish-btn').addEventListener('click', async () => {
   const serial_number = document.getElementById('serialNumberInput').value;
   try {
-    const response = await fetch('/karyawan/permintaan', { // Ubah sesuai route yang benar
+    const response = await fetch('/karyawan/permintaan', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
